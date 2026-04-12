@@ -1,0 +1,8 @@
+{
+  "port": 5432,
+  "ip": "localhost",
+  "database": "crypto_bros",
+  "username": "root",
+  "password": "swain",
+  "admin_password": "admin"
+}
