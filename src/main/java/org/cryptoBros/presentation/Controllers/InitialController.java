@@ -1,6 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
-import org.cryptoBros.presentation.Views.MainFrame;
+import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.WelcomeView;
 
 import javax.swing.*;
@@ -9,26 +9,27 @@ import java.awt.event.ActionListener;
 
 public class InitialController implements ActionListener {
 
-    private MainFrame mainFrame;
+    private FrameController frameController;
     private WelcomeView welcomeView;
     private RegistrationController registrationController;
 
-    public InitialController(MainFrame mainFrame) {
-        this.registrationController = new RegistrationController(mainFrame);
+    public InitialController(FrameController frameController) {
+        this.registrationController = new RegistrationController(frameController);
         this.welcomeView = new WelcomeView();
         welcomeView.setActions(this);
-        this.mainFrame = mainFrame;
+        this.frameController = frameController;
     }
 
     public void startProgram() {
-        mainFrame.displayContent(welcomeView);
+        frameController.displayContent(welcomeView);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
-            case "LOGIN"  -> registrationController.login();
-            case "SIGNUP" -> registrationController.signUp();
+        ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
+        switch (buttonEnumeration) {
+            case LOGIN -> registrationController.login();
+            case SIGNUP -> registrationController.signUp();
         }
     }
 }

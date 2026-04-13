@@ -11,7 +11,7 @@ import java.awt.event.FocusListener;
 public class LoginView extends BaseView {
 
     private JTextField jTFUsername;
-    private JTextField jTFPassword;
+    private JPasswordField jTFPassword;
     private JButton jBSignUp;
     private JButton jBConfirm;
 
@@ -49,7 +49,7 @@ public class LoginView extends BaseView {
         jTFUsername = setTextField("Username/email@gmail.com");
 
         JLabel password = setText("Password");
-        jTFPassword = setTextField("xxxxxxxxxxx");
+        jTFPassword = setPassword();
 
         jBSignUp = setJBSignUp();
 
@@ -96,6 +96,16 @@ public class LoginView extends BaseView {
         jButton.setMaximumSize(new Dimension(150, 35));
 
         return jButton;
+    }
+
+    private JPasswordField setPassword() {
+        JPasswordField password = new JPasswordField();
+        password.setPreferredSize(new Dimension(500, 25));
+        password.setMaximumSize(new Dimension(500, 25));
+        password.setBorder(BorderFactory.createLineBorder(new Color(200, 210, 220)));
+        password.setForeground(Color.GRAY);
+
+        return password;
     }
 
     private JTextField setTextField(String placeholder) {
@@ -165,8 +175,8 @@ public class LoginView extends BaseView {
 
     @Override
     public void setActions(ActionListener listener) {
-        jBConfirm.setActionCommand("CONFIRM_LOGIN");
-        jBSignUp.setActionCommand("GO_SIGNUP");
+        jBConfirm.setActionCommand(ButtonEnumeration.CONFIRM_LOGIN.name());
+        jBSignUp.setActionCommand(ButtonEnumeration.SIGNUP.name());
         jBConfirm.addActionListener(listener);
         jBSignUp.addActionListener(listener);
     }

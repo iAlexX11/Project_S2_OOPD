@@ -34,8 +34,8 @@ public class WelcomeView extends BaseView {
 
     @Override
     public void setActions(ActionListener listener) {
-        jBSignUp.setActionCommand("SIGNUP");
-        jBLogin.setActionCommand("LOGIN");
+        jBSignUp.setActionCommand(ButtonEnumeration.SIGNUP.name());
+        jBLogin.setActionCommand(ButtonEnumeration.LOGIN.name());
         jBSignUp.addActionListener(listener);
         jBLogin.addActionListener(listener);
     }
