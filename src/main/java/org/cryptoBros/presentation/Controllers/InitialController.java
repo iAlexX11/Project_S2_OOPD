@@ -9,9 +9,9 @@ import java.awt.event.ActionListener;
 
 public class InitialController implements ActionListener {
 
-    MainFrame mainFrame;
-    WelcomeView welcomeView;
-    RegistrationController registrationController;
+    private MainFrame mainFrame;
+    private WelcomeView welcomeView;
+    private RegistrationController registrationController;
 
     public InitialController(MainFrame mainFrame) {
         this.registrationController = new RegistrationController(mainFrame);

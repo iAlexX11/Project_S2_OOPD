@@ -10,12 +10,12 @@ import java.awt.event.FocusListener;
 
 public class SignUpView extends BaseView {
 
-    JTextField jTFUsername;
-    JTextField jTFEmail;
-    JTextField jTFPassword;
-    JTextField jTFConfirmPassword;
-    JButton jBLogin;
-    JButton jBConfirm;
+    private JTextField jTFUsername;
+    private JTextField jTFEmail;
+    private JTextField jTFPassword;
+    private JTextField jTFConfirmPassword;
+    private JButton jBLogin;
+    private JButton jBConfirm;
 
     @Override
     public void configureView () {
