@@ -60,7 +60,6 @@ public class UserSQL implements UserPersistence {
                     rs.getString("password"),
                     rs.getDouble("balance")
             );
-
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }
