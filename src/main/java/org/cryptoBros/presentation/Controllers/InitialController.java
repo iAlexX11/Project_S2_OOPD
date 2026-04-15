@@ -1,6 +1,8 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.CredentialManager;
+import org.cryptoBros.presentation.Views.ButtonEnumeration;
+import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.presentation.Views.MainFrame;
 import org.cryptoBros.presentation.Views.WelcomeView;
@@ -11,28 +13,29 @@ import java.awt.event.ActionListener;
 
 public class InitialController implements ActionListener {
 
-    MainFrame mainFrame;
-    WelcomeView welcomeView;
-    RegistrationController registrationController;
-    private final CredentialManager credentialManager;
+    private FrameController frameController;
+    private WelcomeView welcomeView;
+    private RegistrationController registrationController;
+	private CredentialManager credentialManager;
 
-    public InitialController(MainFrame mainFrame) {
-        this.registrationController = new RegistrationController(mainFrame);
+    public InitialController(FrameController frameController) {
+        this.registrationController = new RegistrationController(frameController);
         this.welcomeView = new WelcomeView();
         welcomeView.setActions(this);
-        this.mainFrame = mainFrame;
+        this.frameController = frameController;
         this.credentialManager = new CredentialManager();
     }
 
     public void startProgram() {
-        mainFrame.displayContent(welcomeView);
+        frameController.displayContent(welcomeView);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
-            case "LOGIN"  -> registrationController.login();
-            case "SIGNUP" -> registrationController.signUp();
+        ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
+        switch (buttonEnumeration) {
+            case LOGIN -> registrationController.login();
+            case SIGNUP -> registrationController.signUp();
         }
     }
 

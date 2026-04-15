@@ -12,8 +12,8 @@ public class SignUpView extends BaseView {
 
     private JTextField jTFUsername;
     private JTextField jTFEmail;
-    private JTextField jTFPassword;
-    private JTextField jTFConfirmPassword;
+    private JPasswordField jTFPassword;
+    private JPasswordField jTFConfirmPassword;
     private JButton jBLogin;
     private JButton jBConfirm;
 
@@ -54,10 +54,10 @@ public class SignUpView extends BaseView {
         jTFEmail = setTextField("example@gmail.com");
 
         JLabel passwordText =setText("Password");
-        jTFPassword = setTextField("xxxxxxxxxxx");
+        jTFPassword = setPassword();
 
         JLabel confirmPasswordText = setText("Confirm Password");
-        jTFConfirmPassword = setTextField("xxxxxxxxxxx");
+        jTFConfirmPassword = setPassword();
 
         jBLogin = setJBLogin();
 
@@ -84,6 +84,16 @@ public class SignUpView extends BaseView {
         panel.add(jBConfirm);
 
         return panel;
+    }
+
+    private JPasswordField setPassword() {
+        JPasswordField password = new JPasswordField();
+        password.setPreferredSize(new Dimension(500, 25));
+        password.setMaximumSize(new Dimension(500, 25));
+        password.setBorder(BorderFactory.createLineBorder(new Color(200, 210, 220)));
+        password.setForeground(Color.GRAY);
+
+        return password;
     }
 
     private JButton setJBLogin() {
@@ -180,8 +190,8 @@ public class SignUpView extends BaseView {
 
     @Override
     public void setActions(ActionListener listener) {
-        jBConfirm.setActionCommand("CONFIRM_SIGNUP");
-        jBLogin.setActionCommand("GO_LOGIN");
+        jBConfirm.setActionCommand(ButtonEnumeration.CONFIRM_SIGNUP.name());
+        jBLogin.setActionCommand(ButtonEnumeration.LOGIN.name());
         jBConfirm.addActionListener(listener);
         jBLogin.addActionListener(listener);
     }
