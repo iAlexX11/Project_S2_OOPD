@@ -32,4 +32,14 @@ public class InitialController implements ActionListener {
             case SIGNUP -> registrationController.signUp();
         }
     }
+
+    private void loadAdminPassword() {
+        try {
+            // TODO: store the admin password somewhere
+            credentialManager.readAdminPassword();
+        } catch (ConfigFileNotFoundException e) {
+            // TODO: implement alert thing for this
+            System.out.println("Admin Password File Not Found");
+        }
+    }
 }

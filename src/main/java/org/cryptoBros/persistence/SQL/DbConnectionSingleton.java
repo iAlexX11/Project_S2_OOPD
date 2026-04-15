@@ -1,6 +1,10 @@
 package org.cryptoBros.persistence.SQL;
 
+import org.cryptoBros.persistence.Config;
+import org.cryptoBros.persistence.ConfigJson;
+import org.cryptoBros.persistence.ConfigPersistence;
 import org.cryptoBros.persistence.DbCredentials;
+import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 
 import java.sql.*;
 
@@ -18,6 +22,8 @@ public class DbConnectionSingleton {
     // The static attribute to implement the singleton design pattern.
     private static DbConnectionSingleton instance = null;
 
+    private final ConfigPersistence configPersistence;
+
 
     /**
      * Static method that returns the shared instance managed by the singleton.
@@ -27,7 +33,7 @@ public class DbConnectionSingleton {
     public static DbConnectionSingleton getInstance(){
         if (instance == null ){
             // NOT a good practice to hardcode connection data! Be aware of this for your project delivery ;)
-            instance = new DbConnectionSingleton( /*TODO: read from json*/ "root", "swain", "localhost", 5432, "cryptobros_db");
+            instance = new DbConnectionSingleton();
             // do something like  configPersistence.readCredentials()  to get the credentials;
             instance.connect();
         }
@@ -41,10 +47,26 @@ public class DbConnectionSingleton {
     private Connection conn;
 
     // Parametrized constructor
-    private DbConnectionSingleton(String username, String password, String ip, int port, String database) {
+    private DbConnectionSingleton() {
+        String username;
+        String password;
+        String url;
+
+        configPersistence = new ConfigJson();
+
+        try {
+            DbCredentials dbCredentials = configPersistence.readCredentials();
+            username = dbCredentials.username();
+            password = dbCredentials.password();
+            url = "jdbc:postgresql://" + dbCredentials.ip() + ":" + dbCredentials.port() + "/" + dbCredentials.dbName();
+        } catch (ConfigFileNotFoundException e) {
+            username = "root";
+            password = "swain";
+            url = "jdbc:postgresql://" + "localhost" + ":" + 5432 + "/" + "cryptobros_db";
+        }
         this.username = username;
         this.password = password;
-        this.url = "jdbc:postgresql://" + ip + ":" + port + "/" + database;
+        this.url = url;
     }
 
 
