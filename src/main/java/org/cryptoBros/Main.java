@@ -1,5 +1,6 @@
 package org.cryptoBros;
 
+import org.cryptoBros.presentation.Controllers.FrameController;
 import org.cryptoBros.presentation.Controllers.InitialController;
 import org.cryptoBros.presentation.Views.MainFrame;
 
@@ -10,10 +11,10 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainFrame mainFrame = new MainFrame();
-            InitialController initialController = new InitialController(mainFrame);
+            FrameController frameController = new FrameController();
+            InitialController initialController = new InitialController(frameController);
             initialController.startProgram();
-            mainFrame.start();
+            frameController.startFrame();
         });
     }
 }
