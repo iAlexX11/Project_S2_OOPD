@@ -27,7 +27,6 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error inserting user: " + e.getMessage());
         }
-        db.disconnect();
     }
 
     @Override
@@ -42,7 +41,6 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error deleting user: " + e.getMessage());
         }
-        db.disconnect();
     }
 
     @Override
@@ -66,7 +64,6 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }
-        db.disconnect();
         return null;
     }
 }
