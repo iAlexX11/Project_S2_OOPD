@@ -8,6 +8,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class
+ */
+
 public class CryptoSQL implements CryptoPersistence {
     private final DbConnectionSingleton db;
 
