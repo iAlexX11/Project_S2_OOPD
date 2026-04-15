@@ -1,6 +1,10 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
+import org.cryptoBros.business.User;
+import org.cryptoBros.business.UserManager;
+import org.cryptoBros.persistence.SQL.UserSQL;
+import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
@@ -51,10 +55,23 @@ public class RegistrationController implements ActionListener {
 	}
 
 	public void registerNewUser() {
+		UserPersistence userPersistence = new UserSQL();
+		UserManager userManager = new UserManager(userPersistence);
 		if (signUpCredentialsFormat()) {
 			String password = accountManager.hashPassword(signUpView.getPassword());
 			String email = signUpView.getEmail();
 			String userName = signUpView.getName();
+
+			User user = new User(userName, password, email);
+
+			/// CHECK IF THE EMAIL AND THE USERNAME DOESN'T EXIST IN THE DB
+			if (userManager.getUser(email, userName) == null) {
+				User userWithId = userManager.addUser(user);
+				userManager.setCurrentUser(userWithId);
+			} else {
+				ErrorsView.showError("This email/username already exists!");
+			}
+
 
 		}
 	}

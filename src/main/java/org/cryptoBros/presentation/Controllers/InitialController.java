@@ -13,10 +13,10 @@ import java.awt.event.ActionListener;
 
 public class InitialController implements ActionListener {
 
-    private FrameController frameController;
-    private WelcomeView welcomeView;
-    private RegistrationController registrationController;
-	private CredentialManager credentialManager;
+    private final FrameController frameController;
+    private final WelcomeView welcomeView;
+    private final RegistrationController registrationController;
+	private final CredentialManager credentialManager;
 
     public InitialController(FrameController frameController) {
         this.registrationController = new RegistrationController(frameController);
