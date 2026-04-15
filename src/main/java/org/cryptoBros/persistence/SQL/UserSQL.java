@@ -13,21 +13,33 @@ public class UserSQL implements UserPersistence {
     }
 
     @Override
-    public void addUser(User user) {
+    public User addUser(User user) {
         String query = "INSERT INTO users (username, email, password, balance) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
-
+        try (PreparedStatement ps = db.connect().prepareStatement(
+                query,
+                PreparedStatement.RETURN_GENERATED_KEYS))
+        {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
             ps.setDouble(4, user.getBalance());
 
             ps.executeUpdate();
+
+            var rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                user.setId(generatedId); // update existing object
+            }
+
+            return user;
+
         } catch (Exception e) {
             System.err.println("Error inserting user: " + e.getMessage());
         }
-        db.disconnect();
+
+        return null;
     }
 
     @Override
@@ -42,11 +54,10 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error deleting user: " + e.getMessage());
         }
-        db.disconnect();
     }
 
     @Override
-    public void getUser(String username, String email) {
+    public User getUser(String username, String email) {
         String query = "SELECT * FROM users WHERE username = ? OR email = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
@@ -55,14 +66,16 @@ public class UserSQL implements UserPersistence {
             ps.setString(2, email);
 
             var rs = ps.executeQuery();
-
-            while (rs.next()) {
-                System.out.println("User: " + rs.getString("username"));
-            }
-
+            return new User(
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getDouble("balance")
+            );
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }
-        db.disconnect();
+        return null;
     }
 }

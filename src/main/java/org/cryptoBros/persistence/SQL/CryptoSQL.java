@@ -5,6 +5,10 @@ import org.cryptoBros.persistence.CryptoPersistence;
 
 import java.util.List;
 
+/**
+ * This class
+ */
+
 public class CryptoSQL implements CryptoPersistence {
 
     @Override
