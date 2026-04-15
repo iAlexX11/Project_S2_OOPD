@@ -27,6 +27,7 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error inserting user: " + e.getMessage());
         }
+        db.disconnect();
     }
 
     @Override
@@ -41,10 +42,11 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error deleting user: " + e.getMessage());
         }
+        db.disconnect();
     }
 
     @Override
-    public User getUser(String username, String email) {
+    public void getUser(String username, String email) {
         String query = "SELECT * FROM users WHERE username = ? OR email = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
@@ -53,16 +55,14 @@ public class UserSQL implements UserPersistence {
             ps.setString(2, email);
 
             var rs = ps.executeQuery();
-            return new User(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getDouble("balance")
-            );
+
+            while (rs.next()) {
+                System.out.println("User: " + rs.getString("username"));
+            }
+
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }
-        return null;
+        db.disconnect();
     }
 }
