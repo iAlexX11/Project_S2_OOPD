@@ -13,20 +13,33 @@ public class UserSQL implements UserPersistence {
     }
 
     @Override
-    public void addUser(User user) {
+    public User addUser(User user) {
         String query = "INSERT INTO users (username, email, password, balance) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
-
+        try (PreparedStatement ps = db.connect().prepareStatement(
+                query,
+                PreparedStatement.RETURN_GENERATED_KEYS))
+        {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
             ps.setDouble(4, user.getBalance());
 
             ps.executeUpdate();
+
+            var rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                user.setId(generatedId); // update existing object
+            }
+
+            return user;
+
         } catch (Exception e) {
             System.err.println("Error inserting user: " + e.getMessage());
         }
+
+        return null;
     }
 
     @Override
