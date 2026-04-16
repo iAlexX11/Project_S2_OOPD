@@ -62,12 +62,15 @@ public class RegistrationController implements ActionListener {
 			String email = signUpView.getEmail();
 			String userName = signUpView.getName();
 
+			ErrorsView.showError(userName);
+
 			User user = new User(userName, password, email);
 
 			/// CHECK IF THE EMAIL AND THE USERNAME DOESN'T EXIST IN THE DB
 			if (userManager.getUser(email, userName) == null) {
 				User userWithId = userManager.addUser(user);
 				userManager.setCurrentUser(userWithId);
+				ErrorsView.showError("User created");
 			} else {
 				ErrorsView.showError("This email/username already exists!");
 			}
