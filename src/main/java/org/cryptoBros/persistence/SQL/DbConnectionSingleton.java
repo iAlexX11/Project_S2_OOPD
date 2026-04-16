@@ -76,6 +76,7 @@ public class DbConnectionSingleton {
      */
     public Connection connect() {
         try {
+            if (!conn.isClosed()) return conn;
             conn = DriverManager.getConnection(url, username, password);
             return conn;
         } catch(SQLException e) {
