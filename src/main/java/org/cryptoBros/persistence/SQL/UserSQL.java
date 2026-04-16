@@ -66,13 +66,15 @@ public class UserSQL implements UserPersistence {
             ps.setString(2, email);
 
             var rs = ps.executeQuery();
-            return new User(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getDouble("balance")
-            );
+			if (rs.next()) {
+				return new User(
+						rs.getInt("user_id"),
+						rs.getString("username"),
+						rs.getString("email"),
+						rs.getString("password"),
+						rs.getDouble("balance")
+				);
+			}
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }
