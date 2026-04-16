@@ -44,7 +44,7 @@ public class UserSQL implements UserPersistence {
 
     @Override
     public void removeUser(int id) {
-        String query = "DELETE FROM users WHERE user_id = ?";
+        String query = "DELETE FROM users WHERE id = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 

@@ -100,13 +100,14 @@ public class CryptoSQL implements CryptoPersistence {
 
     @Override
     public void updateCrypto(String name, Crypto newCrypto) {
-        String query = "UPDATE cryptocurrency SET current_price = ?, original_price = ? WHERE name = ?";
+        String query = "UPDATE cryptocurrency SET name = ?, current_price = ?, original_price = ? WHERE name = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 
-            ps.setDouble(1, newCrypto.getCurrentPrice());
-            ps.setDouble(2, newCrypto.getInitialPrice());
-            ps.setString(3, name);
+            ps.setString(1, newCrypto.getName());
+            ps.setDouble(2, newCrypto.getCurrentPrice());
+            ps.setDouble(3, newCrypto.getInitialPrice());
+            ps.setString(4, name);
 
             ps.executeUpdate();
 
