@@ -4,7 +4,7 @@ import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
-import org.cryptoBros.presentation.Views.MainFrame;
+import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.WelcomeView;
 
 import javax.swing.*;
