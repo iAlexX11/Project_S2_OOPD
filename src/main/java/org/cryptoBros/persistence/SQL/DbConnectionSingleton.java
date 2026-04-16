@@ -62,7 +62,7 @@ public class DbConnectionSingleton {
         } catch (ConfigFileNotFoundException e) {
             username = "root";
             password = "swain";
-            url = "jdbc:postgresql://" + "localhost" + ":" + 5432 + "/" + "cryptobros_db";
+            url = "jdbc:postgresql://localhost:5432/postgres";
         }
         this.username = username;
         this.password = password;
