@@ -28,7 +28,7 @@ public class CryptoSQL implements CryptoPersistence {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) { // ✅ REQUIRED
+            if (rs.next()) {
                 return new Crypto(
                         rs.getString("name"),
                         rs.getDouble("current_price"),
