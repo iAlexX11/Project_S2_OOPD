@@ -27,6 +27,10 @@ public class AccountManager {
 		return BCrypt.hashpw(new String(password), BCrypt.gensalt(12));
 	}
 
+	public boolean checkHashedPassword(char[] password,  String hashedPassword) {
+		return BCrypt.checkpw(new String(password), hashedPassword);
+	}
+
 	public boolean checkEmail(String email) {
 		boolean hasDot = false;
 		boolean hasName = false; //

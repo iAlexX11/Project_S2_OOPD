@@ -180,4 +180,12 @@ public class LoginView extends BaseView {
         jBConfirm.addActionListener(listener);
         jBSignUp.addActionListener(listener);
     }
+
+	public char[] getPassword() {
+		return jTFPassword.getPassword();
+	}
+
+	public String getUsername() {
+		return jTFUsername.getText();
+	}
 }

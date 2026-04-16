@@ -14,7 +14,7 @@ public class UserManager {
 		return userPersistence.addUser(user);
 	}
 
-	public  User getUser(String username, String email) {
+	public User getUser(String username, String email) {
 		return userPersistence.getUser(username, email);
 	}
 
