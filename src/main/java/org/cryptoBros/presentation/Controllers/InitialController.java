@@ -1,5 +1,7 @@
 package org.cryptoBros.presentation.Controllers;
 
+import org.cryptoBros.business.CredentialManager;
+import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.WelcomeView;
 
@@ -12,12 +14,14 @@ public class InitialController implements ActionListener {
     private FrameController frameController;
     private WelcomeView welcomeView;
     private RegistrationController registrationController;
+    CredentialManager credentialManager;
 
     public InitialController(FrameController frameController) {
         this.registrationController = new RegistrationController(frameController);
         this.welcomeView = new WelcomeView();
         welcomeView.setActions(this);
         this.frameController = frameController;
+        this.credentialManager = new CredentialManager();
     }
 
     public void startProgram() {
