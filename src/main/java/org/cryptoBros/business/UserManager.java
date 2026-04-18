@@ -1,14 +1,11 @@
 package org.cryptoBros.business;
 
+import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
 public class UserManager {
 	private User currentUser;
-	private final UserPersistence userPersistence;
-
-	public UserManager(UserPersistence userPersistence) {
-		this.userPersistence = userPersistence;
-	}
+	private final UserPersistence userPersistence = new UserSQL();
 
 	public User addUser(User user) {
 		return userPersistence.addUser(user);

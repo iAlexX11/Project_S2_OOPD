@@ -55,8 +55,7 @@ public class RegistrationController implements ActionListener {
 	}
 
 	public void registerNewUser() {
-		UserPersistence userPersistence = new UserSQL();
-		UserManager userManager = new UserManager(userPersistence);
+		UserManager userManager = new UserManager();
 		if (signUpCredentialsFormat()) {
 			String password = accountManager.hashPassword(signUpView.getPassword());
 			String email = signUpView.getEmail();
@@ -74,8 +73,7 @@ public class RegistrationController implements ActionListener {
 	}
 
 	public void logInUser() {
-		UserPersistence userPersistence = new UserSQL();
-		UserManager userManager = new UserManager(userPersistence);
+		UserManager userManager = new UserManager();
 		String usernameOrEmail = loginView.getUsername();
 		User possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
 
