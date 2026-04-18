@@ -42,5 +42,6 @@ public class JImagePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+		// test comment
     }
 }

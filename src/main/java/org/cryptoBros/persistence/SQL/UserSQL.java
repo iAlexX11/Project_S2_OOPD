@@ -44,7 +44,7 @@ public class UserSQL implements UserPersistence {
 
     @Override
     public void removeUser(int id) {
-        String query = "DELETE FROM users WHERE user_id = ?";
+        String query = "DELETE FROM users WHERE id = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 
@@ -66,13 +66,15 @@ public class UserSQL implements UserPersistence {
             ps.setString(2, email);
 
             var rs = ps.executeQuery();
-            return new User(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getDouble("balance")
-            );
+			if (rs.next()) {
+				return new User(
+						rs.getInt("user_id"),
+						rs.getString("username"),
+						rs.getString("email"),
+						rs.getString("password"),
+						rs.getDouble("balance")
+				);
+			}
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }

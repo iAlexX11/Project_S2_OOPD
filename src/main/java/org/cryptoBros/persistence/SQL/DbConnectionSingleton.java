@@ -60,7 +60,7 @@ public class DbConnectionSingleton {
             password = dbCredentials.password();
             url = "jdbc:postgresql://" + dbCredentials.ip() + ":" + dbCredentials.port() + "/" + dbCredentials.dbName();
         } catch (ConfigFileNotFoundException e) {
-            username = "root";
+            username = "postgres";
             password = "swain";
             url = "jdbc:postgresql://localhost:5432/postgres";
         }
@@ -76,7 +76,6 @@ public class DbConnectionSingleton {
      */
     public Connection connect() {
         try {
-            if (!conn.isClosed()) return conn;
             conn = DriverManager.getConnection(url, username, password);
             return conn;
         } catch(SQLException e) {
