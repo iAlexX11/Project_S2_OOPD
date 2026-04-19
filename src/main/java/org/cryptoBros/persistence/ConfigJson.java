@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class ConfigJson implements ConfigPersistence {
     private final Gson gson;
-    private static final String CONFIG_FILEPATH = "config.json";
+    private static final String CONFIG_FILEPATH = "src/main/java/org/cryptoBros/config.json";
 
     public ConfigJson() {
         gson = new GsonBuilder().registerTypeAdapter(Config.class, new ConfigDeserializer()).create();
@@ -20,6 +20,7 @@ public class ConfigJson implements ConfigPersistence {
         try (FileReader reader = new FileReader(CONFIG_FILEPATH)) {
             return gson.fromJson(reader, Config.class);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ConfigFileNotFoundException("Failed to read config file");
         }
     }
