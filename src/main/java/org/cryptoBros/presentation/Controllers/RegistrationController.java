@@ -1,8 +1,10 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
+import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
+import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.presentation.Views.*;
@@ -72,9 +74,36 @@ public class RegistrationController implements ActionListener {
 		}
 	}
 
-	public void logInUser() {
+    private void logInUser() {
+        String usernameOrEmail = loginView.getUsername();
+
+        if (usernameOrEmail.compareTo("admin") == 0) {
+            logInAdmin();
+        }
+        else {
+            logInNormalUser(usernameOrEmail);
+        }
+    }
+
+    private void logInAdmin() {
+        CredentialManager credentialManager = new CredentialManager();
+        AccountManager accountManager = new AccountManager();
+       try {
+           String adminPassword = accountManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
+           char[] password = loginView.getPassword();
+           if (accountManager.checkHashedPassword(password, adminPassword)) {
+               System.out.println("Admin logIn successfully");
+           }
+           else {
+               ErrorsView.showError("This username or password are wrong!");
+           }
+       }catch (ConfigFileNotFoundException e) {
+           ErrorsView.showError("The configuration File couldn't be found");
+       }
+    }
+
+    public void logInNormalUser(String usernameOrEmail) {
 		UserManager userManager = new UserManager();
-		String usernameOrEmail = loginView.getUsername();
 		User possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
 
 		if (possibleUser != null && accountManager.checkHashedPassword(loginView.getPassword(), possibleUser.getPassword())) {
@@ -82,6 +111,7 @@ public class RegistrationController implements ActionListener {
 			System.out.println(possibleUser.getUsername());
 			System.out.println(possibleUser.getPassword());
 			userManager.setCurrentUser(possibleUser);
+            System.out.println("User logIn successfully");
 			//TODO: Redirect to the main page
 		} else {
 			ErrorsView.showError("This email/username doesn't exists!");
@@ -98,4 +128,6 @@ public class RegistrationController implements ActionListener {
 			case SIGNUP -> signUp();
 		}
 	}
+
+
 }
