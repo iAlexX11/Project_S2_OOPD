@@ -22,4 +22,8 @@ public class UserManager {
 	public User getCurrentUser() {
 		return currentUser;
 	}
+
+	public double getCurrentBalance() {
+		return currentUser.getBalance();
+	}
 }

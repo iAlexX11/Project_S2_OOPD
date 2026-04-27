@@ -112,7 +112,7 @@ public class RegistrationController implements ActionListener {
 			System.out.println(possibleUser.getPassword());
 			userManager.setCurrentUser(possibleUser);
             System.out.println("User logIn successfully");
-			UserController userController = new UserController(frameController);
+			UserController userController = new UserController(frameController, userManager);
 			userController.displayCryptoMarketView();
 		} else {
 			ErrorsView.showError("This email/username doesn't exists!");

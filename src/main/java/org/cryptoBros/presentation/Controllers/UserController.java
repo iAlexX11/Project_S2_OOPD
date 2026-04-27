@@ -1,5 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
+import org.cryptoBros.business.UserManager;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.CryptoMarketView;
 
@@ -10,15 +11,22 @@ public class UserController implements ActionListener {
 
 	private final FrameController frameController;
 	private final CryptoMarketView cryptoMarketView;
+	private final UserManager userManager;
 
-	public UserController(FrameController frameController) {
+	public UserController(FrameController frameController, UserManager userManager) {
 		this.frameController = frameController;
+		this.userManager = userManager;
 		this.cryptoMarketView = new CryptoMarketView();
 		cryptoMarketView.setActions(this);
 	}
 
 	public void displayCryptoMarketView() {
+		cryptoMarketView.setBalance(getCurrentBalance());
 		frameController.displayContent(cryptoMarketView);
+	}
+
+	private double getCurrentBalance() {
+		return userManager.getCurrentBalance();
 	}
 
 	@Override

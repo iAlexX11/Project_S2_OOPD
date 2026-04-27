@@ -8,8 +8,8 @@ public class CryptoMarketView extends BaseView {
 
 	private JButton jBSettings;
 	private JButton jBPortfolio;
-	private JTextField jTBalance;
-	private JTextField jTEstimatedProfit;
+	private JLabel jLBalance;
+	private JLabel jLProfit;
 
 	@Override
 	protected void configureView() {
@@ -28,31 +28,53 @@ public class CryptoMarketView extends BaseView {
 	}
 
 	private JPanel setHeader() {
-		JPanel header = new JPanel(new GridLayout(1, 2, 45, 0));
+		JPanel header = new JPanel(new BorderLayout());
 		header.setBackground(new Color(83, 136, 252));
-		header.setBorder(BorderFactory.createEmptyBorder(30, 50, 10, 0));
+		header.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 0));
 		header.setOpaque(true);
 
-		JPanel col1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel col1 = new JPanel();
+		col1.setLayout(new BoxLayout(col1, BoxLayout.X_AXIS));
 		col1.setOpaque(false);
-
-		JPanel col2 = new JPanel(new GridLayout(2, 1, 0, 10));
-		col2.setOpaque(false);
 
 		jBSettings = setJBSettingsButton();
 		jBPortfolio = setJBPortfolioButton();
 
+		col1.add(Box.createHorizontalGlue());
 		col1.add(jBSettings);
 		col1.add(Box.createHorizontalStrut(20));
 		col1.add(jBPortfolio);
+		col1.add(Box.createHorizontalGlue());
 
-		col2.add(new JLabel("Balance:"));
-		col2.add(new JLabel("Estimated Profit:"));
+		JPanel col1Wrapper = new JPanel(new BorderLayout());
+		col1Wrapper.setOpaque(false);
+		col1Wrapper.add(col1, BorderLayout.CENTER);
 
-		header.add(col1);
-		header.add(col2);
+		JPanel col2 = new JPanel(new GridLayout(2, 1, 0, 5));
+		col2.setOpaque(false);
+
+		jLBalance = new JLabel();
+		jLBalance.setForeground(Color.WHITE);
+		jLBalance.setFont(new Font("Apple Casual", Font.PLAIN, 18));
+		col2.add(jLBalance);
+
+		jLProfit = new JLabel("Estimated Profit: 0.00€");
+		jLProfit.setForeground(Color.WHITE);
+		jLProfit.setFont(new Font("Apple Casual", Font.PLAIN, 18));
+		col2.add(jLProfit);
+
+		col2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
+
+		header.add(col1Wrapper, BorderLayout.WEST);
+		header.add(col2, BorderLayout.EAST);
 
 		return header;
+	}
+
+	public void setBalance(double balance) {
+		jLBalance.setText("The balance is: " + String.format("%.2f", balance) + "€");
+		jLBalance.setForeground(Color.WHITE);
+		jLBalance.setFont(new Font("Apple Casual", Font.PLAIN, 18));
 	}
 
 	private JPanel setCore() {
@@ -91,7 +113,6 @@ public class CryptoMarketView extends BaseView {
 
 		jButton.setPreferredSize(new Dimension(90, 35));
 		jButton.setMaximumSize(new Dimension(90, 35));
-
 		return jButton;
 	}
 
