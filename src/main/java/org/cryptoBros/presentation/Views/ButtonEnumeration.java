@@ -4,5 +4,7 @@ public enum ButtonEnumeration {
     SIGNUP,
     LOGIN,
     CONFIRM_SIGNUP,
-    CONFIRM_LOGIN
+    CONFIRM_LOGIN,
+	SETTINGS,
+	PORTFOLIO
 }

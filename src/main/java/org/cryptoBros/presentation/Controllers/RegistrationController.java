@@ -67,7 +67,7 @@ public class RegistrationController implements ActionListener {
 				User user = new User(username, email, password);
 				User userWithId = userManager.addUser(user);
 				userManager.setCurrentUser(userWithId);
-				//TODO: Redirect to the main page
+				//TODO: CryptoMarket for an admin user
 			} else {
 				ErrorsView.showError("This email/username already exists!");
 			}
@@ -112,7 +112,8 @@ public class RegistrationController implements ActionListener {
 			System.out.println(possibleUser.getPassword());
 			userManager.setCurrentUser(possibleUser);
             System.out.println("User logIn successfully");
-			//TODO: Redirect to the main page
+			UserController userController = new UserController(frameController);
+			userController.displayCryptoMarketView();
 		} else {
 			ErrorsView.showError("This email/username doesn't exists!");
 		}
