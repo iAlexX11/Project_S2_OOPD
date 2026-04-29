@@ -1,10 +1,12 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.CredentialManager;
+import org.cryptoBros.persistence.SQL.DbConnectionSingleton;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
+import org.cryptoBros.presentation.Views.ErrorsView;
 import org.cryptoBros.presentation.Views.WelcomeView;
 
 import javax.swing.*;
@@ -28,6 +30,13 @@ public class InitialController implements ActionListener {
 
     public void startProgram() {
         frameController.displayContent(welcomeView);
+
+        try {
+            DbConnectionSingleton.getInstance().loadConfig();
+        } catch (ConfigFileNotFoundException e) {
+            ErrorsView.showError("Config file not found");
+            System.exit(1);
+        }
     }
 
     @Override

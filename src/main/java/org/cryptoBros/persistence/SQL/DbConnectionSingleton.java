@@ -30,43 +30,22 @@ public class DbConnectionSingleton {
      *
      * @return The shared SQLConnector instance.
      */
-    public static DbConnectionSingleton getInstance(){
+    public static DbConnectionSingleton getInstance() {
         if (instance == null ){
-            // NOT a good practice to hardcode connection data! Be aware of this for your project delivery ;)
             instance = new DbConnectionSingleton();
-            // do something like  configPersistence.readCredentials()  to get the credentials;
-            instance.connect();
         }
         return instance;
     }
 
     // Attributes to connect to the database.
-    private final String username;
-    private final String password;
-    private final String url;
+    private String username;
+    private String password;
+    private String url;
     private Connection conn;
 
     // Parametrized constructor
     private DbConnectionSingleton() {
-        String username;
-        String password;
-        String url;
-
         configPersistence = new ConfigJson();
-
-        try {
-            DbCredentials dbCredentials = configPersistence.readCredentials();
-            username = dbCredentials.username();
-            password = dbCredentials.password();
-            url = "jdbc:postgresql://" + dbCredentials.ip() + ":" + dbCredentials.port() + "/" + dbCredentials.dbName();
-        } catch (ConfigFileNotFoundException e) {
-            username = "postgres";
-            password = "swain";
-            url = "jdbc:postgresql://localhost:5432/postgres";
-        }
-        this.username = username;
-        this.password = password;
-        this.url = url;
     }
 
 
@@ -79,9 +58,7 @@ public class DbConnectionSingleton {
             conn = DriverManager.getConnection(url, username, password);
             return conn;
         } catch(SQLException e) {
-            // TODO: Handle errors with exceptions
-            System.err.println("Couldn't connect to --> " + url + " (" + e.getMessage() + ")");
-            return null;
+            throw new IllegalStateException("Couldn't connect to --> " + url + " (" + e.getMessage() + ")");
         }
     }
 
@@ -89,11 +66,23 @@ public class DbConnectionSingleton {
      * Method that closes the inner connection to the database. Ideally, users would disconnect after
      * using the shared instance.
      */
-    public void disconnect(){
+    public void disconnect() throws SQLException {
         try {
             conn.close();
         } catch (SQLException e) {
-            System.err.println("Problem when closing the connection --> " + e.getSQLState() + " (" + e.getMessage() + ")");
+            throw new IllegalStateException("Problem when closing the connection --> " + e.getSQLState() + " (" + e.getMessage() + ")");
         }
+    }
+
+    /**
+     * This method needs to be called when initializing the singleton
+     * for the first time
+     */
+
+    public void loadConfig() throws ConfigFileNotFoundException {
+        DbCredentials dbCredentials = configPersistence.readCredentials();
+        this.username = dbCredentials.username();
+        this.password = dbCredentials.password();
+        this.url = "jdbc:postgresql://" + dbCredentials.ip() + ":" + dbCredentials.port() + "/" + dbCredentials.dbName();
     }
 }
