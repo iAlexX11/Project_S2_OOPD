@@ -37,40 +37,13 @@ public class RegistrationController implements ActionListener {
 		frameController.displayContent(signUpView);
 	}
 
-	private boolean signUpCredentialsFormat () {
-		boolean emailOk = accountManager.checkEmail(signUpView.getEmail());
-		boolean passwordOk = accountManager.checkPassword(signUpView.getPassword());
-		boolean difPassword = Arrays.equals(signUpView.getPassword(), signUpView.getConfirmPassword());
-
-		if (emailOk && passwordOk && difPassword) {
-			return true;
-		} else if (!emailOk && !passwordOk) {
-			ErrorsView.showError("Wrong email and password format");
-		} else if (!emailOk) {
-			ErrorsView.showError("Wrong email format");
-		} else if (!passwordOk) {
-			ErrorsView.showError("Wrong password format");
+	public void signUpLogic() {
+		String credentials = accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
+		if (!credentials.equals("ok")) {
+			frameController.showError(credentials);
 		} else {
-			ErrorsView.showError("Password must match");
-		}
-		return false;
-	}
-
-	public void registerNewUser() {
-		UserManager userManager = new UserManager();
-		if (signUpCredentialsFormat()) {
-			String password = accountManager.hashPassword(signUpView.getPassword());
-			String email = signUpView.getEmail();
-			String username = signUpView.getUsername();
-
-			if (userManager.getUser(username, email) == null) {
-				User user = new User(username, email, password);
-				User userWithId = userManager.addUser(user);
-				userManager.setCurrentUser(userWithId);
-				//TODO: CryptoMarket for an admin user
-			} else {
-				ErrorsView.showError("This email/username already exists!");
-			}
+			UserController userController = new UserController(frameController);
+			userController.displayCryptoMarketView();
 		}
 	}
 
@@ -79,9 +52,14 @@ public class RegistrationController implements ActionListener {
 
         if (usernameOrEmail.compareTo("admin") == 0) {
             logInAdmin();
-        }
-        else {
-            logInNormalUser(usernameOrEmail);
+        } else {
+            String error = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
+			if (error.equals("ok")) {
+				UserController userController = new UserController(frameController);
+				userController.displayCryptoMarketView();
+			} else {
+				frameController.showError(error);
+			}
         }
     }
 
@@ -95,35 +73,18 @@ public class RegistrationController implements ActionListener {
                System.out.println("Admin logIn successfully");
            }
            else {
-               ErrorsView.showError("This username or password are wrong!");
+			   frameController.showError("This username or password are wrong!");
            }
        }catch (ConfigFileNotFoundException e) {
-           ErrorsView.showError("The configuration File couldn't be found");
+		   frameController.showError("The configuration File couldn't be found");
        }
     }
-
-    public void logInNormalUser(String usernameOrEmail) {
-		UserManager userManager = new UserManager();
-		User possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
-
-		if (possibleUser != null && accountManager.checkHashedPassword(loginView.getPassword(), possibleUser.getPassword())) {
-			System.out.println(possibleUser.getEmail());
-			System.out.println(possibleUser.getUsername());
-			System.out.println(possibleUser.getPassword());
-			userManager.setCurrentUser(possibleUser);
-            System.out.println("User logIn successfully");
-			UserController userController = new UserController(frameController, userManager);
-			userController.displayCryptoMarketView();
-		} else {
-			ErrorsView.showError("This email/username doesn't exists!");
-		}
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
 		switch (buttonEnumeration) {
-			case CONFIRM_SIGNUP -> registerNewUser();
+			case CONFIRM_SIGNUP -> signUpLogic();
 			case LOGIN -> login();
 			case CONFIRM_LOGIN -> logInUser();
 			case SIGNUP -> signUp();

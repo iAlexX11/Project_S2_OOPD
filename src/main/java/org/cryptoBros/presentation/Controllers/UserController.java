@@ -11,23 +11,19 @@ public class UserController implements ActionListener {
 
 	private final FrameController frameController;
 	private final CryptoMarketView cryptoMarketView;
-	private final UserManager userManager;
 
-	public UserController(FrameController frameController, UserManager userManager) {
+	public UserController(FrameController frameController) {
 		this.frameController = frameController;
-		this.userManager = userManager;
 		this.cryptoMarketView = new CryptoMarketView();
 		cryptoMarketView.setActions(this);
 	}
 
 	public void displayCryptoMarketView() {
-		cryptoMarketView.setBalance(getCurrentBalance());
+		//TODO: Get the balance of each user from the persistance, like "getBalanceOfUser(int userId)"
+		//cryptoMarketView.setBalance(getCurrentBalance());
 		frameController.displayContent(cryptoMarketView);
 	}
 
-	private double getCurrentBalance() {
-		return userManager.getCurrentBalance();
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

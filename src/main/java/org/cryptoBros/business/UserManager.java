@@ -4,7 +4,7 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
 public class UserManager {
-	private User currentUser;
+	private int currentUserId;
 	private final UserPersistence userPersistence = new UserSQL();
 
 	public User addUser(User user) {
@@ -15,15 +15,11 @@ public class UserManager {
 		return userPersistence.getUser(username, email);
 	}
 
-	public void setCurrentUser(User currentUser) {
-		this.currentUser = currentUser;
+	public void setCurrentUserId(int currentUserId) {
+		this.currentUserId = currentUserId;
 	}
 
-	public User getCurrentUser() {
-		return currentUser;
-	}
-
-	public double getCurrentBalance() {
-		return currentUser.getBalance();
+	public int getCurrentUserId() {
+		return currentUserId;
 	}
 }
