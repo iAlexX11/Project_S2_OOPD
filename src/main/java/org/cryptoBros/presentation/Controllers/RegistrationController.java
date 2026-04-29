@@ -43,7 +43,7 @@ public class RegistrationController implements ActionListener {
 			frameController.showError(credentials);
 		} else {
 			UserController userController = new UserController(frameController);
-			userController.displayCryptoMarketView();
+			userController.displayCryptoMarketView(signUpView.getUsername(), signUpView.getEmail());
 		}
 	}
 
@@ -56,7 +56,7 @@ public class RegistrationController implements ActionListener {
             String error = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
 			if (error.equals("ok")) {
 				UserController userController = new UserController(frameController);
-				userController.displayCryptoMarketView();
+				userController.displayCryptoMarketView(usernameOrEmail, usernameOrEmail);
 			} else {
 				frameController.showError(error);
 			}

@@ -15,6 +15,10 @@ public class UserManager {
 		return userPersistence.getUser(username, email);
 	}
 
+	public double getUserBalance(String username, String email) {
+		return userPersistence.getUserBalance(username, email);
+	}
+
 	public void setCurrentUserId(int currentUserId) {
 		this.currentUserId = currentUserId;
 	}

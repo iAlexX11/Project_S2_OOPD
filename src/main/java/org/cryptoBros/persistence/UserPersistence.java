@@ -11,4 +11,5 @@ public interface UserPersistence {
     User addUser(User user);
     void removeUser(int id);
     User getUser(String username, String email);
+	double getUserBalance(String username, String email);
 }
