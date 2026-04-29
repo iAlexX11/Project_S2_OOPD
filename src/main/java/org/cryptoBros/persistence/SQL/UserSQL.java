@@ -38,7 +38,7 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error inserting user: " + e.getMessage());
         }
-
+        // TODO: throw exception user not found
         return null;
     }
 
@@ -78,6 +78,7 @@ public class UserSQL implements UserPersistence {
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
         }
+        // TODO: throw exception user not found
         return null;
     }
 }
