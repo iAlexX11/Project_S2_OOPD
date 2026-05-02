@@ -1,8 +1,0 @@
-{
-  "port": 5432,
-  "ip": "localhost",
-  "database": "postgres",
-  "username": "postgres",
-  "password": "swain",
-  "admin_password": "admin"
-}
