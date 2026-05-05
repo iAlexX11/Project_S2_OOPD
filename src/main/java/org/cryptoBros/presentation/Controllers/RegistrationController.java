@@ -68,6 +68,8 @@ public class RegistrationController implements ActionListener {
 				User userWithId = userManager.addUser(user);
 				userManager.setCurrentUser(userWithId);
 				//TODO: Redirect to the main page
+				SettingController settingController = new SettingController(frameController);
+				settingController.displaySettings();
 			} else {
 				ErrorsView.showError("This email/username already exists!");
 			}
@@ -112,6 +114,8 @@ public class RegistrationController implements ActionListener {
 			System.out.println(possibleUser.getPassword());
 			userManager.setCurrentUser(possibleUser);
             System.out.println("User logIn successfully");
+			SettingController settingController = new SettingController(frameController);
+			settingController.displaySettings();
 			//TODO: Redirect to the main page
 		} else {
 			ErrorsView.showError("This email/username doesn't exists!");
