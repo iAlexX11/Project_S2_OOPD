@@ -79,7 +79,7 @@ public class RegistrationController implements ActionListener {
 				}
 			}
 			catch (DbConnectionException e) {
-				ErrorsView.showError("Error connecting to the database: " + e.getMessage());
+				ErrorsView.showError(e.getMessage());
 			}
         }
 	}
