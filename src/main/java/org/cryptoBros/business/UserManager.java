@@ -1,5 +1,6 @@
 package org.cryptoBros.business;
 
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.persistence.SQL.UserSQL;
@@ -9,11 +10,11 @@ public class UserManager {
 	private User currentUser;
 	private final UserPersistence userPersistence = new UserSQL();
 
-	public User addUser(User user) throws UserNotAddException {
+	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
 	}
 
-	public User getUser(String username, String email) throws UserNotFoundException {
+	public User getUser(String username, String email) throws UserNotFoundException, DbConnectionException {
 		return userPersistence.getUser(username, email);
 	}
 

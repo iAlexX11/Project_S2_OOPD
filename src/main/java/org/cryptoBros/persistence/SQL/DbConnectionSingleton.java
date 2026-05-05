@@ -52,31 +52,29 @@ public class DbConnectionSingleton {
     /**
      * Method that starts the inner connection to the database. Ideally, users would disconnect after
      * using the shared instance.
+     * @return The connection to the database.
+     * @throws SQLException if there is a problem when connecting to the database
      */
-    public Connection connect() {
-        try {
-            conn = DriverManager.getConnection(url, username, password);
-            return conn;
-        } catch(SQLException e) {
-            throw new IllegalStateException("Couldn't connect to --> " + url + " (" + e.getMessage() + ")");
-        }
+    public Connection connect() throws SQLException {
+        conn = DriverManager.getConnection(url, username, password);
+        return conn;
     }
 
     /**
      * Method that closes the inner connection to the database. Ideally, users would disconnect after
      * using the shared instance.
+     * @throws SQLException if there is a problem when disconnecting from the database
      */
     public void disconnect() throws SQLException {
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            throw new IllegalStateException("Problem when closing the connection --> " + e.getSQLState() + " (" + e.getMessage() + ")");
-        }
+        if (conn == null) return;
+        conn.close();
+        conn = null;
     }
 
     /**
      * This method needs to be called when initializing the singleton
      * for the first time
+     * @throws ConfigFileNotFoundException if the configuration file is not found
      */
 
     public void loadConfig() throws ConfigFileNotFoundException {

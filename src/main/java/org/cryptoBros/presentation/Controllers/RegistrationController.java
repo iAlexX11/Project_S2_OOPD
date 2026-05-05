@@ -5,6 +5,7 @@ import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.persistence.SQL.UserSQL;
@@ -73,9 +74,12 @@ public class RegistrationController implements ActionListener {
 					User user = new User(username, email, password);
 					User userWithId = userManager.addUser(user);
 					userManager.setCurrentUser(userWithId);
-				} catch (UserNotAddException ex) {
+				} catch (UserNotAddException | DbConnectionException ex) {
 					ErrorsView.showError(ex.getMessage());
 				}
+			}
+			catch (DbConnectionException e) {
+				ErrorsView.showError("Error connecting to the database: " + e.getMessage());
 			}
         }
 	}
@@ -113,7 +117,7 @@ public class RegistrationController implements ActionListener {
         User possibleUser = null;
         try {
             possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | DbConnectionException e) {
 			// TODO: improve login exception
             ErrorsView.showError(e.getMessage());
 			return;

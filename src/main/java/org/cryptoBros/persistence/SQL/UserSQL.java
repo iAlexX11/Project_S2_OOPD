@@ -1,6 +1,7 @@
 package org.cryptoBros.persistence.SQL;
 
 import org.cryptoBros.business.User;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.persistence.UserPersistence;
@@ -16,7 +17,7 @@ public class UserSQL implements UserPersistence {
     }
 
     @Override
-    public User addUser(User user) throws UserNotAddException {
+    public User addUser(User user) throws UserNotAddException, DbConnectionException {
         String query = "INSERT INTO users (username, email, password, balance) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = db.connect().prepareStatement(
@@ -28,7 +29,11 @@ public class UserSQL implements UserPersistence {
             ps.setString(3, user.getPassword());
             ps.setDouble(4, user.getBalance());
 
-            ps.executeUpdate();
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new UserNotAddException("Error inserting user into database");
+            }
 
             var rs = ps.getGeneratedKeys();
             if (rs.next()) {
@@ -39,26 +44,32 @@ public class UserSQL implements UserPersistence {
             return user;
 
         } catch (SQLException e) {
-            throw new UserNotAddException("Error inserting user: " + e.getMessage());
+            throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
     }
 
     @Override
-    public void removeUser(int id) throws UserNotFoundException {
+    public void removeUser(int id) throws UserNotFoundException, DbConnectionException {
         String query = "DELETE FROM users WHERE id = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows == 0)
+            {
+                throw new UserNotFoundException("Error deleting user: " + id + " not found");
+            }
 
         } catch (SQLException e) {
-            throw new UserNotFoundException("Error deleting user: " + e.getMessage());
+            throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
     }
 
     @Override
-    public User getUser(String username, String email) throws UserNotFoundException {
+    public User getUser(String username, String email) throws UserNotFoundException, DbConnectionException {
         String query = "SELECT * FROM users WHERE username = ? OR email = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
@@ -77,10 +88,10 @@ public class UserSQL implements UserPersistence {
 				);
 			}
             else {
-                throw new UserNotFoundException("User not found");
+                throw new UserNotFoundException("User with username " + username + " and email" + email + " not found");
             }
         } catch (SQLException e) {
-            throw new UserNotFoundException("Error fetching user: " + e.getMessage());
+            throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
     }
 }
