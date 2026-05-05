@@ -5,6 +5,9 @@ import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
+import org.cryptoBros.persistence.Exceptions.UserNotAddException;
+import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.presentation.Views.*;
@@ -63,15 +66,22 @@ public class RegistrationController implements ActionListener {
 			String email = signUpView.getEmail();
 			String username = signUpView.getUsername();
 
-			if (userManager.getUser(username, email) == null) {
-				User user = new User(username, email, password);
-				User userWithId = userManager.addUser(user);
-				userManager.setCurrentUser(userWithId);
-				//TODO: Redirect to the main page
-			} else {
-				ErrorsView.showError("This email/username already exists!");
+            try {
+				userManager.getUser(username, email);
+				ErrorsView.showError("Username/email already exists");
+			} catch (UserNotFoundException e) {
+				try {
+					User user = new User(username, email, password);
+					User userWithId = userManager.addUser(user);
+					userManager.setCurrentUser(userWithId);
+				} catch (UserNotAddException | DbConnectionException ex) {
+					ErrorsView.showError(ex.getMessage());
+				}
 			}
-		}
+			catch (DbConnectionException e) {
+				ErrorsView.showError(e.getMessage());
+			}
+        }
 	}
 
     private void logInUser() {
@@ -104,9 +114,16 @@ public class RegistrationController implements ActionListener {
 
     public void logInNormalUser(String usernameOrEmail) {
 		UserManager userManager = new UserManager();
-		User possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
+        User possibleUser = null;
+        try {
+            possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
+        } catch (UserNotFoundException | DbConnectionException e) {
+			// TODO: improve login exception
+            ErrorsView.showError(e.getMessage());
+			return;
+        }
 
-		if (possibleUser != null && accountManager.checkHashedPassword(loginView.getPassword(), possibleUser.getPassword())) {
+        if (possibleUser != null && accountManager.checkHashedPassword(loginView.getPassword(), possibleUser.getPassword())) {
 			System.out.println(possibleUser.getEmail());
 			System.out.println(possibleUser.getUsername());
 			System.out.println(possibleUser.getPassword());

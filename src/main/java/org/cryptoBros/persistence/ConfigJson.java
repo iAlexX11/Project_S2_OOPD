@@ -33,6 +33,7 @@ public class ConfigJson implements ConfigPersistence {
     @Override
     public DbCredentials readCredentials() throws ConfigFileNotFoundException {
         Config c = readConfig();
+        if (readConfig() == null) throw new ConfigFileNotFoundException("Failed to read config");
         return new DbCredentials(c.port(), c.ip(), c.dbName(), c.username(), c.password());
     }
 }
