@@ -1,7 +1,12 @@
 package org.cryptoBros.business;
+import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.presentation.Controllers.SettingController;
 import org.cryptoBros.presentation.Controllers.UserController;
+import org.cryptoBros.presentation.Views.ErrorsView;
 import org.passay.*;
 import org.mindrot.jbcrypt.BCrypt;
+
+import javax.security.auth.login.CredentialException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,27 +15,29 @@ import static org.passay.EnglishCharacterData.*;
 
 public class AccountManager {
 
-	public String signUpLogic(String email, char[] password, char[] confirmPassword, String username) {
+	public void signUpLogic(String email, char[] password, char[] confirmPassword, String username)
+			throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException  {
+
 		String errorCredentials = checkCredentials(email, password, confirmPassword);
 		if (!errorCredentials.equals("ok")) {
-			return errorCredentials;
+			throw new CredentialsErrorFormatException(errorCredentials);
 		}
 
 		String hashedPassword = hashPassword(password);
 		UserManager userManager = new UserManager();
-		String error;
 
-		if (userManager.getUser(username, email) == null) {
+		try {
+			userManager.getUser(username, email);
+			throw new UserAlreadyExistsException("Username or email is already taken.");
+
+		} catch (UserNotFoundException e) {
 			User user = new User(username, email, hashedPassword);
 			User userWithId = userManager.addUser(user);
 			userManager.setCurrentUserId(userWithId.getId());
-			error = ("ok");
-		} else {
-			error = ("This email/username already exists!");
+
+		} catch (DbConnectionException ex) {
+			throw ex;
 		}
-
-		return error;
-
 	}
 
 	private String checkCredentials(String email, char[] password, char[] confirmPassword) {
@@ -87,16 +94,18 @@ public class AccountManager {
 		return email.matches("^(?![.])[A-Za-z0-9+_-]+(\\.[A-Za-z0-9+_-]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)+$");
 	}
 
-	public String logInNormalUser(String usernameOrEmail, char[] password) {
+	public User logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException, CredentialsErrorFormatException {
 		UserManager userManager = new UserManager();
-		User possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
-
-		if (possibleUser != null && checkHashedPassword(password, possibleUser.getPassword())) {
-			userManager.setCurrentUserId(possibleUser.getId());
-			return ("ok");
-
-		} else {
-			return ("This email/username doesn't exist!");
+		try {
+			User user = userManager.getUser(usernameOrEmail, usernameOrEmail);
+			if (checkHashedPassword(password, user.getPassword())) {
+				return user;
+			} else {
+				throw new CredentialsErrorFormatException("The username/email or password is incorrect.");
+			}
+		} catch (UserNotFoundException | DbConnectionException e) {
+			throw e;
 		}
 	}
+
 }

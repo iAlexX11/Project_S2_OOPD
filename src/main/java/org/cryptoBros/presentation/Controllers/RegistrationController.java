@@ -4,7 +4,7 @@ import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
-import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
+import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.presentation.Views.*;
@@ -38,27 +38,26 @@ public class RegistrationController implements ActionListener {
 	}
 
 	public void signUpLogic() {
-		String credentials = accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-		if (!credentials.equals("ok")) {
-			frameController.showError(credentials);
-		} else {
+		try {
+			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
 			UserController userController = new UserController(frameController);
 			userController.displayCryptoMarketView(signUpView.getUsername(), signUpView.getEmail());
+		} catch (DbConnectionException | UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
+			frameController.showError(e.getMessage());
 		}
 	}
 
     private void logInUser() {
         String usernameOrEmail = loginView.getUsername();
-
         if (usernameOrEmail.compareTo("admin") == 0) {
             logInAdmin();
         } else {
-            String error = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
-			if (error.equals("ok")) {
+			try {
+				accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
 				UserController userController = new UserController(frameController);
 				userController.displayCryptoMarketView(usernameOrEmail, usernameOrEmail);
-			} else {
-				frameController.showError(error);
+			} catch (UserNotFoundException | DbConnectionException | CredentialsErrorFormatException e) {
+				frameController.showError(e.getMessage());
 			}
         }
     }
@@ -90,6 +89,5 @@ public class RegistrationController implements ActionListener {
 			case SIGNUP -> signUp();
 		}
 	}
-
 
 }

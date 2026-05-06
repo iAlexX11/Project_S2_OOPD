@@ -83,7 +83,7 @@ public class CryptoMarketView extends BaseView {
 		core.setOpaque(true);
 
 		JPanel jData = dataPanel();
-		core.add(jData, BorderLayout.WEST);
+		core.add(jData, BorderLayout.CENTER);
 
 		return core;
 	}
@@ -91,12 +91,12 @@ public class CryptoMarketView extends BaseView {
 	private JPanel dataPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER,0,10));
-		panel.setBorder(BorderFactory.createEmptyBorder(24, 50, 24, 28));
+		panel.setBorder(BorderFactory.createEmptyBorder(5, 50, 24, 28));
 		panel.setPreferredSize(new Dimension(400, 0));
 		panel.setBackground(new Color(239, 247, 255));
 
 		JLabel title = new JLabel("Current Cryptocurrencies Market");
-		title.setFont(new Font("Apple Casual", Font.BOLD, 40));
+		title.setFont(new Font("Apple Casual", Font.BOLD, 35));
 		title.setForeground(Color.BLACK);
 		panel.add(title);
 

@@ -1,8 +1,12 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.UserManager;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
+import org.cryptoBros.persistence.Exceptions.UserNotAddException;
+import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.CryptoMarketView;
+import org.cryptoBros.presentation.Views.ErrorsView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,24 +25,22 @@ public class UserController implements ActionListener {
 
 	public void displayCryptoMarketView(String username, String email) {
 		//TODO: Get the balance of each user from the persistance, like "getBalanceOfUser(int userId)"
-		cryptoMarketView.setBalance(userManager.getUserBalance(username, email));
-		frameController.displayContent(cryptoMarketView);
-	}
-
-	public double getUserBalance(String username, String email) {
-		return userManager.getUserBalance(username, email);
+		try {
+			cryptoMarketView.setBalance(userManager.getUserBalance(username, email));
+		} catch (UserNotFoundException | DbConnectionException ex) {
+			frameController.showError(ex.getMessage());
+			frameController.displayContent(cryptoMarketView);
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		/*
+		SettingController settingController = new SettingController(frameController);
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
 		switch (buttonEnumeration) {
-			case SETTINGS -> ;
-			case PORTFOLIO -> ;
+			case SETTINGS -> settingController.displaySettings();
+			case PORTFOLIO -> System.out.println("PORTFOLIO");
 			//TODO: The cryptos table
 		}
-
-		 */
 	}
 }
