@@ -36,3 +36,29 @@ CREATE TABLE Crypto_History (
     PRIMARY KEY (crypto_id, event_id),
     FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(name) ON DELETE CASCADE
 );
+
+
+CREATE OR REPLACE FUNCTION record_price_history()
+    RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO Crypto_History (crypto_id, price, time_stamp)
+    VALUES (NEW.name, NEW.current_price, CURRENT_TIMESTAMP);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_price_history
+AFTER UPDATE OF current_price ON Cryptocurrency
+FOR EACH ROW
+WHEN (OLD.current_price IS DISTINCT FROM NEW.current_price)
+EXECUTE FUNCTION record_price_history();
+
+-- used when first insert is done
+CREATE TRIGGER insert_price_history
+    AFTER INSERT ON Cryptocurrency
+    FOR EACH ROW
+EXECUTE FUNCTION record_price_history();
+
+
+
+

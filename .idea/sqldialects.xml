@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/createTables.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/cryptoBros/persistence/SQL/CryptoSQL.java" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/cryptoBros/persistence/SQL/UserSQL.java" dialect="PostgreSQL" />
+    <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>
