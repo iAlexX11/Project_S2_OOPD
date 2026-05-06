@@ -8,8 +8,7 @@ import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
-import org.cryptoBros.persistence.SQL.UserSQL;
-import org.cryptoBros.persistence.UserPersistence;
+import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
@@ -22,12 +21,14 @@ public class RegistrationController implements ActionListener {
 	private final LoginView loginView;
 	private final SignUpView signUpView;
 	private final AccountManager accountManager;
+    InitialController initialController;
 
-	public RegistrationController (FrameController frameController) {
+	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.accountManager = new AccountManager();
+        this.initialController = initialController;
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
@@ -74,8 +75,6 @@ public class RegistrationController implements ActionListener {
 					User user = new User(username, email, password);
 					User userWithId = userManager.addUser(user);
 					userManager.setCurrentUser(userWithId);
-                    SettingController settingController = new SettingController(frameController);
-                    settingController.displaySettings();
 				} catch (UserNotAddException | DbConnectionException ex) {
 					ErrorsView.showError(ex.getMessage());
 				}
@@ -131,8 +130,6 @@ public class RegistrationController implements ActionListener {
 			System.out.println(possibleUser.getPassword());
 			userManager.setCurrentUser(possibleUser);
             System.out.println("User logIn successfully");
-			SettingController settingController = new SettingController(frameController);
-			settingController.displaySettings();
 			//TODO: Redirect to the main page
 		} else {
 			ErrorsView.showError("This email/username doesn't exists!");

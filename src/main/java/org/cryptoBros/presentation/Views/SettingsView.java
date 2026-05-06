@@ -1,5 +1,7 @@
 package org.cryptoBros.presentation.Views;
 
+import org.cryptoBros.presentation.ButtonEnumeration;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;

@@ -34,4 +34,9 @@ public class AccountManager {
 	public boolean checkEmail(String email) {
 		return email.matches("^(?![.])[A-Za-z0-9+_-]+(\\.[A-Za-z0-9+_-]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)+$");
 	}
-}	
+
+
+    public void logout() {
+        //TODO: Remove the current user from ram
+    }
+}
