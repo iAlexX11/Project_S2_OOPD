@@ -74,6 +74,8 @@ public class RegistrationController implements ActionListener {
 					User user = new User(username, email, password);
 					User userWithId = userManager.addUser(user);
 					userManager.setCurrentUser(userWithId);
+                    SettingController settingController = new SettingController(frameController);
+                    settingController.displaySettings();
 				} catch (UserNotAddException | DbConnectionException ex) {
 					ErrorsView.showError(ex.getMessage());
 				}
@@ -81,7 +83,7 @@ public class RegistrationController implements ActionListener {
 			catch (DbConnectionException e) {
 				ErrorsView.showError(e.getMessage());
 			}
-        }
+		}
 	}
 
     private void logInUser() {
@@ -129,6 +131,8 @@ public class RegistrationController implements ActionListener {
 			System.out.println(possibleUser.getPassword());
 			userManager.setCurrentUser(possibleUser);
             System.out.println("User logIn successfully");
+			SettingController settingController = new SettingController(frameController);
+			settingController.displaySettings();
 			//TODO: Redirect to the main page
 		} else {
 			ErrorsView.showError("This email/username doesn't exists!");
