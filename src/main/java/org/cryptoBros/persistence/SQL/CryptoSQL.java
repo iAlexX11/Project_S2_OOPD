@@ -165,7 +165,9 @@ public class CryptoSQL implements CryptoPersistence {
 
     @Override
     public List<Map<Instant, Double>> getPriceHistory(String cryptoName) throws CryptoNotFoundException, DbConnectionException {
-        String query = "SELECT timestamp, price FROM crypto_history WHERE crypto_name = ? ORDER BY timestamp ASC";
+        String query = """
+            SELECT time_stamp, price FROM crypto_history ch
+                WHERE ch.crypto_id = ? ORDER BY ch.time_stamp;""";
 
         List<Map<Instant, Double>> priceHistory = new ArrayList<>();
 
