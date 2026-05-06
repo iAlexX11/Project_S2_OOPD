@@ -7,9 +7,7 @@ import java.text.DecimalFormat;
 
 public class DynamicTable extends JPanel {
 
-	private static final String[] COLUMNS = {
-			"#", "Cryptocurrency", "Price (€)", "Change (€)", "% Change"
-	};
+	private static final String[] columns = { "#", "Cryptocurrency", "Price (€)", "Change (€)", "% Change"};
 
 	private DefaultTableModel model;
 
@@ -17,7 +15,7 @@ public class DynamicTable extends JPanel {
 		setBackground(Color.WHITE);
 		setLayout(new BorderLayout());
 
-		model = new DefaultTableModel(null, COLUMNS) {
+		model = new DefaultTableModel(null, columns) {
 			@Override public boolean isCellEditable(int r, int c) { return false; }
 		};
 
@@ -61,8 +59,8 @@ public class DynamicTable extends JPanel {
 
 				switch (col) {
 					case 0 -> { setForeground(new Color(100, 100, 100)); setFont(new Font("SansSerif", Font.PLAIN, 13)); setHorizontalAlignment(CENTER); }
-					case 1 -> { setForeground(Color.BLACK);              setFont(new Font("SansSerif", Font.BOLD,  14)); setHorizontalAlignment(LEFT);   }
-					case 2 -> { setForeground(Color.BLACK);              setFont(new Font("SansSerif", Font.PLAIN, 14)); setHorizontalAlignment(RIGHT);  }
+					case 1 -> { setForeground(Color.BLACK); setFont(new Font("SansSerif", Font.BOLD,14)); setHorizontalAlignment(LEFT);   }
+					case 2 -> { setForeground(Color.BLACK); setFont(new Font("SansSerif", Font.PLAIN, 14)); setHorizontalAlignment(RIGHT);  }
 					case 3, 4 -> {
 						setForeground(s.startsWith("+") ? new Color(0, 150, 80) : new Color(200, 50, 50));
 						setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -73,7 +71,7 @@ public class DynamicTable extends JPanel {
 			}
 		};
 
-		for (int c = 0; c < COLUMNS.length; c++)
+		for (int c = 0; c < columns.length; c++)
 			table.getColumnModel().getColumn(c).setCellRenderer(cellRenderer);
 
 		JScrollPane sp = new JScrollPane(table);
@@ -84,6 +82,6 @@ public class DynamicTable extends JPanel {
 	}
 
 	public void addRow(Object[] row) { model.addRow(row); }
-	public void clearRows()          { model.setRowCount(0); }
+	public void clearRows() { model.setRowCount(0); }
 	public void setValueAt(Object value, int row, int col) { model.setValueAt(value, row, col); }
 }
