@@ -46,8 +46,8 @@ EXECUTE FUNCTION record_price_history();
 CREATE OR REPLACE FUNCTION record_price_history()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO Crypto_History (crypto_id, price)
-    VALUES (NEW.name, NEW.current_price);
+    INSERT INTO Crypto_History (crypto_id, price, time_stamp)
+    VALUES (NEW.name, NEW.current_price, CURRENT_TIMESTAMP);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
