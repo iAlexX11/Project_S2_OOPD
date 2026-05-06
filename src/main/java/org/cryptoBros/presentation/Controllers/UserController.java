@@ -2,57 +2,60 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
+import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
 import org.cryptoBros.presentation.Views.ButtonEnumeration;
-import org.cryptoBros.presentation.Views.CryptoMarketView;
-import org.cryptoBros.presentation.Views.ErrorsView;
-import org.cryptoBros.presentation.Views.Pages;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class UserController implements ActionListener {
+public class UserController implements PagesListeners {
 
 	private final FrameController frameController;
-	private final CryptoMarketView cryptoMarketView;
-	private final UserManager userManager = new UserManager();
-	private Pages currentPage;
+	private final UserManager userManager;
+    private final SettingController settingController;
+    private final CryptoMarketController cryptoMarketController;
+
+    private String username;
+    private String email;
 
 	public UserController(FrameController frameController) {
 		this.frameController = frameController;
-		this.cryptoMarketView = new CryptoMarketView();
-		cryptoMarketView.setActions(this);
+        this.settingController = new SettingController(frameController, this);
+        this.userManager = new UserManager();
+        this.cryptoMarketController = new CryptoMarketController(frameController, this);
+        this.email = email;
+        this.username = username;
+        cryptoMarketController.displayCryptoMarketView(getBalance(username, email));
 	}
 
-	public void updateBalance(String username, String email) {
+	public double getBalance(String username, String email) {
 		try {
-			currentPage.updateBalance(userManager.getUserBalance(username, email));
+			return userManager.getUserBalance(username, email);
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
 			// NEVER PRINT THIS EXCEPTIONS
 		}
+        return 0;
 	}
 
-	public void displayCryptoMarketView(String username, String email) {
-		currentPage = cryptoMarketView;
-		updateBalance(username, email);
-		frameController.displayContent(cryptoMarketView);
-	}
+    private void logout() {
+        InitialController initialController = new InitialController(frameController);
+        initialController.startProgram();
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		SettingController settingController = new SettingController(frameController, cryptoMarketView);
-		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
-		switch (buttonEnumeration) {
-			case SETTINGS -> {
-				settingController.displaySettings();
-				userManager.updateBalanceListener(settingController);
-			}
-			case PORTFOLIO -> System.out.println("PORTFOLIO");
-			//TODO: The cryptos table
-		}
-	}
+    @Override
+    public void setAction(ButtonEnumeration action) {
+        switch (action) {
+            case SETTINGS -> {
+                settingController.displaySettings(100); //To be implement the get balance
+                userManager.updateBalanceListener(settingController);
+            }
+            case PORTFOLIO -> System.out.println("PORTFOLIO");
+            //TODO: The cryptos table
+            case BACK -> System.out.println("Back");
+            case LOGOUT -> logout();
+            case ACCOUNT -> System.out.println("Account");
+            case DELETE -> System.out.println("Delete");
+        }
+    }
 }

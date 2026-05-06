@@ -43,7 +43,6 @@ public class RegistrationController implements ActionListener {
 		try {
 			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
 			UserController userController = new UserController(frameController);
-			userController.displayCryptoMarketView(signUpView.getUsername(), signUpView.getEmail());
 		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
 			frameController.showError(e.getMessage());
 		} catch (DbConnectionException ex) {
@@ -59,7 +58,6 @@ public class RegistrationController implements ActionListener {
 			try {
 				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
 				UserController userController = new UserController(frameController);
-				userController.displayCryptoMarketView(user.getUsername(), user.getEmail());
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
