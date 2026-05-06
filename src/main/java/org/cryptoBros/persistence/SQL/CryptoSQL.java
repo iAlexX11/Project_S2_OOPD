@@ -9,8 +9,11 @@ import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class
@@ -158,5 +161,33 @@ public class CryptoSQL implements CryptoPersistence {
         } catch (SQLException e) {
             throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
+    }
+
+    @Override
+    public List<Map<Instant, Double>> getPriceHistory(String cryptoName) throws CryptoNotFoundException, DbConnectionException {
+        String query = "SELECT timestamp, price FROM crypto_history WHERE crypto_name = ? ORDER BY timestamp ASC";
+
+        List<Map<Instant, Double>> priceHistory = new ArrayList<>();
+
+        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+
+            ps.setString(1, cryptoName);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Map<Instant, Double> entry = new HashMap<>();
+                entry.put(rs.getTimestamp("timestamp").toInstant(), rs.getDouble("price"));
+                priceHistory.add(entry);
+            }
+
+        } catch (SQLException e) {
+            throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
+        }
+
+        if (priceHistory.isEmpty()) {
+            throw new CryptoNotFoundException("No price history found for crypto with name '" + cryptoName + "'.");
+        }
+
+        return priceHistory;
     }
 }
