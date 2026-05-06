@@ -68,7 +68,7 @@ public interface CryptoPersistence {
     /**
      * Gets the price history of a crypto.
      * @param name the name of the crypto
-     * @return list with the crypto's price history
+     * @return a list of maps containing the price history of the crypto, where each map contains the timestamp and the price at that time
      * @throws CryptoNotFoundException if the crypto is not found
      * @throws DbConnectionException if there is a problem with the database connection
      */
