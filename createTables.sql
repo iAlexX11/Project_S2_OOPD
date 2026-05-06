@@ -53,5 +53,12 @@ FOR EACH ROW
 WHEN (OLD.current_price IS DISTINCT FROM NEW.current_price)
 EXECUTE FUNCTION record_price_history();
 
+-- used when first insert is done
+CREATE TRIGGER insert_price_history
+    AFTER INSERT ON Cryptocurrency
+    FOR EACH ROW
+EXECUTE FUNCTION record_price_history();
+
+
 
 

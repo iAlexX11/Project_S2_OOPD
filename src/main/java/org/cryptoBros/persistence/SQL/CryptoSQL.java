@@ -164,12 +164,12 @@ public class CryptoSQL implements CryptoPersistence {
     }
 
     @Override
-    public List<Map<Instant, Double>> getPriceHistory(String cryptoName) throws CryptoNotFoundException, DbConnectionException {
+    public Map<Instant, Double> getPriceHistory(String cryptoName) throws CryptoNotFoundException, DbConnectionException {
         String query = """
             SELECT time_stamp, price FROM crypto_history ch
                 WHERE ch.crypto_id = ? ORDER BY ch.time_stamp;""";
 
-        List<Map<Instant, Double>> priceHistory = new ArrayList<>();
+        Map<Instant, Double> priceHistory = new HashMap<>();
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 
@@ -177,9 +177,7 @@ public class CryptoSQL implements CryptoPersistence {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Map<Instant, Double> entry = new HashMap<>();
-                entry.put(rs.getTimestamp("timestamp").toInstant(), rs.getDouble("price"));
-                priceHistory.add(entry);
+                priceHistory.put(rs.getTimestamp("time_stamp").toInstant(), rs.getDouble("price"));
             }
 
         } catch (SQLException e) {
