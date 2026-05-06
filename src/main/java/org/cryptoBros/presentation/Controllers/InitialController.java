@@ -34,7 +34,7 @@ public class InitialController implements ActionListener {
         try {
             DbConnectionSingleton.getInstance().loadConfig();
         } catch (ConfigFileNotFoundException e) {
-            ErrorsView.showError("Config file not found");
+            frameController.showError("Config file not found");
             System.exit(1);
         }
     }

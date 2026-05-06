@@ -19,12 +19,14 @@ public class RegistrationController implements ActionListener {
 	private final LoginView loginView;
 	private final SignUpView signUpView;
 	private final AccountManager accountManager;
+	private final UserManager userManager;
 
 	public RegistrationController (FrameController frameController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
-		this.accountManager = new AccountManager();
+		this.userManager = new UserManager();
+		this.accountManager = new AccountManager(this.userManager);
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
@@ -42,8 +44,10 @@ public class RegistrationController implements ActionListener {
 			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
 			UserController userController = new UserController(frameController);
 			userController.displayCryptoMarketView(signUpView.getUsername(), signUpView.getEmail());
-		} catch (DbConnectionException | UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
+		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
 			frameController.showError(e.getMessage());
+		} catch (DbConnectionException ex) {
+			// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
 		}
 	}
 
@@ -53,18 +57,21 @@ public class RegistrationController implements ActionListener {
             logInAdmin();
         } else {
 			try {
-				accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
+				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
 				UserController userController = new UserController(frameController);
-				userController.displayCryptoMarketView(usernameOrEmail, usernameOrEmail);
-			} catch (UserNotFoundException | DbConnectionException | CredentialsErrorFormatException e) {
+				userController.displayCryptoMarketView(user.getUsername(), user.getEmail());
+			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
+			} catch (DbConnectionException ex) {
+				// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
 			}
+
         }
     }
 
     private void logInAdmin() {
         CredentialManager credentialManager = new CredentialManager();
-        AccountManager accountManager = new AccountManager();
+        AccountManager accountManager = new AccountManager(userManager);
        try {
            String adminPassword = accountManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
            char[] password = loginView.getPassword();

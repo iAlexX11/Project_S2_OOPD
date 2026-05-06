@@ -7,8 +7,9 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
 public class UserManager {
-	private int currentUserId;
+	private int currentUserId; // -1;
 	private final UserPersistence userPersistence = new UserSQL();
+	private BalanceListener balanceListener;
 
 	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
@@ -28,5 +29,9 @@ public class UserManager {
 
 	public int getCurrentUserId() {
 		return currentUserId;
+	}
+
+	public void updateBalanceListener(BalanceListener balanceListener) {
+		this.balanceListener = balanceListener;
 	}
 }

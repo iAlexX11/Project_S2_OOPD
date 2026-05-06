@@ -1,12 +1,8 @@
 package org.cryptoBros.business;
 import org.cryptoBros.persistence.Exceptions.*;
-import org.cryptoBros.presentation.Controllers.SettingController;
-import org.cryptoBros.presentation.Controllers.UserController;
-import org.cryptoBros.presentation.Views.ErrorsView;
 import org.passay.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.security.auth.login.CredentialException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +10,11 @@ import java.util.List;
 import static org.passay.EnglishCharacterData.*;
 
 public class AccountManager {
+	private final UserManager userManager;
+
+	public AccountManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
 
 	public void signUpLogic(String email, char[] password, char[] confirmPassword, String username)
 			throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException  {
@@ -24,7 +25,6 @@ public class AccountManager {
 		}
 
 		String hashedPassword = hashPassword(password);
-		UserManager userManager = new UserManager();
 
 		try {
 			userManager.getUser(username, email);
@@ -94,11 +94,11 @@ public class AccountManager {
 		return email.matches("^(?![.])[A-Za-z0-9+_-]+(\\.[A-Za-z0-9+_-]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)+$");
 	}
 
-	public User logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException, CredentialsErrorFormatException {
-		UserManager userManager = new UserManager();
+	public User logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, CredentialsErrorFormatException, DbConnectionException {
 		try {
 			User user = userManager.getUser(usernameOrEmail, usernameOrEmail);
 			if (checkHashedPassword(password, user.getPassword())) {
+				userManager.setCurrentUserId(user.getId());
 				return user;
 			} else {
 				throw new CredentialsErrorFormatException("The username/email or password is incorrect.");
