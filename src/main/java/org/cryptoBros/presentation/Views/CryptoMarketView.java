@@ -81,20 +81,21 @@ public class CryptoMarketView extends Pages {
 		return core;
 	}
 
-	private JPanel dataPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER,0,10));
-		panel.setBorder(BorderFactory.createEmptyBorder(5, 50, 24, 28));
-		panel.setPreferredSize(new Dimension(400, 0));
-		panel.setBackground(new Color(239, 247, 255));
+		private JPanel dataPanel() {
+			JPanel panel = new JPanel(new BorderLayout(0, 10));
+			panel.setBorder(BorderFactory.createEmptyBorder(5, 50, 24, 28));
+			panel.setPreferredSize(new Dimension(400, 0));
+			panel.setBackground(new Color(239, 247, 255));
 
-		JLabel title = new JLabel("Current Cryptocurrencies Market");
-		title.setFont(new Font("Apple Casual", Font.BOLD, 35));
-		title.setForeground(Color.BLACK);
-		panel.add(title);
+			JLabel title = new JLabel("Current Cryptocurrencies Market");
+			title.setFont(new Font("Apple Casual", Font.BOLD, 35));
+			title.setForeground(Color.BLACK);
+			DynamicTable cryptoTable = new DynamicTable();
+			panel.add(title, BorderLayout.NORTH);
+			panel.add(cryptoTable, BorderLayout.CENTER);
 
-		return panel;
-	}
+			return panel;
+		}
 
 	private JButton setJBSettingsButton() {
 		ImageIcon icon = new ImageIcon("images/settings.png");
