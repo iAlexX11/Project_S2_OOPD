@@ -1,9 +1,8 @@
 package org.cryptoBros.persistence;
 
-import org.cryptoBros.business.Crypto;
 import org.cryptoBros.persistence.Exceptions.*;
 
-public interface UserPortoflioPersistence {
+public interface UserPortfolioPersistence {
     /**
      * Buys crypto for a user.
      * - If the user has no position: INSERT a new Portfolio row.

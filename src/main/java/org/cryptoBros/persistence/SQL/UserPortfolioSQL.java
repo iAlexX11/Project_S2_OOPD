@@ -4,17 +4,26 @@ import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.PurchaseNotAddedException;
 import org.cryptoBros.persistence.Exceptions.SaleNotAddedException;
-import org.cryptoBros.persistence.UserPortoflioPersistence;
+import org.cryptoBros.persistence.UserPortfolioPersistence;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserPortfolioSQL implements UserPortoflioPersistence {
+public class UserPortfolioSQL implements UserPortfolioPersistence {
 
     @Override
     public void buyCrypto(int userId, String cryptoSymbol, double currentPrice, double units)
             throws PurchaseNotAddedException, DbConnectionException {
+
+        if (units <= 0) {
+            throw new PurchaseNotAddedException("Units cannot be negative or equal to zero");
+        }
+
+        if (currentPrice <= 0) {
+            throw new PurchaseNotAddedException("Current price cannot be negative or equal to zero");
+        }
+
         // ON CONFLICT targets the composite PK (user_id, crypto_id).
         // On a duplicate key we just accumulate units; buy_price is kept from
         // the original purchase (trigger will update it by 1% regardless).
