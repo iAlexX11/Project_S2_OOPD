@@ -12,9 +12,11 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Cryptocurrency (
-    name            VARCHAR(100)   UNIQUE PRIMARY KEY,
+    symbol            VARCHAR(100)   UNIQUE PRIMARY KEY,
+    name              VARCHAR(100) NOT NULL,
     current_price   DECIMAL(18, 8) NOT NULL,
-    original_price  DECIMAL(18, 8) NOT NULL
+    original_price  DECIMAL(18, 8) NOT NULL,
+    volatility      DECIMAL(5, 2) NOT NULL
 );
 
 CREATE TABLE Portfolio (
@@ -25,7 +27,7 @@ CREATE TABLE Portfolio (
     time_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, crypto_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(name) ON DELETE CASCADE
+    FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(symbol) ON DELETE CASCADE
 );
 
 CREATE TABLE Crypto_History (
@@ -34,7 +36,7 @@ CREATE TABLE Crypto_History (
     time_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     price           DECIMAL(18, 8) NOT NULL,
     PRIMARY KEY (crypto_id, event_id),
-    FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(name) ON DELETE CASCADE
+    FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(symbol) ON DELETE CASCADE
 );
 
 
@@ -42,7 +44,7 @@ CREATE OR REPLACE FUNCTION record_price_history()
     RETURNS TRIGGER AS $$
 BEGIN
     INSERT INTO Crypto_History (crypto_id, price, time_stamp)
-    VALUES (NEW.name, NEW.current_price, CURRENT_TIMESTAMP);
+    VALUES (NEW.symbol, NEW.current_price, CURRENT_TIMESTAMP);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

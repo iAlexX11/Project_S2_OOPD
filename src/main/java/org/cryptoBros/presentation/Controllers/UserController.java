@@ -5,7 +5,6 @@ import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
 import org.cryptoBros.presentation.ButtonEnumeration;
-import org.cryptoBros.presentation.Views.Pages;
 
 public class UserController implements PagesListeners {
 
@@ -15,6 +14,8 @@ public class UserController implements PagesListeners {
     private final SettingController settingController;
     private final CryptoMarketController cryptoMarketController;
 
+    private String username;
+    private String email;
 
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
@@ -24,9 +25,9 @@ public class UserController implements PagesListeners {
         this.initialController = initialController;
 	}
 
-	public double getBalance() {
+	public double getBalance(int id) {
 		try {
-			return userManager.getUserBalance();
+			return userManager.getUserBalance(id);
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
@@ -36,7 +37,7 @@ public class UserController implements PagesListeners {
 	}
 
     public void displayHome() {
-        cryptoMarketController.displayCryptoMarketView(getBalance());
+        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
     }
 
     private void logout() {
@@ -60,6 +61,8 @@ public class UserController implements PagesListeners {
             //TODO: The cryptos table
             case BACK -> System.out.println("Back");
             case LOGOUT -> logout();
+            case ACCOUNT -> System.out.println("Account");
+            case DELETE -> System.out.println("Delete");
         }
     }
 }
