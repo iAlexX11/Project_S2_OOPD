@@ -50,7 +50,7 @@ public class UserSQL implements UserPersistence {
 
     @Override
     public void removeUser(int id) throws UserNotFoundException, DbConnectionException {
-        String query = "DELETE FROM users WHERE id = ?";
+        String query = "DELETE FROM users WHERE user_id = ?";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 
