@@ -96,20 +96,22 @@ public class UserSQL implements UserPersistence {
     }
 
 	@Override
-	public double getUserBalance(String username, String email) {
-		String query = "SELECT balance FROM users WHERE username = ? OR email = ?";
+	public double getUserBalance(int id) throws UserNotFoundException, DbConnectionException {
+		String query = "SELECT balance FROM users WHERE user_id = ?";
 
 		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
-			ps.setString(1, username);
-			ps.setString(2, email);
+			ps.setInt(1, id);
 
 			var rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getDouble("balance");
 			}
-		} catch (Exception e) {
-			System.err.println("Error fetching user: " + e.getMessage());
+            else {
+                throw new UserNotFoundException("User with user_id " + id + " not found");
+            }
+
+		} catch (SQLException e) {
+			throw new DbConnectionException("Error fetching user: " + e.getMessage());
 		}
-		return -1;
 	}
 }

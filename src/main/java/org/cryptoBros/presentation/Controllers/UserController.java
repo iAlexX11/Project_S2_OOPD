@@ -23,12 +23,12 @@ public class UserController implements PagesListeners {
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
         this.email = email;
         this.username = username;
-        cryptoMarketController.displayCryptoMarketView(getBalance(username, email));
+        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
 	}
 
-	public double getBalance(String username, String email) {
+	public double getBalance(int id) {
 		try {
-			return userManager.getUserBalance(username, email);
+			return userManager.getUserBalance(id);
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
