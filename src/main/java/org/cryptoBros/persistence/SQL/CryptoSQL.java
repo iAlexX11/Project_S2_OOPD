@@ -40,7 +40,8 @@ public class CryptoSQL implements CryptoPersistence {
                         rs.getString("symbol"),
                         rs.getString("name"),
                         rs.getDouble("current_price"),
-                        rs.getDouble("original_price")
+                        rs.getDouble("original_price"),
+                        rs.getDouble("volatility")
                 );
             }
             else {
@@ -66,7 +67,8 @@ public class CryptoSQL implements CryptoPersistence {
                         rs.getString("symbol"),
                         rs.getString("name"),
                         rs.getDouble("current_price"),
-                        rs.getDouble("original_price")
+                        rs.getDouble("original_price"),
+                        rs.getDouble("volatility")
                 ));
             }
 
@@ -83,13 +85,14 @@ public class CryptoSQL implements CryptoPersistence {
 
     @Override
     public void addCrypto(Crypto newCrypto) throws CryptoNotAddedException,DbConnectionException {
-        String query = "INSERT INTO cryptocurrency (symbol, name, current_price, original_price) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO cryptocurrency (symbol, name, current_price, original_price, volatility) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
             ps.setString(1, newCrypto.getSymbol());
             ps.setString(2, newCrypto.getName());
             ps.setDouble(3, newCrypto.getCurrentPrice());
             ps.setDouble(4, newCrypto.getInitialPrice());
+            ps.setDouble(5, newCrypto.getVolatility());
 
             int affectedRows = ps.executeUpdate();
 

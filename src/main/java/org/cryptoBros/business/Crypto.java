@@ -15,11 +15,15 @@ public class Crypto {
     @SerializedName("original_price")
     private double initialPrice;
 
-    public Crypto(String symbol, String name, double currentPrice, double initialPrice) {
+    @SerializedName("volatility")
+    private double volatility;
+
+    public Crypto(String symbol, String name, double currentPrice, double initialPrice, double volatility) {
         this.symbol = symbol;
         this.name = name;
         this.currentPrice = currentPrice;
         this.initialPrice = initialPrice;
+        this.volatility = volatility;
     }
 
     public String getSymbol() { return symbol; }
@@ -35,4 +39,6 @@ public class Crypto {
     public double getInitialPrice() {
         return initialPrice;
     }
+
+    public double getVolatility() { return volatility; }
 }

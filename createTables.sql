@@ -15,7 +15,8 @@ CREATE TABLE Cryptocurrency (
     symbol            VARCHAR(100)   UNIQUE PRIMARY KEY,
     name              VARCHAR(100) NOT NULL,
     current_price   DECIMAL(18, 8) NOT NULL,
-    original_price  DECIMAL(18, 8) NOT NULL
+    original_price  DECIMAL(18, 8) NOT NULL,
+    volatility      DECIMAL(5, 2) NOT NULL
 );
 
 CREATE TABLE Portfolio (
