@@ -90,7 +90,7 @@ CREATE TRIGGER update_crypto_price_after_buy_update
 CREATE OR REPLACE FUNCTION update_crypto_price_after_sell()
     RETURNS TRIGGER AS $$
 BEGIN
-    -- Decrease price by 1% after a buy
+    -- Decrease price by 1% after a sell
     UPDATE Cryptocurrency
     SET current_price = current_price * 0.99 -- Decrease price by 1% after a sell
     WHERE symbol = NEW.crypto_id;
