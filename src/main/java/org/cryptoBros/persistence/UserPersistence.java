@@ -35,11 +35,10 @@ public interface UserPersistence {
 
 	/**
 	 * Gets a user from the db.
-	 * @param username the username of the user to be retrieved
-	 * @param email the email of the user to be retrieved
+	 * @param id the id of the user to be retrieved
 	 * @return the user with the given username and email
 	 * @throws UserNotFoundException if there is no user with the given username or email in the db.
 	 * @throws DbConnectionException if there was an error connecting to the db.
 	 */
-	double getUserBalance(String username, String email) throws UserNotFoundException, DbConnectionException;
+	double getUserBalance(int id) throws UserNotFoundException, DbConnectionException;
 }

@@ -19,8 +19,8 @@ public class UserManager {
 		return userPersistence.getUser(username, email);
 	}
 
-	public double getUserBalance(String username, String email) throws UserNotFoundException, DbConnectionException {
-		return userPersistence.getUserBalance(username, email);
+	public double getUserBalance(int id) throws UserNotFoundException, DbConnectionException {
+		return userPersistence.getUserBalance(id);
 	}
 
 	public void setCurrentUserId(int currentUserId) {
