@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS Bots CASCADE;
 DROP TABLE IF EXISTS Crypto_History CASCADE;
 DROP TABLE IF EXISTS Portfolio CASCADE;
 DROP TABLE IF EXISTS Cryptocurrency CASCADE;
@@ -17,6 +18,15 @@ CREATE TABLE Cryptocurrency (
     current_price   DECIMAL(18, 8) NOT NULL,
     original_price  DECIMAL(18, 8) NOT NULL,
     volatility      DECIMAL(5, 2) NOT NULL
+);
+
+-- Bots are a specialisation of Users, one per cryptocurrency
+CREATE TABLE Bots (
+     bot_id          BIGINT PRIMARY KEY,                -- same PK as Users.user_id
+     crypto_id       VARCHAR(100) NOT NULL UNIQUE,      -- one bot per crypto
+     volatility      DECIMAL(5, 2) NOT NULL,            -- cached here for the scheduler
+     FOREIGN KEY (bot_id)    REFERENCES Users(user_id)  ON DELETE CASCADE,
+     FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(symbol) ON DELETE CASCADE
 );
 
 CREATE TABLE Portfolio (
