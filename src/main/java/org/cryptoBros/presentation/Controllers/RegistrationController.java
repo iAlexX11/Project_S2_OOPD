@@ -23,8 +23,8 @@ public class RegistrationController implements ActionListener {
 	private final LoginView loginView;
 	private final SignUpView signUpView;
 	private final AccountManager accountManager;
-    private final InitialController initialController;
 	private final UserManager userManager;
+    private final UserController userController;
 
 	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
@@ -32,7 +32,7 @@ public class RegistrationController implements ActionListener {
 		this.frameController = frameController;
 		this.userManager = new UserManager();
 		this.accountManager = new AccountManager(this.userManager);
-        this.initialController = initialController;
+        this.userController = new UserController(frameController, initialController);
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
@@ -48,7 +48,7 @@ public class RegistrationController implements ActionListener {
 	public void signUpLogic() {
 		try {
 			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-			UserController userController = new UserController(frameController);
+            userController.displayHome();
 		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
 			frameController.showError(e.getMessage());
 		} catch (DbConnectionException ex) {
@@ -63,8 +63,8 @@ public class RegistrationController implements ActionListener {
             logInAdmin();
         } else {
 			try {
-				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
-				UserController userController = new UserController(frameController);
+				accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
+                userController.displayHome();
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
