@@ -5,13 +5,11 @@ import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
-import org.cryptoBros.persistence.SQL.UserSQL;
-import org.cryptoBros.persistence.UserPersistence;
+import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 public class RegistrationController implements ActionListener {
 
@@ -43,7 +41,6 @@ public class RegistrationController implements ActionListener {
 		try {
 			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
 			UserController userController = new UserController(frameController);
-			userController.displayCryptoMarketView(signUpView.getUsername(), signUpView.getEmail());
 		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
 			frameController.showError(e.getMessage());
 		} catch (DbConnectionException ex) {
@@ -59,7 +56,6 @@ public class RegistrationController implements ActionListener {
 			try {
 				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
 				UserController userController = new UserController(frameController);
-				userController.displayCryptoMarketView(user.getUsername(), user.getEmail());
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {

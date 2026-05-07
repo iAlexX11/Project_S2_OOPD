@@ -1,5 +1,7 @@
 package org.cryptoBros.presentation.Views;
 
+import org.cryptoBros.presentation.ButtonEnumeration;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -18,37 +20,6 @@ public class SettingsView extends Pages{
 
         getContent().add(header, BorderLayout.NORTH);
         getContent().add(core, BorderLayout.CENTER);
-    }
-
-	@Override
-    public JPanel setHeader() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(83, 136, 252));
-        header.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 0));
-        header.setOpaque(true);
-
-
-        backButton = new JButton("←");
-        backButton.setFont(new Font("Arial", Font.BOLD, 18));
-        backButton.setBackground(Color.WHITE);
-        backButton.setForeground(Color.BLACK);
-        backButton.setFocusPainted(false);
-        backButton.setBorderPainted(true);
-        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        backButton.setPreferredSize(new Dimension(70, 45));
-
-        JPanel balancePanel = new JPanel();
-        balancePanel.setLayout(new BoxLayout(balancePanel, BoxLayout.Y_AXIS));
-        balancePanel.setBackground(new Color(70, 105, 210));
-        balancePanel.setOpaque(true);
-        balancePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-
-		JLabel jLBalance = setBalance();
-
-        header.add(backButton, BorderLayout.WEST);
-        header.add(jLBalance, BorderLayout.EAST);
-
-        return header;
     }
 
     private JPanel setCore() {
@@ -99,8 +70,7 @@ public class SettingsView extends Pages{
 
     @Override
     public void setActions(ActionListener listener) {
-        backButton.setActionCommand(ButtonEnumeration.BACK.name());
-        backButton.addActionListener(listener);
+        addHeaderActions(listener);
 
         logoutButton.setActionCommand(ButtonEnumeration.LOGOUT.name());
         logoutButton.addActionListener(listener);
