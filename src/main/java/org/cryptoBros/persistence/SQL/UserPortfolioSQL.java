@@ -25,8 +25,8 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
         }
 
         // ON CONFLICT targets the composite PK (user_id, crypto_id).
-        // On a duplicate key we just accumulate units; buy_price is kept from
-        // the original purchase (trigger will update it by 1% regardless).
+        // On a duplicate key we just accumulate units; buy_price remains
+        // unchanged by this statement.
         String query = """
                 INSERT INTO Portfolio (user_id, crypto_id, units, buy_price)
                 VALUES (?, ?, ?, ?)
