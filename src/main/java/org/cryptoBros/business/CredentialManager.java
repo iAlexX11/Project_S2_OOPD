@@ -20,4 +20,6 @@ public class CredentialManager {
     public String readAdminPassword() throws ConfigFileNotFoundException {
         return configPersistence.readAdminPassword();
     }
+
+
 }

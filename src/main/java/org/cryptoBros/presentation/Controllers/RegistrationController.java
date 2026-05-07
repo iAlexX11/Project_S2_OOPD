@@ -4,6 +4,8 @@ import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
+import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotAddException;
@@ -21,13 +23,15 @@ public class RegistrationController implements ActionListener {
 	private final LoginView loginView;
 	private final SignUpView signUpView;
 	private final AccountManager accountManager;
-    InitialController initialController;
+    private final InitialController initialController;
+	private final UserManager userManager;
 
 	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
-		this.accountManager = new AccountManager();
+		this.userManager = new UserManager();
+		this.accountManager = new AccountManager(this.userManager);
         this.initialController = initialController;
 		loginView.setActions(this);
 		signUpView.setActions(this);
@@ -41,47 +45,14 @@ public class RegistrationController implements ActionListener {
 		frameController.displayContent(signUpView);
 	}
 
-	private boolean signUpCredentialsFormat () {
-		boolean emailOk = accountManager.checkEmail(signUpView.getEmail());
-		boolean passwordOk = accountManager.checkPassword(signUpView.getPassword());
-		boolean difPassword = Arrays.equals(signUpView.getPassword(), signUpView.getConfirmPassword());
-
-		if (emailOk && passwordOk && difPassword) {
-			return true;
-		} else if (!emailOk && !passwordOk) {
-			ErrorsView.showError("Wrong email and password format");
-		} else if (!emailOk) {
-			ErrorsView.showError("Wrong email format");
-		} else if (!passwordOk) {
-			ErrorsView.showError("Wrong password format");
-		} else {
-			ErrorsView.showError("Password must match");
-		}
-		return false;
-	}
-
-	public void registerNewUser() {
-		UserManager userManager = new UserManager();
-		if (signUpCredentialsFormat()) {
-			String password = accountManager.hashPassword(signUpView.getPassword());
-			String email = signUpView.getEmail();
-			String username = signUpView.getUsername();
-
-            try {
-				userManager.getUser(username, email);
-				ErrorsView.showError("Username/email already exists");
-			} catch (UserNotFoundException e) {
-				try {
-					User user = new User(username, email, password);
-					User userWithId = userManager.addUser(user);
-					userManager.setCurrentUser(userWithId);
-				} catch (UserNotAddException | DbConnectionException ex) {
-					ErrorsView.showError(ex.getMessage());
-				}
-			}
-			catch (DbConnectionException e) {
-				ErrorsView.showError(e.getMessage());
-			}
+	public void signUpLogic() {
+		try {
+			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
+			UserController userController = new UserController(frameController);
+		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
+			frameController.showError(e.getMessage());
+		} catch (DbConnectionException ex) {
+			// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
 		}
 	}
 
@@ -90,15 +61,22 @@ public class RegistrationController implements ActionListener {
 
         if (usernameOrEmail.compareTo("admin") == 0) {
             logInAdmin();
-        }
-        else {
-            logInNormalUser(usernameOrEmail);
+        } else {
+			try {
+				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
+				UserController userController = new UserController(frameController);
+			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
+				frameController.showError(e.getMessage());
+			} catch (DbConnectionException ex) {
+				// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
+			}
+
         }
     }
 
     private void logInAdmin() {
         CredentialManager credentialManager = new CredentialManager();
-        AccountManager accountManager = new AccountManager();
+        AccountManager accountManager = new AccountManager(userManager);
        try {
            String adminPassword = accountManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
            char[] password = loginView.getPassword();
@@ -106,41 +84,18 @@ public class RegistrationController implements ActionListener {
                System.out.println("Admin logIn successfully");
            }
            else {
-               ErrorsView.showError("This username or password are wrong!");
+			   frameController.showError("This username or password are wrong!");
            }
        }catch (ConfigFileNotFoundException e) {
-           ErrorsView.showError("The configuration File couldn't be found");
+		   frameController.showError("The configuration File couldn't be found");
        }
     }
-
-    public void logInNormalUser(String usernameOrEmail) {
-		UserManager userManager = new UserManager();
-        User possibleUser = null;
-        try {
-            possibleUser = userManager.getUser(usernameOrEmail, usernameOrEmail);
-        } catch (UserNotFoundException | DbConnectionException e) {
-			// TODO: improve login exception
-            ErrorsView.showError(e.getMessage());
-			return;
-        }
-
-        if (possibleUser != null && accountManager.checkHashedPassword(loginView.getPassword(), possibleUser.getPassword())) {
-			System.out.println(possibleUser.getEmail());
-			System.out.println(possibleUser.getUsername());
-			System.out.println(possibleUser.getPassword());
-			userManager.setCurrentUser(possibleUser);
-            System.out.println("User logIn successfully");
-			//TODO: Redirect to the main page
-		} else {
-			ErrorsView.showError("This email/username doesn't exists!");
-		}
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
 		switch (buttonEnumeration) {
-			case CONFIRM_SIGNUP -> registerNewUser();
+			case CONFIRM_SIGNUP -> signUpLogic();
 			case LOGIN -> login();
 			case CONFIRM_LOGIN -> logInUser();
 			case SIGNUP -> signUp();

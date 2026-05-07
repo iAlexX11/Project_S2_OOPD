@@ -54,7 +54,7 @@ public class SignUpView extends BaseView {
 		JLabel emailText = setText("Email");
 		jTFEmail = setTextField("example@gmail.com");
 
-		JLabel passwordText =setText("Password");
+		JLabel passwordText = setText("Password");
 		jTFPassword = setPassword();
 
 		JLabel confirmPasswordText = setText("Confirm Password");

@@ -7,8 +7,9 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
 public class UserManager {
-	private User currentUser;
+	private int currentUserId; // -1;
 	private final UserPersistence userPersistence = new UserSQL();
+	private BalanceListener balanceListener;
 
 	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
@@ -18,11 +19,19 @@ public class UserManager {
 		return userPersistence.getUser(username, email);
 	}
 
-	public void setCurrentUser(User currentUser) {
-		this.currentUser = currentUser;
+	public double getUserBalance(String username, String email) throws UserNotFoundException, DbConnectionException {
+		return userPersistence.getUserBalance(username, email);
 	}
 
-	public User getCurrentUser() {
-		return currentUser;
+	public void setCurrentUserId(int currentUserId) {
+		this.currentUserId = currentUserId;
+	}
+
+	public int getCurrentUserId() {
+		return currentUserId;
+	}
+
+	public void updateBalanceListener(BalanceListener balanceListener) {
+		this.balanceListener = balanceListener;
 	}
 }
