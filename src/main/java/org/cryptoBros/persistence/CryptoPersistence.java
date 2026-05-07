@@ -13,12 +13,12 @@ public interface CryptoPersistence {
     /**
      * Returns the crypto with the given name.
      *
-     * @param name the crypto to be found
+     * @param symbol the crypto to be found
      * @return the crypto with the given name
      * @throws CryptoNotFoundException if the crypto is not found
      * @throws DbConnectionException if there is a problem with the database connection
      */
-    Crypto getCrypto(String name) throws CryptoNotFoundException, DbConnectionException;
+    Crypto getCrypto(String symbol) throws CryptoNotFoundException, DbConnectionException;
 
     /**
      * Returns all the cryptos in the database.
@@ -39,38 +39,28 @@ public interface CryptoPersistence {
     /**
      * Removes a crypto from the database.
      *
-     * @param name the name of the crypto to be removed
+     * @param symbol the name of the crypto to be removed
      * @throws CryptoNotFoundException if the crypto is not found
      * @throws DbConnectionException if there is a problem with the database connection
      */
-    void removeCrypto(String name) throws CryptoNotFoundException, DbConnectionException;
-
-    /**
-     * Updates an existing crypto in the database.
-     *
-     * @param name the name of the crypto to be updated
-     * @param newCrypto the new crypto data to be updated
-     * @throws CryptoNotFoundException if the crypto is not found
-     * @throws DbConnectionException if there is a problem with the database connection
-     */
-    void updateCrypto(String name, Crypto newCrypto) throws CryptoNotFoundException, DbConnectionException;
+    void removeCrypto(String symbol) throws CryptoNotFoundException, DbConnectionException;
 
     /**
      * Updates the price of an existing crypto in the database.
      *
-     * @param name the name of the crypto to be updated
+     * @param symbol the name of the crypto to be updated
      * @param newPrice the new price to be updated
      * @throws CryptoNotFoundException if the crypto is not found
      * @throws DbConnectionException if there is a problem with the database connection
      */
-    void updatePrice(String name, double newPrice) throws CryptoNotFoundException, DbConnectionException;
+    void updatePrice(String symbol, double newPrice) throws CryptoNotFoundException, DbConnectionException;
 
     /**
      * Gets the price history of a crypto.
-     * @param name the name of the crypto
+     * @param symbol the symbol of the crypto
      * @return a map of the price history of the crypto, where the key is the timestamp and the value is the price
      * @throws CryptoNotFoundException if the crypto is not found
      * @throws DbConnectionException if there is a problem with the database connection
      */
-    Map<Instant, Double> getPriceHistory(String name) throws CryptoNotFoundException, DbConnectionException;
+    Map<Instant, Double> getPriceHistory(String symbol) throws CryptoNotFoundException, DbConnectionException;
 }
