@@ -3,27 +3,27 @@ package org.cryptoBros.presentation.Controllers;
 import org.cryptoBros.business.BalanceListener;
 import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
 import org.cryptoBros.presentation.ButtonEnumeration;
-import org.cryptoBros.presentation.Views.SettingsView;
+import org.cryptoBros.presentation.Views.CryptoMarketView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SettingController implements ActionListener, BalanceListener {
+public class CryptoMarketController implements ActionListener, BalanceListener {
 
     private final FrameController frameController;
+    private final CryptoMarketView cryptoMarketView;
     PagesListeners pagesListeners;
-    private final SettingsView settingsView;
 
-    public SettingController(FrameController frameController, PagesListeners pagesListeners) {
+    public CryptoMarketController(FrameController frameController, PagesListeners pagesListeners) {
         this.frameController = frameController;
+        this.cryptoMarketView = new CryptoMarketView();
         this.pagesListeners = pagesListeners;
-        this.settingsView = new SettingsView();
-        settingsView.setActions(this);
+        cryptoMarketView.setActions(this);
     }
 
-    public void displaySettings(double currentBalance) {
-        frameController.displayContent(settingsView);
-        settingsView.updateBalance(currentBalance);
+    public void displayCryptoMarketView(double balance) {
+        frameController.displayContent(cryptoMarketView);
+        cryptoMarketView.updateBalance(balance);
     }
 
     @Override
@@ -34,6 +34,6 @@ public class SettingController implements ActionListener, BalanceListener {
 
     @Override
     public void balanceChanged(double balance) {
-        settingsView.updateBalance(balance);
+        cryptoMarketView.updateBalance(balance);
     }
 }

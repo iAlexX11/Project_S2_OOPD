@@ -2,6 +2,7 @@ package org.cryptoBros;
 
 import org.cryptoBros.presentation.Controllers.FrameController;
 import org.cryptoBros.presentation.Controllers.InitialController;
+import org.cryptoBros.presentation.Views.ErrorsView;
 import org.cryptoBros.presentation.Views.MainFrame;
 
 import javax.swing.*;

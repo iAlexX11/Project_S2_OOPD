@@ -1,10 +1,12 @@
 package org.cryptoBros.presentation.Views;
 
+import org.cryptoBros.presentation.ButtonEnumeration;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class SettingsView extends BaseView{
+public class SettingsView extends Pages{
 
     private JButton backButton;
     private JButton logoutButton;
@@ -18,48 +20,6 @@ public class SettingsView extends BaseView{
 
         getContent().add(header, BorderLayout.NORTH);
         getContent().add(core, BorderLayout.CENTER);
-    }
-
-    private JPanel setHeader() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(83, 136, 252));
-        header.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 0));
-        header.setOpaque(true);
-
-
-        backButton = new JButton("←");
-        backButton.setFont(new Font("Arial", Font.BOLD, 18));
-        backButton.setBackground(Color.WHITE);
-        backButton.setForeground(Color.BLACK);
-        backButton.setFocusPainted(false);
-        backButton.setBorderPainted(true);
-        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        backButton.setPreferredSize(new Dimension(70, 45));
-
-        JPanel balancePanel = new JPanel();
-        balancePanel.setLayout(new BoxLayout(balancePanel, BoxLayout.Y_AXIS));
-        balancePanel.setBackground(new Color(70, 105, 210));
-        balancePanel.setOpaque(true);
-        balancePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-
-        JLabel balanceLabel = new JLabel("Current Balance: €1,000");
-        balanceLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        balanceLabel.setForeground(Color.WHITE);
-        balanceLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-        JLabel profitLabel = new JLabel("Estimated Profit: +€0.00");
-        profitLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        profitLabel.setForeground(Color.WHITE);
-        profitLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-        balancePanel.add(balanceLabel);
-        balancePanel.add(Box.createVerticalStrut(4));
-        balancePanel.add(profitLabel);
-
-        header.add(backButton, BorderLayout.WEST);
-        header.add(balancePanel, BorderLayout.EAST);
-
-        return header;
     }
 
     private JPanel setCore() {
@@ -110,8 +70,7 @@ public class SettingsView extends BaseView{
 
     @Override
     public void setActions(ActionListener listener) {
-        backButton.setActionCommand(ButtonEnumeration.BACK.name());
-        backButton.addActionListener(listener);
+        addHeaderActions(listener);
 
         logoutButton.setActionCommand(ButtonEnumeration.LOGOUT.name());
         logoutButton.addActionListener(listener);

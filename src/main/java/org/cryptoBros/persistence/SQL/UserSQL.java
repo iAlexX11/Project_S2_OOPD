@@ -94,4 +94,22 @@ public class UserSQL implements UserPersistence {
             throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
     }
+
+	@Override
+	public double getUserBalance(String username, String email) {
+		String query = "SELECT balance FROM users WHERE username = ? OR email = ?";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setString(1, username);
+			ps.setString(2, email);
+
+			var rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getDouble("balance");
+			}
+		} catch (Exception e) {
+			System.err.println("Error fetching user: " + e.getMessage());
+		}
+		return -1;
+	}
 }
