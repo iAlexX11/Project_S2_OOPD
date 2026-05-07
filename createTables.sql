@@ -62,5 +62,26 @@ CREATE TRIGGER insert_price_history
 EXECUTE FUNCTION record_price_history();
 
 
+CREATE OR REPLACE FUNCTION update_crypto_price_after_buy()
+    RETURNS TRIGGER AS $$
+DECLARE
+    crypto_price DECIMAL(18, 8);
+BEGIN
+    -- Increase price by 1% after a buy
+    UPDATE Cryptocurrency
+    SET current_price = current_price * 1.01
+    WHERE symbol = NEW.crypto_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER update_crypto_price_after_buy
+    AFTER INSERT ON Portfolio
+    FOR EACH ROW
+    EXECUTE FUNCTION update_crypto_price_after_buy();
+
+
 
 
