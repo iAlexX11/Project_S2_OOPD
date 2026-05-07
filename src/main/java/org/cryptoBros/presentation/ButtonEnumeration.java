@@ -1,4 +1,4 @@
-package org.cryptoBros.presentation.Views;
+package org.cryptoBros.presentation;
 
 public enum ButtonEnumeration {
     SIGNUP,
@@ -10,5 +10,6 @@ public enum ButtonEnumeration {
     BACK,
     LOGOUT,
     ACCOUNT,
-    DELETE
+    DELETE,
+    HOME
 }

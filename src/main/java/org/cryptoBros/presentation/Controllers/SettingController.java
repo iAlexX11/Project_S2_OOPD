@@ -2,10 +2,8 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.BalanceListener;
 import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
-import org.cryptoBros.presentation.Views.ButtonEnumeration;
-import org.cryptoBros.presentation.Views.CryptoMarketView;
+import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.SettingsView;
-import org.cryptoBros.presentation.Views.WelcomeView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

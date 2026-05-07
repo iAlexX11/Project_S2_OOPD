@@ -4,8 +4,7 @@ import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
-import org.cryptoBros.presentation.Views.ButtonEnumeration;
-import java.awt.*;
+import org.cryptoBros.presentation.ButtonEnumeration;
 
 public class UserController implements PagesListeners {
 
@@ -48,7 +47,11 @@ public class UserController implements PagesListeners {
         switch (action) {
             case SETTINGS -> {
                 settingController.displaySettings(100); //To be implement the get balance
-                userManager.updateBalanceListener(settingController);
+                userManager.updateBalanceListener(settingController); // This is so he know how has to notify the change in balance
+            }
+            case HOME -> {
+                cryptoMarketController.displayCryptoMarketView(100);
+                userManager.updateBalanceListener(cryptoMarketController);
             }
             case PORTFOLIO -> System.out.println("PORTFOLIO");
             //TODO: The cryptos table
