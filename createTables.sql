@@ -64,8 +64,6 @@ EXECUTE FUNCTION record_price_history();
 
 CREATE OR REPLACE FUNCTION update_crypto_price_after_buy()
     RETURNS TRIGGER AS $$
-DECLARE
-    crypto_price DECIMAL(18, 8);
 BEGIN
     -- Increase price by 1% after a buy
     UPDATE Cryptocurrency
