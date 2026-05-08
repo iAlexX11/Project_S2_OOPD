@@ -22,7 +22,7 @@ public class UserManager {
 	private ScheduledExecutorService scheduler;
 
 	private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
-	private static final long INTERVAL_SECONDS = 60;
+	private static final long INTERVAL_SECONDS = 10;
 
 	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
@@ -110,15 +110,8 @@ public class UserManager {
 
 	public void stopBalanceScheduler() {
 		if (scheduler != null && !scheduler.isShutdown()) {
-			scheduler.shutdown();
-			try {
-				if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-					scheduler.shutdownNow();
-				}
-			} catch (InterruptedException e) {
-				scheduler.shutdownNow();
-				Thread.currentThread().interrupt();
-			}
+			scheduler.shutdownNow();
+			scheduler = null;
 		}
 	}
 
