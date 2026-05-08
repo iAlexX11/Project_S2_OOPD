@@ -7,7 +7,6 @@ public enum ButtonEnumeration {
     CONFIRM_LOGIN,
 	SETTINGS,
 	PORTFOLIO,
-    BACK,
     LOGOUT,
     ACCOUNT,
     DELETE,
