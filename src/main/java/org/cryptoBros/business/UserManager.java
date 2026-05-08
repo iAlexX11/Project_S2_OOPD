@@ -34,4 +34,12 @@ public class UserManager {
 	public void updateBalanceListener(BalanceListener balanceListener) {
 		this.balanceListener = balanceListener;
 	}
+
+    public void clearBalanceListener() {
+        this.balanceListener = null;
+    }
+
+    public void clearCurrentUser() {
+        this.currentUserId = -1;
+    }
 }

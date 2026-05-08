@@ -6,10 +6,16 @@ import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
+import org.cryptoBros.persistence.Exceptions.UserNotAddException;
+import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
+import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class RegistrationController implements ActionListener {
 
@@ -18,13 +24,15 @@ public class RegistrationController implements ActionListener {
 	private final SignUpView signUpView;
 	private final AccountManager accountManager;
 	private final UserManager userManager;
+    private final UserController userController;
 
-	public RegistrationController (FrameController frameController) {
+	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.userManager = new UserManager();
 		this.accountManager = new AccountManager(this.userManager);
+        this.userController = new UserController(frameController, initialController);
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
@@ -39,8 +47,8 @@ public class RegistrationController implements ActionListener {
 
 	public void signUpLogic() {
 		try {
-			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-			UserController userController = new UserController(frameController);
+			int id = accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
+            userController.displayHome(id);
 		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
 			frameController.showError(e.getMessage());
 		} catch (DbConnectionException ex) {
@@ -50,12 +58,13 @@ public class RegistrationController implements ActionListener {
 
     private void logInUser() {
         String usernameOrEmail = loginView.getUsername();
+
         if (usernameOrEmail.compareTo("admin") == 0) {
             logInAdmin();
         } else {
 			try {
-				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
-				UserController userController = new UserController(frameController);
+				int id = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
+                userController.displayHome(id);
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
@@ -92,5 +101,6 @@ public class RegistrationController implements ActionListener {
 			case SIGNUP -> signUp();
 		}
 	}
+
 
 }

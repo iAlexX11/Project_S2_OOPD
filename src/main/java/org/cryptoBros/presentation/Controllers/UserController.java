@@ -8,6 +8,7 @@ import org.cryptoBros.presentation.ButtonEnumeration;
 
 public class UserController implements PagesListeners {
 
+    private final InitialController initialController;
 	private final FrameController frameController;
 	private final UserManager userManager;
     private final SettingController settingController;
@@ -16,14 +17,12 @@ public class UserController implements PagesListeners {
     private String username;
     private String email;
 
-	public UserController(FrameController frameController) {
+	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.settingController = new SettingController(frameController, this);
         this.userManager = new UserManager();
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
-        this.email = email;
-        this.username = username;
-        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
+        this.initialController = initialController;
 	}
 
 	public double getBalance(int id) {
@@ -37,8 +36,14 @@ public class UserController implements PagesListeners {
         return 0;
 	}
 
+    public void displayHome(int id) {
+        userManager.setCurrentUserId(id);
+        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
+    }
+
     private void logout() {
-        InitialController initialController = new InitialController(frameController);
+        userManager.clearBalanceListener();
+        userManager.clearCurrentUser();
         initialController.startProgram();
     }
 
