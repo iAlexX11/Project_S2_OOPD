@@ -41,4 +41,23 @@ public interface UserPersistence {
 	 * @throws DbConnectionException if there was an error connecting to the db.
 	 */
 	double getUserBalance(int id) throws UserNotFoundException, DbConnectionException;
+
+	/**
+	 * Updates the balance for a user.
+	 * @param userId the id of the user
+	 * @param newBalance the new balance value
+	 * @throws UserNotFoundException if no user exists with the given id
+	 * @throws DbConnectionException if there was an error connecting to the db
+	 */
+	void updateUserBalance(int userId, double newBalance) throws UserNotFoundException, DbConnectionException;
+
+	/**
+	 * Adjusts the balance for a user by adding or subtracting an amount.
+	 * @param userId the id of the user
+	 * @param amount the amount to add (positive) or subtract (negative)
+	 * @return the new balance after the adjustment
+	 * @throws UserNotFoundException if no user exists with the given id
+	 * @throws DbConnectionException if there was an error connecting to the db
+	 */
+	double adjustUserBalance(int userId, double amount) throws UserNotFoundException, DbConnectionException;
 }
