@@ -36,7 +36,8 @@ public class UserController implements PagesListeners {
         return 0;
 	}
 
-    public void displayHome() {
+    public void displayHome(int id) {
+        userManager.setCurrentUserId(id);
         cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
     }
 

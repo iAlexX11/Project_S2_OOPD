@@ -47,8 +47,8 @@ public class RegistrationController implements ActionListener {
 
 	public void signUpLogic() {
 		try {
-			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-            userController.displayHome();
+			int id = accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
+            userController.displayHome(id);
 		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
 			frameController.showError(e.getMessage());
 		} catch (DbConnectionException ex) {
@@ -63,8 +63,8 @@ public class RegistrationController implements ActionListener {
             logInAdmin();
         } else {
 			try {
-				accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
-                userController.displayHome();
+				int id = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
+                userController.displayHome(id);
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
