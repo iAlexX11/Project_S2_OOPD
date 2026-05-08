@@ -9,8 +9,8 @@ import org.cryptoBros.persistence.UserPersistence;
 public class UserManager {
 	private int currentUserId; // -1;
 	private final UserPersistence userPersistence;
-	private BalanceListener balanceListener;
 
+	private BalanceListener balanceListener;
     public UserManager () {
         this.userPersistence = new UserSQL();
     }
