@@ -68,7 +68,7 @@ public class UserManager {
 
 	public double addBalance(double amount) throws UserNotFoundException, DbConnectionException {
 		if (currentUserId == -1) {
-			throw new UserNotFoundException("No user is currently logged in");
+			throw new UserNotFoundException();
 		}
 		double newBalance = userPersistence.adjustUserBalance(currentUserId, amount);
 		notifyBalanceListeners(newBalance);
@@ -77,11 +77,11 @@ public class UserManager {
 
 	public double deductBalance(double amount) throws UserNotFoundException, DbConnectionException, InsufficientBalanceException {
 		if (currentUserId == -1) {
-			throw new UserNotFoundException("No user is currently logged in");
+			throw new UserNotFoundException();
 		}
 		double currentBalance = userPersistence.getUserBalance(currentUserId);
 		if (currentBalance < amount) {
-			throw new InsufficientBalanceException("Insufficient balance. Current: " + currentBalance + ", Required: " + amount);
+			throw new InsufficientBalanceException();
 		}
 		double newBalance = userPersistence.adjustUserBalance(currentUserId, -amount);
 		notifyBalanceListeners(newBalance);
@@ -122,7 +122,7 @@ public class UserManager {
 		try {
 			addBalance(PERIODIC_INCREASE_AMOUNT);
 		} catch (UserNotFoundException | DbConnectionException e) {
-			System.err.println("Failed to increase balance: " + e.getMessage());
+			// Silent fail - scheduler continues
 		}
 	}
 }
