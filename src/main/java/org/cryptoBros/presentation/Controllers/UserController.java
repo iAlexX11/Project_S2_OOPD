@@ -62,6 +62,7 @@ public class UserController implements PagesListeners {
             }
             case PORTFOLIO -> {
                 portfolioController.displayPortfolioView(100);
+                userManager.updateBalanceListener(portfolioController);
 
             }
             //TODO: The cryptos table

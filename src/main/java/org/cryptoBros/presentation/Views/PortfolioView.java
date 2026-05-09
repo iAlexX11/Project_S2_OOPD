@@ -5,6 +5,8 @@ import org.cryptoBros.presentation.ButtonEnumeration;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class PortfolioView extends Pages{
 
@@ -12,7 +14,6 @@ public class PortfolioView extends Pages{
     private JTextField jTFAddBalance;
     private JLabel jLBalance;
     private JLabel jLProfit;
-    private JLabel jLCurrentBalance;
 
     @Override
     protected void configureView() {
@@ -70,11 +71,6 @@ public class PortfolioView extends Pages{
         balanceTitle.setFont(new Font("SansSerif", Font.BOLD, 26));
         balanceTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // TODO Place proper current balance of the user
-        jLCurrentBalance = new JLabel("Current Balance: €1,000", SwingConstants.CENTER);
-        jLCurrentBalance.setFont(new Font("SansSerif", Font.BOLD, 14));
-        jLCurrentBalance.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         JPanel addBalanceCard = new JPanel();
         addBalanceCard.setLayout(new BoxLayout(addBalanceCard, BoxLayout.Y_AXIS));
         addBalanceCard.setBackground(new Color(185, 200, 245));
@@ -88,7 +84,7 @@ public class PortfolioView extends Pages{
         inputRow.setOpaque(false);
         JLabel quantityLabel = new JLabel("Quantity:");
         quantityLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
-        jTFAddBalance = new JTextField("00.00 €", 10);
+        jTFAddBalance = setTextField("00.00 $");
         jTFAddBalance.setFont(new Font("SansSerif", Font.PLAIN, 13));
         inputRow.add(quantityLabel);
         inputRow.add(jTFAddBalance);
@@ -110,23 +106,11 @@ public class PortfolioView extends Pages{
 
         card.add(balanceTitle);
         card.add(Box.createVerticalStrut(4));
-        card.add(jLCurrentBalance);
         card.add(Box.createVerticalStrut(10));
         card.add(addBalanceCard);
 
         wrapper.add(card);
         return wrapper;
-    }
-
-    public void updateBalance(double balance) {
-        jLBalance.setText(String.format("Current Balance: €%.2f", balance));
-        jLCurrentBalance.setText(String.format("Current Balance: €%.2f", balance));
-    }
-
-    public void updateProfit(double profit) {
-        String sign = profit >= 0 ? "+" : "";
-        jLProfit.setText(String.format("Estimated Profit: %s€%.2f", sign, profit));
-        jLProfit.setForeground(profit >= 0 ? new Color(180, 255, 180) : new Color(255, 180, 180));
     }
 
     public void setPortfolioData(Object[][] data) {
@@ -141,5 +125,34 @@ public class PortfolioView extends Pages{
         } catch (NumberFormatException e) {
             return 0.0;
         }
+    }
+
+    private JTextField setTextField(String placeholder) {
+        JTextField jTextField = new JTextField();
+        jTextField.setPreferredSize(new Dimension(100, 25));
+        jTextField.setMaximumSize(new Dimension(100, 25));
+        jTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 210, 220)));
+        jTextField.setText(placeholder);
+        jTextField.setForeground(Color.GRAY);
+        jTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (jTextField.getText().equals(placeholder)) {
+                    jTextField.setText("");
+                    jTextField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (jTextField.getText().isEmpty()) {
+                    jTextField.setForeground(Color.GRAY);
+                    jTextField.setText(placeholder);
+                }
+            }
+        });
+
+        return jTextField;
     }
 }

@@ -39,13 +39,12 @@ public class PortfolioController implements ActionListener, BalanceListener {
                 { "Bitcoin", 1,    "100.451,91 €",  "-15.767,61 €"   },
         };
         portfolioView.setPortfolioData(data);
-        portfolioView.updateProfit(0.0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-
+        //TODO: make a way to return data
         if (ButtonEnumeration.CONFIRM_BALANCE.name().equals(command)) {
             double amount = portfolioView.getAddBalanceAmount();
             if (amount > 0)
