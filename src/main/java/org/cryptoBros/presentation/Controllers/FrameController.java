@@ -25,4 +25,8 @@ public class FrameController {
     public void displayContent(BaseView view) {
         this.mainFrame.displayContent(view);
     }
+
+    public MainFrame getMainFram() {
+        return mainFrame;
+    }
 }

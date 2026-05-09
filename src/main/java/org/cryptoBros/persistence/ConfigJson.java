@@ -3,6 +3,7 @@ package org.cryptoBros.persistence;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.cryptoBros.persistence.Deserializers.ConfigDeserializer;
+import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 
 import java.io.FileReader;
@@ -31,9 +32,10 @@ public class ConfigJson implements ConfigPersistence {
     }
 
     @Override
-    public DbCredentials readCredentials() throws ConfigFileNotFoundException {
+    public DbCredentials readCredentials() throws ConfigFileNotFoundException, ConfigFileCorruptedException {
         Config c = readConfig();
         if (readConfig() == null) throw new ConfigFileNotFoundException("Failed to read config");
+        if (c.port() == -1 || c.ip() == null || c.dbName() == null || c.username() == null || c.password() == null) throw new ConfigFileCorruptedException("Some data in the config file is missing");
         return new DbCredentials(c.port(), c.ip(), c.dbName(), c.username(), c.password());
     }
 }
