@@ -23,6 +23,9 @@ public class UserController implements PagesListeners {
         this.userManager = new UserManager();
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
         this.initialController = initialController;
+
+        userManager.addBalanceListener(cryptoMarketController);
+        userManager.addBalanceListener(settingController);
 	}
 
 	public double getBalance(int id) {
@@ -38,28 +41,30 @@ public class UserController implements PagesListeners {
 
     public void displayHome(int id) {
         userManager.setCurrentUserId(id);
+        userManager.addBalanceListener(cryptoMarketController);
+        userManager.addBalanceListener(settingController);
+        userManager.startBalanceScheduler();
         cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
     }
 
     private void logout() {
-        userManager.clearBalanceListener();
         userManager.clearCurrentUser();
+        userManager.stopBalanceScheduler();
+        userManager.clearBalanceListener();
         initialController.startProgram();
     }
 
     @Override
     public void setAction(ButtonEnumeration action) {
+        double currentBalance = getBalance(userManager.getCurrentUserId());
         switch (action) {
             case SETTINGS -> {
-                settingController.displaySettings(100); //To be implement the get balance
-                userManager.updateBalanceListener(settingController); // This is so he know how has to notify the change in balance
+                settingController.displaySettings(currentBalance);
             }
             case HOME -> {
-                cryptoMarketController.displayCryptoMarketView(100);
-                userManager.updateBalanceListener(cryptoMarketController);
+                cryptoMarketController.displayCryptoMarketView(currentBalance);
             }
             case PORTFOLIO -> System.out.println("PORTFOLIO");
-            //TODO: The cryptos table
             case BACK -> System.out.println("Back");
             case LOGOUT -> logout();
             case ACCOUNT -> System.out.println("Account");
