@@ -12,6 +12,7 @@ public class UserController implements PagesListeners {
 	private final UserManager userManager;
     private final SettingController settingController;
     private final CryptoMarketController cryptoMarketController;
+    private final PortfolioController portfolioController;
 
     private String username;
     private String email;
@@ -21,6 +22,7 @@ public class UserController implements PagesListeners {
         this.settingController = new SettingController(frameController, this);
         this.userManager = new UserManager();
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
+        this.portfolioController = new PortfolioController(frameController, this);
         this.email = email;
         this.username = username;
         cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
@@ -53,7 +55,10 @@ public class UserController implements PagesListeners {
                 cryptoMarketController.displayCryptoMarketView(100);
                 userManager.updateBalanceListener(cryptoMarketController);
             }
-            case PORTFOLIO -> System.out.println("PORTFOLIO");
+            case PORTFOLIO -> {
+                portfolioController.displayPortfolioView(100);
+
+            }
             //TODO: The cryptos table
             case BACK -> System.out.println("Back");
             case LOGOUT -> logout();
