@@ -62,9 +62,13 @@ public class AtomicSQL implements AtomicPersistence {
                 conn.commit();
                 return botUserId;
 
-            } catch (BotGenerationException | CryptoNotAddedException e) {
+            } catch (Exception e) {
                 conn.rollback();   // nothing persisted if any step fails
-                throw e;
+                if (e instanceof BotGenerationException botGenerationException) throw botGenerationException;
+                if (e instanceof CryptoNotAddedException cryptoNotAddedException) throw cryptoNotAddedException;
+                if (e instanceof SQLException sqlException)
+                    throw new DbConnectionException("DB transaction error: " + sqlException.getMessage());
+                throw new DbConnectionException("Unexpected transaction error: " + e.getMessage());
             }
 
         } catch (SQLException e) {
