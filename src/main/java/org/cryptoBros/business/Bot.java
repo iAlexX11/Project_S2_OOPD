@@ -123,7 +123,7 @@ public class Bot implements Runnable {
             LOG.info("Bot SELL " + UNITS_PER_TRADE + " " + cryptoSymbol);
 
         } catch (CryptoNotFoundException e) {
-            // Bot tried to buy crypto that didn't exist
+            // Bot tried to sell crypto that didn't exist
             LOG.log(Level.WARNING, "Bot sell failed for " + cryptoSymbol, e);
         } catch (SaleNotAddedException e) {
             // Bot has no position in this crypto — treat it as a buy instead
