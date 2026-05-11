@@ -37,7 +37,8 @@ public class BotSQL implements BotPersistence {
                 ps.setString(1, username);
                 ps.setString(2, email);
                 ps.setString(3, password);
-                ps.executeUpdate();
+                int rows = ps.executeUpdate();
+                if (rows == 0) throw new BotGenerationException("Couldn't insert bot user into database");
 
                 try (ResultSet keys = ps.getGeneratedKeys()) {
                     if (!keys.next()) throw new BotGenerationException("No user_id generated for bot");
@@ -49,7 +50,8 @@ public class BotSQL implements BotPersistence {
                 ps.setInt   (1, botUserId);
                 ps.setString(2, cryptoSymbol);
                 ps.setDouble(3, volatility);
-                ps.executeUpdate();
+                int rows = ps.executeUpdate();
+                if (rows == 0) throw new BotGenerationException("Couldn't insert bot into database");
             }
 
             conn.commit();
