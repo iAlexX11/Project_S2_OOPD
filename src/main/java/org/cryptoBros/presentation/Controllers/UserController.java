@@ -1,35 +1,29 @@
 package org.cryptoBros.presentation.Controllers;
 
+import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.UserManager;
-import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
-import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.persistence.Exceptions.*;
 
-public class UserController implements PagesListeners {
+public class UserController{
 
     private final InitialController initialController;
 	private final FrameController frameController;
     private final CryptoManager cryptoManager;
+    private final AccountManager accountManager;
 	private final UserManager userManager;
-    private final SettingController settingController;
-    private final CryptoMarketController cryptoMarketController;
 
-    private String username;
-    private String email;
+    private int id;
 
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
-        this.settingController = new SettingController(frameController, this);
-        this.cryptoMarketController = new CryptoMarketController(frameController, this);
         this.initialController = initialController;
 
         this.userManager = new UserManager();
-        this.cryptoManager = new CryptoManager(cryptoMarketController);
+        this.cryptoManager = new CryptoManager();
+        this.accountManager = new AccountManager(userManager);
 
-        userManager.addBalanceListener(cryptoMarketController);
-        userManager.addBalanceListener(settingController);
+        this.id = 0;
 	}
 
 	public double getBalance(int id) {
@@ -43,14 +37,6 @@ public class UserController implements PagesListeners {
         return 0;
 	}
 
-    public void displayHome(int id) {
-        userManager.setCurrentUserId(id);
-        userManager.addBalanceListener(cryptoMarketController);
-        userManager.addBalanceListener(settingController);
-        userManager.startBalanceScheduler();
-        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
-    }
-
     private void logout() {
         userManager.clearCurrentUser();
         userManager.stopBalanceScheduler();
@@ -58,21 +44,11 @@ public class UserController implements PagesListeners {
         initialController.startProgram();
     }
 
-    @Override
-    public void setAction(ButtonEnumeration action) {
-        double currentBalance = getBalance(userManager.getCurrentUserId());
-        switch (action) {
-            case SETTINGS -> {
-                settingController.displaySettings(currentBalance);
-            }
-            case HOME -> {
-                cryptoMarketController.displayCryptoMarketView(currentBalance);
-            }
-            case PORTFOLIO -> System.out.println("PORTFOLIO");
-            case BACK -> System.out.println("Back");
-            case LOGOUT -> logout();
-            case ACCOUNT -> System.out.println("Account");
-            case DELETE -> System.out.println("Delete");
-        }
+    public void signUpLogic(String email, char[] password, char[] confirmedPassword, String username) throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException {
+            id = accountManager.signUpLogic(email, password, confirmedPassword, username);
+    }
+
+    public void logIn(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException {
+        id = accountManager.logInNormalUser(usernameOrEmail, password);
     }
 }

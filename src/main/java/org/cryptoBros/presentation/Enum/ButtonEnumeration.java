@@ -1,4 +1,4 @@
-package org.cryptoBros.presentation;
+package org.cryptoBros.presentation.Enum;
 
 public enum ButtonEnumeration {
     SIGNUP,

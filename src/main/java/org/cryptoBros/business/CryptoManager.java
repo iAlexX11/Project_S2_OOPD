@@ -9,7 +9,7 @@ public class CryptoManager {
     CryptoListener cryptoListener;
     CryptoPersistence cryptoPersistence;
 
-    public CryptoManager(CryptoListener cryptoListener) {
+    public CryptoManager() {
         this.cryptoListener = cryptoListener;
         this.cryptoPersistence = new CryptoSQL();
     }

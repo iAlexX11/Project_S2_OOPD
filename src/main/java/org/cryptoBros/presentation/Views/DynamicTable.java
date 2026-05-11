@@ -8,12 +8,15 @@ import java.util.Map;
 
 public class DynamicTable extends JPanel {
 
-    private Map<String, Integer> cryptos = new HashMap<>();
-	private static final String[] columns = { "#", "Cryptocurrency", "Price (€)", "Change (€)", "% Change"};
+    private Map<String, Integer> cryptos;
+	private static String[] columns;
 
 	private DefaultTableModel model;
 
 	public DynamicTable() {
+        cryptos = new HashMap<>();
+        columns = new String[]{"Cryptocurrency", "Price (€)", "Change (€)", "% Change"};
+
 		setBackground(Color.WHITE);
 		setLayout(new BorderLayout());
 
@@ -32,7 +35,7 @@ public class DynamicTable extends JPanel {
 		table.setSelectionForeground(Color.BLACK);
 		table.setFocusable(false);
 
-		int[] widths = {40, 160, 170, 150, 130};
+		int[] widths = {160, 170, 150, 130};
 		for (int i = 0; i < widths.length; i++)
 			table.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
 
@@ -90,10 +93,10 @@ public class DynamicTable extends JPanel {
             String percentageStr = (percentage >= 0 ? "+" : "") + percentage + "%";
 
             int row = cryptos.get(name);
-            model.setValueAt(name, row, 1);
-            model.setValueAt(priceStr, row, 2);
-            model.setValueAt(changeStr, row, 3);
-            model.setValueAt(percentageStr, row, 4);
+            model.setValueAt(name, row, 0);
+            model.setValueAt(priceStr, row, 1);
+            model.setValueAt(changeStr, row, 2);
+            model.setValueAt(percentageStr, row, 3);
         } else {
             addRow(name, price, change, percentage);
         }
@@ -103,10 +106,10 @@ public class DynamicTable extends JPanel {
         String priceStr      = "€ " + price;
         String changeStr     = (change >= 0 ? "+" : "-") + "€ " + change;
         String percentageStr = (percentage >= 0 ? "+" : "-") + percentage + "%";
-        int rowNum           = model.getRowCount() + 1;
 
-        cryptos.put(name, rowNum);
-        model.addRow(new Object[]{ rowNum, name, priceStr, changeStr, percentageStr });
+        model.addRow(new Object[]{name, priceStr, changeStr, percentageStr });
+
+        cryptos.put(name, model.getRowCount());
     }
 	public void clearRows() { model.setRowCount(0); }
 }
