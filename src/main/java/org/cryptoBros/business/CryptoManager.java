@@ -41,7 +41,7 @@ public class CryptoManager {
     public void createCrypto(Crypto newCrypto)
             throws DbConnectionException, BotGenerationException, CryptoNotAddedException {
 
-        int botUserId = atomicDb.createCryptoWithBot(newCrypto);
+        long botUserId = atomicDb.createCryptoWithBot(newCrypto);
 
         // DB succeeded: start in-memory bot
         Bot bot = new Bot(botUserId, newCrypto.getSymbol(), newCrypto.getVolatility());
@@ -57,12 +57,12 @@ public class CryptoManager {
      * @throws CryptoNotFoundException if the {@link Crypto} could not be found
      */
     public void deleteCrypto(String symbol) throws DbConnectionException, CryptoNotFoundException {
-        // Stop in-memory bot first — harmless if it was never started
-        Bot bot = activeBots.remove(symbol);
-        if (bot != null) bot.stop();
-
         // One transaction: crypto + bot user gone or neither is
         atomicDb.deleteCryptoWithBot(symbol);
+
+        // DB succeeded: stop in-memory bot
+        Bot bot = activeBots.remove(symbol);
+        if (bot != null) bot.stop();
     }
 
 

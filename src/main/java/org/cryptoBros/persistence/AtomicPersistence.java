@@ -8,7 +8,7 @@ import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 
 public interface AtomicPersistence {
 
-    int createCryptoWithBot(Crypto crypto)
+    long createCryptoWithBot(Crypto crypto)
             throws DbConnectionException, BotGenerationException, CryptoNotAddedException;
 
     void deleteCryptoWithBot(String symbol)

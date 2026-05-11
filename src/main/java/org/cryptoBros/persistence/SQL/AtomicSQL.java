@@ -48,14 +48,14 @@ public class AtomicSQL implements AtomicPersistence {
      * @return the generated bot_id (= user_id)
      */
     @Override
-    public int createCryptoWithBot(Crypto crypto)
+    public long createCryptoWithBot(Crypto crypto)
             throws DbConnectionException, BotGenerationException, CryptoNotAddedException {
 
         try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
             conn.setAutoCommit(false);
 
             try {
-                int botUserId = insertUser(conn, crypto.getSymbol());
+                long botUserId = insertUser(conn, crypto.getSymbol());
                 insertCrypto(conn, crypto);
                 insertBot(conn, botUserId, crypto.getSymbol(), crypto.getVolatility());
 
@@ -76,7 +76,7 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
-    private int insertUser(Connection conn, String symbol)
+    private long insertUser(Connection conn, String symbol)
             throws SQLException, BotGenerationException {
 
         try (PreparedStatement ps = conn.prepareStatement(
@@ -92,7 +92,7 @@ public class AtomicSQL implements AtomicPersistence {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (!keys.next())
                     throw new BotGenerationException("No user_id generated for bot " + symbol);
-                return keys.getInt(1);
+                return keys.getLong(1);
             }
         }
     }
@@ -113,11 +113,11 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
-    private void insertBot(Connection conn, int botUserId, String symbol, double volatility)
+    private void insertBot(Connection conn, long botUserId, String symbol, double volatility)
             throws SQLException, BotGenerationException {
 
         try (PreparedStatement ps = conn.prepareStatement(INSERT_BOT)) {
-            ps.setInt   (1, botUserId);
+            ps.setLong  (1, botUserId);
             ps.setString(2, symbol);
             ps.setDouble(3, volatility);
 
@@ -135,7 +135,7 @@ public class AtomicSQL implements AtomicPersistence {
 
             try {
                 // Resolve the bot's user_id before we lose the Bots row
-                int botUserId = fetchBotUserId(conn, symbol);
+                long botUserId = fetchBotUserId(conn, symbol);
 
                 // Delete crypto cascades Bots, Portfolio, Crypto_History
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_CRYPTO)) {
@@ -147,15 +147,18 @@ public class AtomicSQL implements AtomicPersistence {
 
                 // Delete the bot user (Bots row already gone via cascade)
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_USER)) {
-                    ps.setInt(1, botUserId);
+                    ps.setLong(1, botUserId);
                     ps.executeUpdate();
                 }
 
                 conn.commit();
 
-            } catch (CryptoNotFoundException e) {
+            } catch (Exception e) {
                 conn.rollback();
-                throw e;
+                if (e instanceof CryptoNotFoundException cryptoNotFoundException) throw cryptoNotFoundException;
+                if (e instanceof SQLException sqlException)
+                    throw new DbConnectionException("DB transaction error: " + sqlException.getMessage());
+                throw new DbConnectionException("Unexpected transaction error: " + e.getMessage());
             }
 
         } catch (SQLException e) {
@@ -163,7 +166,7 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
-    private int fetchBotUserId(Connection conn, String symbol)
+    private long fetchBotUserId(Connection conn, String symbol)
             throws SQLException, CryptoNotFoundException {
 
         try (PreparedStatement ps = conn.prepareStatement(SELECT_BOT_ID)) {
@@ -172,7 +175,7 @@ public class AtomicSQL implements AtomicPersistence {
             if (!rs.next())
                 throw new CryptoNotFoundException(
                         "No bot found for crypto '" + symbol + "'.");
-            return rs.getInt("bot_id");
+            return rs.getLong("bot_id");
         }
     }
 
