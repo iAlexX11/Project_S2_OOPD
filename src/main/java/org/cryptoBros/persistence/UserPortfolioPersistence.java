@@ -15,7 +15,7 @@ public interface UserPortfolioPersistence {
      * @throws PurchaseNotAddedException if there was an error inserting data
      * @throws DbConnectionException if there was a connection error with the db
      */
-    void buyCrypto(int userId, String cryptoSymbol, double currentPrice, double units) throws PurchaseNotAddedException, DbConnectionException;
+    void buyCrypto(long userId, String cryptoSymbol, double currentPrice, double units) throws PurchaseNotAddedException, DbConnectionException;
 
 /**
  * Sells crypto for a user.
@@ -29,5 +29,5 @@ public interface UserPortfolioPersistence {
  * @throws SaleNotAddedException if user attempts to sell more than what is owned, or an unexpected error happens
  * @throws DbConnectionException if there is a connection error with the db.
  */
-    void sellCrypto(int userId, String cryptoSymbol, double units) throws CryptoNotFoundException, SaleNotAddedException, DbConnectionException;
+    void sellCrypto(long userId, String cryptoSymbol, double units) throws CryptoNotFoundException, SaleNotAddedException, DbConnectionException;
 }

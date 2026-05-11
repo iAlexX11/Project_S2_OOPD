@@ -31,7 +31,7 @@ public class Bot implements Runnable {
     private final Logger LOG;
     private static final double UNITS_PER_TRADE = 1.0;
 
-    private final int                       botUserId;
+    private final long                      botUserId;
     private final String                    cryptoSymbol;
     private final double                    volatility;
     private final UserPortfolioPersistence  portfolio;
@@ -46,7 +46,7 @@ public class Bot implements Runnable {
      * @param cryptoSymbol the {@link Crypto} this bot is responsible for
      * @param volatility   copied from {@link Crypto} at creation time
      */
-    public Bot(int botUserId, String cryptoSymbol, double volatility) {
+    public Bot(long botUserId, String cryptoSymbol, double volatility) {
         this.botUserId          = botUserId;
         this.cryptoSymbol       = cryptoSymbol;
         this.volatility         = volatility;

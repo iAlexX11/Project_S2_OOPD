@@ -1,23 +1,24 @@
 package org.cryptoBros.business;
 
 import org.cryptoBros.business.Liseners.CryptoListener;
-import org.cryptoBros.persistence.BotPersistence;
+import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.BotGenerationException;
+import org.cryptoBros.persistence.Exceptions.CryptoNotAddedException;
+import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.SQL.BotSQL;
+import org.cryptoBros.persistence.SQL.AtomicSQL;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CryptoManager {
 
-    private CryptoListener cryptoListener;
-    private CryptoPersistence cryptoPersistence;
+    private final CryptoListener cryptoListener;
+    private final CryptoPersistence cryptoPersistence;
     private final Map<String, Bot> activeBots;
-    private final BotPersistence botDb;
+    private final AtomicPersistence atomicDb;
 
     /**
      * Builds a manager with its associated listener
@@ -27,7 +28,7 @@ public class CryptoManager {
         this.cryptoListener = cryptoListener;
         this.cryptoPersistence = new CryptoSQL();
         this.activeBots = new ConcurrentHashMap<>();
-        this.botDb = new BotSQL();
+        this.atomicDb = new AtomicSQL();
     }
 
     /**
@@ -35,24 +36,33 @@ public class CryptoManager {
      * @param newCrypto the crypto to be created
      * @throws DbConnectionException if the db connection fails at any point during this process
      * @throws BotGenerationException if the bot could not be generated
+     * @throws CryptoNotAddedException if the crypto could not be added to the db
      */
-    public void createCrypto(Crypto newCrypto) throws DbConnectionException, BotGenerationException {
-        // Persist bot user + bots table row, returns the new user_id
-        int botUserId = botDb.createBotUser(newCrypto.getSymbol(), newCrypto.getVolatility());
+    public void createCrypto(Crypto newCrypto)
+            throws DbConnectionException, BotGenerationException, CryptoNotAddedException {
 
-        // Build and start the in-memory bot
+        long botUserId = atomicDb.createCryptoWithBot(newCrypto);
+
+        // DB succeeded: start in-memory bot
         Bot bot = new Bot(botUserId, newCrypto.getSymbol(), newCrypto.getVolatility());
         activeBots.put(newCrypto.getSymbol(), bot);
         bot.start();
-
-        // TODO: add the new crypto to the DB
     }
 
-    public void deleteCrypto(String symbol) {
+    /**
+     * Deletes a crypto from the db, with its associated bot
+     *
+     * @param symbol symbol of the crypto to be deleted
+     * @throws DbConnectionException if there was a problem connecting to the {@link AtomicPersistence}
+     * @throws CryptoNotFoundException if the {@link Crypto} could not be found
+     */
+    public void deleteCrypto(String symbol) throws DbConnectionException, CryptoNotFoundException {
+        // One transaction: crypto + bot user gone or neither is
+        atomicDb.deleteCryptoWithBot(symbol);
+
+        // DB succeeded: stop in-memory bot
         Bot bot = activeBots.remove(symbol);
         if (bot != null) bot.stop();
-
-        // TODO: remove the crypto from the db
     }
 
 
