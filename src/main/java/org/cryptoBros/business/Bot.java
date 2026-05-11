@@ -1,4 +1,5 @@
 package org.cryptoBros.business;
+
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
@@ -7,13 +8,14 @@ import org.cryptoBros.persistence.Exceptions.SaleNotAddedException;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
 import org.cryptoBros.persistence.SQL.UserPortfolioSQL;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
-
+import org.cryptoBros.presentation.BotLogFormatter;
 
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +54,13 @@ public class Bot implements Runnable {
         this.rng                = new Random();
         this.cryptoPersistence  = new CryptoSQL();
         this.LOG = Logger.getLogger(this.getClass().getName());
+        this.LOG.setUseParentHandlers(false);
+
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new BotLogFormatter());
+        handler.setLevel(Level.ALL);
+        this.LOG.addHandler(handler);
+        this.LOG.setLevel(Level.ALL);
     }
 
     //Starts the periodic scheduler. Safe to call once per bot instance.
@@ -101,7 +110,7 @@ public class Bot implements Runnable {
         try {
             double currentPrice = fetchCurrentPrice();
             portfolio.buyCrypto(botUserId, cryptoSymbol, currentPrice, UNITS_PER_TRADE);
-            LOG.fine("Bot BUY  " + UNITS_PER_TRADE + " " + cryptoSymbol);
+            LOG.info("Bot BUY  " + UNITS_PER_TRADE + " " + cryptoSymbol);
 
         } catch (PurchaseNotAddedException | DbConnectionException e) {
             LOG.log(Level.WARNING, "Bot buy failed for " + cryptoSymbol, e);
@@ -111,7 +120,7 @@ public class Bot implements Runnable {
     private void executeSell() {
         try {
             portfolio.sellCrypto(botUserId, cryptoSymbol, UNITS_PER_TRADE);
-            LOG.fine("Bot SELL " + UNITS_PER_TRADE + " " + cryptoSymbol);
+            LOG.info("Bot SELL " + UNITS_PER_TRADE + " " + cryptoSymbol);
 
         } catch (CryptoNotFoundException e) {
             // Bot tried to buy crypto that didn't exist
