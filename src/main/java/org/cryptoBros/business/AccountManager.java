@@ -16,7 +16,7 @@ public class AccountManager {
 		this.userManager = userManager;
 	}
 
-	public void signUpLogic(String email, char[] password, char[] confirmPassword, String username)
+	public int signUpLogic(String email, char[] password, char[] confirmPassword, String username)
 			throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException  {
 
 		String errorCredentials = checkCredentials(email, password, confirmPassword);
@@ -33,8 +33,9 @@ public class AccountManager {
 		} catch (UserNotFoundException e) {
 			User user = new User(username, email, hashedPassword);
 			User userWithId = userManager.addUser(user);
-			userManager.setCurrentUserId(userWithId.getId());
-
+            user = null;
+            userWithId = null;
+            return userWithId.getId();
 		} catch (DbConnectionException ex) {
 			throw ex;
 		}
@@ -74,6 +75,7 @@ public class AccountManager {
 
 		PasswordData data = new PasswordData(new String(password));
 		RuleResult result = validator.validate(data);
+		data = null;
 
 		if (result.isValid()) {
 			return "ok";
@@ -94,12 +96,11 @@ public class AccountManager {
 		return email.matches("^(?![.])[A-Za-z0-9+_-]+(\\.[A-Za-z0-9+_-]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)+$");
 	}
 
-	public User logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, CredentialsErrorFormatException, DbConnectionException {
+	public int logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, CredentialsErrorFormatException, DbConnectionException {
 		try {
 			User user = userManager.getUser(usernameOrEmail, usernameOrEmail);
 			if (checkHashedPassword(password, user.getPassword())) {
-				userManager.setCurrentUserId(user.getId());
-				return user;
+				return user.getId();
 			} else {
 				throw new CredentialsErrorFormatException("The username/email or password is incorrect.");
 			}
@@ -107,5 +108,4 @@ public class AccountManager {
 			throw e;
 		}
 	}
-
 }

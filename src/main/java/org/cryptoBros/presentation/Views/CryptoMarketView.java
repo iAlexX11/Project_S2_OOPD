@@ -8,9 +8,7 @@ import java.awt.event.ActionListener;
 
 public class CryptoMarketView extends Pages {
 
-	private JButton jBSettings;
-	private JButton jBPortfolio;
-	private JLabel jLProfit;
+    DynamicTable cryptoTable;
 
 	@Override
 	protected void configureView() {
@@ -25,8 +23,6 @@ public class CryptoMarketView extends Pages {
 	public void setActions(ActionListener listener) {
         addHeaderActions(listener);
 	}
-
-
 
 	private JPanel setCore() {
 		JPanel core = new JPanel(new BorderLayout());
@@ -48,10 +44,15 @@ public class CryptoMarketView extends Pages {
         JLabel title = new JLabel("Current Cryptocurrencies Market");
         title.setFont(new Font("Apple Casual", Font.BOLD, 35));
         title.setForeground(Color.BLACK);
-        DynamicTable cryptoTable = new DynamicTable();
+        cryptoTable = new DynamicTable();
+
         panel.add(title, BorderLayout.NORTH);
         panel.add(cryptoTable, BorderLayout.CENTER);
 
         return panel;
+    }
+
+    public void updateCryptoTable(String name, double currentPrice, double change, double percentage) {
+        cryptoTable.update(name, currentPrice, change, percentage);
     }
 }
