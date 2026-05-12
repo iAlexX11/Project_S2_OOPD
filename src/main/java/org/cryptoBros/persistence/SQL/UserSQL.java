@@ -114,4 +114,42 @@ public class UserSQL implements UserPersistence {
 			throw new DbConnectionException("Error fetching user: " + e.getMessage());
 		}
 	}
+
+	@Override
+	public void updateUserBalance(int userId, double newBalance) throws UserNotFoundException, DbConnectionException {
+		String query = "UPDATE users SET balance = ? WHERE user_id = ?";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setDouble(1, newBalance);
+			ps.setInt(2, userId);
+
+			int affectedRows = ps.executeUpdate();
+
+			if (affectedRows == 0) {
+				throw new UserNotFoundException("User with user_id " + userId + " not found");
+			}
+		} catch (SQLException e) {
+			throw new DbConnectionException("Error updating balance: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public double adjustUserBalance(int userId, double amount) throws UserNotFoundException, DbConnectionException {
+		String query = "UPDATE users SET balance = balance + ? WHERE user_id = ? RETURNING balance";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setDouble(1, amount);
+			ps.setInt(2, userId);
+
+			var rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getDouble("balance");
+			} else {
+				throw new UserNotFoundException("User with user_id " + userId + " not found");
+			}
+		} catch (SQLException e) {
+			throw new DbConnectionException("Error adjusting balance: " + e.getMessage());
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
+import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
@@ -10,6 +11,7 @@ public class UserController implements PagesListeners {
 
     private final InitialController initialController;
 	private final FrameController frameController;
+    private final CryptoManager cryptoManager;
 	private final UserManager userManager;
     private final SettingController settingController;
     private final CryptoMarketController cryptoMarketController;
@@ -21,9 +23,14 @@ public class UserController implements PagesListeners {
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.settingController = new SettingController(frameController, this);
-        this.userManager = new UserManager();
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
         this.initialController = initialController;
+
+        this.userManager = new UserManager();
+        this.cryptoManager = new CryptoManager(cryptoMarketController);
+
+        userManager.addBalanceListener(cryptoMarketController);
+        userManager.addBalanceListener(settingController);
         this.portfolioController = new PortfolioController(frameController, this);
 	}
 
@@ -40,25 +47,28 @@ public class UserController implements PagesListeners {
 
     public void displayHome(int id) {
         userManager.setCurrentUserId(id);
+        userManager.addBalanceListener(cryptoMarketController);
+        userManager.addBalanceListener(settingController);
+        userManager.startBalanceScheduler();
         cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
     }
 
     private void logout() {
-        userManager.clearBalanceListener();
         userManager.clearCurrentUser();
+        userManager.stopBalanceScheduler();
+        userManager.clearBalanceListener();
         initialController.startProgram();
     }
 
     @Override
     public void setAction(ButtonEnumeration action) {
+        double currentBalance = getBalance(userManager.getCurrentUserId());
         switch (action) {
             case SETTINGS -> {
-                settingController.displaySettings(100); //To be implement the get balance
-                userManager.updateBalanceListener(settingController); // This is so he know how has to notify the change in balance
+                settingController.displaySettings(currentBalance);
             }
             case HOME -> {
-                cryptoMarketController.displayCryptoMarketView(100);
-                userManager.updateBalanceListener(cryptoMarketController);
+                cryptoMarketController.displayCryptoMarketView(currentBalance);
             }
             case PORTFOLIO -> {
                 portfolioController.displayPortfolioView(100);

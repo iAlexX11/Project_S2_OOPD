@@ -87,6 +87,8 @@ public abstract class Pages extends BaseView{
 		jLBalance.setText("The balance is: " + String.format("%.2f", balance) + "€");
 		jLBalance.setForeground(Color.WHITE);
 		jLBalance.setFont(new Font("Apple Casual", Font.PLAIN, 18));
+		jLBalance.revalidate();
+		jLBalance.repaint();
 	}
 
 }

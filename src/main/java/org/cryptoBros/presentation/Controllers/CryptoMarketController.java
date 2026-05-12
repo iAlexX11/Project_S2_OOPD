@@ -1,14 +1,17 @@
 package org.cryptoBros.presentation.Controllers;
 
-import org.cryptoBros.business.BalanceListener;
+import org.cryptoBros.business.Liseners.BalanceListener;
+import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
 import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.CryptoMarketView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
-public class CryptoMarketController implements ActionListener, BalanceListener {
+public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener {
 
     private final FrameController frameController;
     private final CryptoMarketView cryptoMarketView;
@@ -19,6 +22,7 @@ public class CryptoMarketController implements ActionListener, BalanceListener {
         this.cryptoMarketView = new CryptoMarketView();
         this.pagesListeners = pagesListeners;
         cryptoMarketView.setActions(this);
+        updateData("Bitcoin", 12.32, -1.32, -0.02);
     }
 
     public void displayCryptoMarketView(double balance) {
@@ -35,5 +39,10 @@ public class CryptoMarketController implements ActionListener, BalanceListener {
     @Override
     public void balanceChanged(double balance) {
         cryptoMarketView.updateBalance(balance);
+    }
+
+    @Override
+    public void updateData(String name, double currentPrice, double change, double percentage) {
+        cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
     }
 }
