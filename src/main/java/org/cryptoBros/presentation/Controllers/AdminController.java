@@ -42,6 +42,7 @@ public class AdminController implements PagesListeners {
 			case LOGOUT -> adminLogout();
 			case ACCOUNT -> System.out.println("Account");
 			case DELETE -> System.out.println("Delete");
+			case MANAGE_CRYPTO -> System.out.println("Manage Crypto");
 		}
 	}
 }
