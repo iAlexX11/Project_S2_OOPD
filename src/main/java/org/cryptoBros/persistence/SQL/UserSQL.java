@@ -96,11 +96,11 @@ public class UserSQL implements UserPersistence {
     }
 
 	@Override
-	public double getUserBalance(int id) throws UserNotFoundException, DbConnectionException {
+	public double getUserBalance(long id) throws UserNotFoundException, DbConnectionException {
 		String query = "SELECT balance FROM users WHERE user_id = ?";
 
 		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
-			ps.setInt(1, id);
+			ps.setLong(1, id);
 
 			var rs = ps.executeQuery();
 			if (rs.next()) {
@@ -116,12 +116,12 @@ public class UserSQL implements UserPersistence {
 	}
 
 	@Override
-	public void updateUserBalance(int userId, double newBalance) throws UserNotFoundException, DbConnectionException {
+	public void updateUserBalance(long userId, double newBalance) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = ? WHERE user_id = ?";
 
 		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 			ps.setDouble(1, newBalance);
-			ps.setInt(2, userId);
+			ps.setLong(2, userId);
 
 			int affectedRows = ps.executeUpdate();
 
@@ -134,12 +134,12 @@ public class UserSQL implements UserPersistence {
 	}
 
 	@Override
-	public double adjustUserBalance(int userId, double amount) throws UserNotFoundException, DbConnectionException {
+	public double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = balance + ? WHERE user_id = ? RETURNING balance";
 
 		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
 			ps.setDouble(1, amount);
-			ps.setInt(2, userId);
+			ps.setLong(2, userId);
 
 			var rs = ps.executeQuery();
 
