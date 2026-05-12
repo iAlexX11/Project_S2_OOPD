@@ -24,6 +24,7 @@ public class UserController implements PagesListeners {
 		this.frameController = frameController;
         this.settingController = new SettingController(frameController, this);
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
+        this.portfolioController = new PortfolioController(frameController, this);
         this.initialController = initialController;
 
         this.userManager = new UserManager();
@@ -31,7 +32,7 @@ public class UserController implements PagesListeners {
 
         userManager.addBalanceListener(cryptoMarketController);
         userManager.addBalanceListener(settingController);
-        this.portfolioController = new PortfolioController(frameController, this);
+        userManager.addBalanceListener(portfolioController);
 	}
 
 	public double getBalance(int id) {
