@@ -12,5 +12,6 @@ public enum ButtonEnumeration {
     ACCOUNT,
     DELETE,
     HOME,
-    CONFIRM_BALANCE
+    CONFIRM_BALANCE,
+    ADD_CRYPTO
 }

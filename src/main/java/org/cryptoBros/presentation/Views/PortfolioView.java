@@ -12,8 +12,6 @@ public class PortfolioView extends Pages{
 
     private PortfolioTable portfolioTable;
     private JTextField jTFAddBalance;
-    private JLabel jLBalance;
-    private JLabel jLProfit;
 
     @Override
     protected void configureView() {
