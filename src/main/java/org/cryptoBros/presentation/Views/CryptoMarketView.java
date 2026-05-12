@@ -11,10 +11,16 @@ public class CryptoMarketView extends Pages {
 	private JButton jBSettings;
 	private JButton jBPortfolio;
 	private JLabel jLProfit;
+	private boolean isAdmin;
 
 	@Override
 	protected void configureView() {
-		JPanel header = setHeader();
+		JPanel header;
+		if (isAdmin) {
+			header = setAdminHeader();
+		} else {
+			header = setHeader();
+		}
 		JPanel core = setCore();
 		getContent().add(header, BorderLayout.NORTH);
 		getContent().add(core, BorderLayout.CENTER);
@@ -26,7 +32,17 @@ public class CryptoMarketView extends Pages {
         addHeaderActions(listener);
 	}
 
+	public void setTypeUser(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+		reconfigure();
+	}
 
+	private void reconfigure() {
+		getContent().removeAll();
+		configureView();
+		getContent().revalidate();
+		getContent().repaint();
+	}
 
 	private JPanel setCore() {
 		JPanel core = new JPanel(new BorderLayout());

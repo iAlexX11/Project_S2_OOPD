@@ -22,9 +22,9 @@ public class SettingController implements ActionListener, BalanceListener {
         settingsView.setActions(this);
     }
 
-    public void displaySettings(double currentBalance) {
+    public void displaySettings(boolean isAdmin, double currentBalance) {
         frameController.displayContent(settingsView);
-        settingsView.updateBalance(currentBalance);
+        if (!isAdmin) {settingsView.updateBalance(currentBalance);}
     }
 
     @Override

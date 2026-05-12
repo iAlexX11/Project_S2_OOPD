@@ -44,7 +44,7 @@ public class UserController implements PagesListeners {
         userManager.addBalanceListener(cryptoMarketController);
         userManager.addBalanceListener(settingController);
         userManager.startBalanceScheduler();
-        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
+        cryptoMarketController.displayCryptoMarketView(false, getBalance(userManager.getCurrentUserId()));
     }
 
     private void logout() {
@@ -59,10 +59,10 @@ public class UserController implements PagesListeners {
         double currentBalance = getBalance(userManager.getCurrentUserId());
         switch (action) {
             case SETTINGS -> {
-                settingController.displaySettings(currentBalance);
+                settingController.displaySettings(false, currentBalance);
             }
             case HOME -> {
-                cryptoMarketController.displayCryptoMarketView(currentBalance);
+                cryptoMarketController.displayCryptoMarketView(false, currentBalance);
             }
             case PORTFOLIO -> System.out.println("PORTFOLIO");
             case BACK -> System.out.println("Back");

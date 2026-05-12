@@ -25,12 +25,14 @@ public class RegistrationController implements ActionListener {
 	private final AccountManager accountManager;
 	private final UserManager userManager;
     private final UserController userController;
+	private final AdminController adminController;
 
 	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.userManager = new UserManager();
+		this.adminController = new AdminController(frameController, initialController);
 		this.accountManager = new AccountManager(this.userManager);
         this.userController = new UserController(frameController, initialController);
 		loginView.setActions(this);
@@ -82,6 +84,7 @@ public class RegistrationController implements ActionListener {
            char[] password = loginView.getPassword();
            if (accountManager.checkHashedPassword(password, adminPassword)) {
                System.out.println("Admin logIn successfully");
+			   adminController.displayAdminHome();
            }
            else {
 			   frameController.showError("This username or password are wrong!");

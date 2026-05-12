@@ -21,9 +21,10 @@ public class CryptoMarketController implements ActionListener, BalanceListener {
         cryptoMarketView.setActions(this);
     }
 
-    public void displayCryptoMarketView(double balance) {
+    public void displayCryptoMarketView(boolean isAdmin, double balance) {
+		cryptoMarketView.setTypeUser(isAdmin);
         frameController.displayContent(cryptoMarketView);
-        cryptoMarketView.updateBalance(balance);
+        if (!isAdmin) {cryptoMarketView.updateBalance(balance);}
     }
 
     @Override

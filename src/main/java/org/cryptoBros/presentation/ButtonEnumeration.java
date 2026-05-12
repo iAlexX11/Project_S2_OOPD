@@ -11,5 +11,6 @@ public enum ButtonEnumeration {
     LOGOUT,
     ACCOUNT,
     DELETE,
-    HOME
+    HOME,
+	MANAGE_CRYPTO
 }
