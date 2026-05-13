@@ -2,6 +2,8 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CryptoManager;
+import org.cryptoBros.business.Liseners.BalanceListener;
+import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 
@@ -37,7 +39,7 @@ public class UserController{
         return 0;
 	}
 
-    private void logout() {
+    public void logout() {
         userManager.clearCurrentUser();
         userManager.stopBalanceScheduler();
         userManager.clearBalanceListener();
@@ -50,5 +52,18 @@ public class UserController{
 
     public void logIn(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException {
         id = accountManager.logInNormalUser(usernameOrEmail, password);
+    }
+
+    public void registerBalanceListener(BalanceListener listener) {
+        userManager.changeBalanceListener(listener);
+    }
+
+    public void registerCryptoListener(CryptoListener listener) {
+        cryptoManager.addCryptoListener(listener);
+    }
+
+    public void pushCurrentBalance(BalanceListener listener) {
+        double balance = getBalance(userManager.getCurrentUserId());
+        listener.balanceChanged(balance);
     }
 }

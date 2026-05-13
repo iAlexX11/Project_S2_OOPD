@@ -104,8 +104,8 @@ public class DynamicTable extends JPanel {
 
     private void addRow(String name, double price, double change, double percentage) {
         String priceStr      = "€ " + price;
-        String changeStr     = (change >= 0 ? "+" : "-") + "€ " + change;
-        String percentageStr = (percentage >= 0 ? "+" : "-") + percentage + "%";
+        String changeStr     = (change >= 0 ? "+" : "") + "€ " + change;
+        String percentageStr = (percentage >= 0 ? "+" : "") + percentage + "%";
 
         model.addRow(new Object[]{name, priceStr, changeStr, percentageStr });
 

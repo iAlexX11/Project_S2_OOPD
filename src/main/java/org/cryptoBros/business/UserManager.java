@@ -17,15 +17,19 @@ import java.util.concurrent.TimeUnit;
 
 public class UserManager {
 	private int currentUserId = -1;
-	private final UserPersistence userPersistence = new UserSQL();
+	private final UserPersistence userPersistence;
 
-	private final List<BalanceListener> balanceListeners = new CopyOnWriteArrayList<>();
+	private BalanceListener balanceListeners;
 	private ScheduledExecutorService scheduler;
 
 	private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
 	private static final long INTERVAL_SECONDS = 10;
 
-	public User addUser(User user) throws UserNotAddException, DbConnectionException {
+    public UserManager() {
+        this.userPersistence = new UserSQL();
+    }
+
+    public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
 	}
 
@@ -45,27 +49,16 @@ public class UserManager {
 		return currentUserId;
 	}
 
-	public void updateBalanceListener(BalanceListener balanceListener) {
-		addBalanceListener(balanceListener);
-	}
-
-    public void clearBalanceListener() {
-        balanceListeners.clear();
-    }
-
     public void clearCurrentUser() {
         this.currentUserId = -1;
     }
 
-	public void addBalanceListener(BalanceListener listener) {
-		if (listener != null && !balanceListeners.contains(listener)) {
-			balanceListeners.add(listener);
+	public void changeBalanceListener(BalanceListener listener) {
+		if (listener != null) {
+			balanceListeners = listener;
 		}
 	}
 
-	public void removeBalanceListener(BalanceListener listener) {
-		balanceListeners.remove(listener);
-	}
 
 	public double addBalance(double amount) throws UserNotFoundException, DbConnectionException {
 		if (currentUserId == -1) {
@@ -91,9 +84,7 @@ public class UserManager {
 
 	private void notifyBalanceListeners(double newBalance) {
 		SwingUtilities.invokeLater(() -> {
-			for (BalanceListener listener : balanceListeners) {
-				listener.balanceChanged(newBalance);
-			}
+            balanceListeners.balanceChanged(newBalance);
 		});
 	}
 
@@ -126,4 +117,8 @@ public class UserManager {
 			// Silent fail - scheduler continues
 		}
 	}
+
+    public void clearBalanceListener() {
+        balanceListeners = null;
+    }
 }

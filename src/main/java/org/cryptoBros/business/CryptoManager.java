@@ -6,8 +6,8 @@ import org.cryptoBros.persistence.SQL.CryptoSQL;
 
 public class CryptoManager {
 
-    CryptoListener cryptoListener;
-    CryptoPersistence cryptoPersistence;
+    private CryptoListener cryptoListener;
+    private CryptoPersistence cryptoPersistence;
 
     public CryptoManager() {
         this.cryptoListener = cryptoListener;
@@ -15,4 +15,7 @@ public class CryptoManager {
     }
 
 
+    public void addCryptoListener(CryptoListener listener) {
+        this.cryptoListener = listener;
+    }
 }
