@@ -90,13 +90,18 @@ public class CryptoManager {
             PurchaseNotAddedException,
             UserNotFoundException
     {
+        if (units <= 0) {
+            throw new PurchaseNotAddedException("Units to purchase must be greater than zero.");
+        }
+
         // fetch crypto's current price
         double currentPrice = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
 
         // fetch user balance
         double userBalance = userPersistence.getUserBalance(userId);
+        double totalCost = currentPrice * units;
 
-        if (currentPrice > userBalance) {
+        if (totalCost > userBalance) {
             throw new PurchaseNotAddedException("You don't have enough money to purchase this crypto.");
         }
 
