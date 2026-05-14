@@ -14,6 +14,4 @@ public interface AtomicPersistence {
     void deleteCryptoWithBot(String symbol)
             throws DbConnectionException, CryptoNotFoundException;
 
-    void purchaseCryptoWithBalanceUpdate(long userId, String symbol, double currentPrice, double units, double totalCost)
-            throws DbConnectionException, CryptoNotFoundException;
 }
