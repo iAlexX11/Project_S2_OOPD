@@ -96,6 +96,7 @@ public class CryptoManager {
 
         // fetch crypto's current price
         double currentPrice = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
+        double totalCost = currentPrice * units;
 
         // fetch user balance
         double userBalance = userPersistence.getUserBalance(userId);
@@ -105,8 +106,8 @@ public class CryptoManager {
             throw new PurchaseNotAddedException("You don't have enough money to purchase this crypto.");
         }
 
-        // if price found and user has enough balance -> execute purchase
-        portfolioPersistence.buyCrypto(userId, symbol, currentPrice, units);
+        // execute the portfolio write and balance debit together in one transaction
+        atomicDb.purchaseCryptoWithBalanceUpdate(userId, symbol, currentPrice, units, totalCost);
     }
 
 
