@@ -166,6 +166,8 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
+
+
     private long fetchBotUserId(Connection conn, String symbol)
             throws SQLException, CryptoNotFoundException {
 
