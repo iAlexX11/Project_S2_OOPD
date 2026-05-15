@@ -1,11 +1,16 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.CryptoManager;
+import org.cryptoBros.business.AccountManager;
+import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
 import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Views.ErrorsView;
+
+import java.lang.reflect.AccessFlag;
 
 public class UserController implements PagesListeners {
 
@@ -21,13 +26,13 @@ public class UserController implements PagesListeners {
     private String email;
 
 	public UserController(FrameController frameController, InitialController initialController) {
-		this.frameController = frameController;
+        this.frameController = frameController;
         this.settingController = new SettingController(frameController, this);
         this.cryptoMarketController = new CryptoMarketController(frameController, this);
         this.portfolioController = new PortfolioController(frameController, this);
         this.initialController = initialController;
 
-        this.userManager = new UserManager();
+        this.userManager =  new UserManager();
         this.cryptoManager = new CryptoManager(cryptoMarketController);
 
         userManager.addBalanceListener(cryptoMarketController);
@@ -55,10 +60,21 @@ public class UserController implements PagesListeners {
     }
 
     private void logout() {
+        userManager.clearBalanceListener();
         userManager.clearCurrentUser();
         userManager.stopBalanceScheduler();
         userManager.clearBalanceListener();
         initialController.startProgram();
+    }
+
+    private void deleteUser() {
+        try {
+            AccountManager accountManager = new AccountManager(userManager);
+            accountManager.deleteUser(userManager.getCurrentUserId());
+            logout();
+        } catch (UserNotFoundException | DbConnectionException e) {
+            ErrorsView.showError(frameController.getMainFram() ,e.getMessage());
+        }
     }
 
     @Override
@@ -77,10 +93,9 @@ public class UserController implements PagesListeners {
 
             }
             //TODO: The cryptos table
-            case BACK -> System.out.println("Back");
             case LOGOUT -> logout();
             case ACCOUNT -> System.out.println("Account");
-            case DELETE -> System.out.println("Delete");
+            case DELETE -> deleteUser();
         }
     }
 }

@@ -16,14 +16,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class UserManager {
-	private int currentUserId = -1;
-	private final UserPersistence userPersistence = new UserSQL();
+	private int currentUserId; // -1;
+	private final UserPersistence userPersistence;
 
-	private final List<BalanceListener> balanceListeners = new CopyOnWriteArrayList<>();
-	private ScheduledExecutorService scheduler;
+    private final List<BalanceListener> balanceListeners = new CopyOnWriteArrayList<>();
+    private ScheduledExecutorService scheduler;
 
-	private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
-	private static final long INTERVAL_SECONDS = 10;
+    private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
+    private static final long INTERVAL_SECONDS = 10;
+
+	private BalanceListener balanceListener;
+    public UserManager () {
+        this.userPersistence = new UserSQL();
+    }
 
 	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
@@ -46,11 +51,11 @@ public class UserManager {
 	}
 
 	public void updateBalanceListener(BalanceListener balanceListener) {
-		addBalanceListener(balanceListener);
+		this.balanceListener = balanceListener;
 	}
 
     public void clearBalanceListener() {
-        balanceListeners.clear();
+        this.balanceListener = null;
     }
 
     public void clearCurrentUser() {
