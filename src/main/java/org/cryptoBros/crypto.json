@@ -4,34 +4,34 @@
         "symbol": "BTC",
         "original_price": 30000,
         "current_price": 30000,
-        "volatility": 0.05
+        "volatility": 2.0
     },
     {
         "name": "Ethereum",
         "symbol": "ETH",
         "original_price": 2000,
         "current_price": 2000,
-        "volatility": 0.1
+        "volatility": 1.5
     },
     {
         "name": "Litecoin",
         "symbol": "LTC",
         "original_price": 150,
         "current_price": 150,
-        "volatility": 0.15
+        "volatility": 3.5
     },
     {
         "name": "Ripple",
         "symbol": "XRP",
         "original_price": 0.5,
         "current_price": 0.5,
-        "volatility": 0.2
+        "volatility": 3.0
     },
     {
         "name": "Cardano",
         "symbol": "ADA",
         "original_price": 1.2,
         "current_price": 1.2,
-        "volatility": 0.25
+        "volatility": 0.5
     }
 ]

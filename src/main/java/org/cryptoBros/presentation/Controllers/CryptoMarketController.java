@@ -29,7 +29,7 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
         switch (buttonEnumeration) {
             case SETTINGS -> navigation.navigate(PagesName.SETTING);
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
-            case PORTFOLIO -> System.out.println("PORTFOLIO");
+            case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
         }
     }
 
@@ -42,7 +42,6 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     public void updateData(String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
     }
-
 
     public BaseView getView() {
         return cryptoMarketView;

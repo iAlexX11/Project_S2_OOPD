@@ -9,27 +9,25 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
 import javax.swing.SwingUtilities;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class UserManager {
-	private int currentUserId = -1;
+	private int currentUserId; // -1;
 	private final UserPersistence userPersistence;
 
-	private BalanceListener balanceListeners;
-	private ScheduledExecutorService scheduler;
+    private BalanceListener balanceListeners;
+    private ScheduledExecutorService scheduler;
 
-	private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
+    private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
 	private static final long INTERVAL_SECONDS = 10;
 
     public UserManager() {
         this.userPersistence = new UserSQL();
     }
 
-    public User addUser(User user) throws UserNotAddException, DbConnectionException {
+	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
 	}
 
@@ -53,9 +51,13 @@ public class UserManager {
         this.currentUserId = -1;
     }
 
+	public void updateBalanceListener(BalanceListener balanceListener) {
+		this.balanceListeners = balanceListener;
+	}
+
 	public void changeBalanceListener(BalanceListener listener) {
 		if (listener != null) {
-			balanceListeners = listener;
+            this.balanceListeners = listener;
 		}
 	}
 

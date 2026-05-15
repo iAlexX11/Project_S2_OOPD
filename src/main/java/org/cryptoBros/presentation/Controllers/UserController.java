@@ -6,6 +6,7 @@ import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.presentation.Views.ErrorsView;
 
 public class UserController{
 
@@ -15,7 +16,6 @@ public class UserController{
     private final AccountManager accountManager;
 	private final UserManager userManager;
 
-    private int id;
 
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
@@ -24,8 +24,6 @@ public class UserController{
         this.userManager = new UserManager();
         this.cryptoManager = new CryptoManager();
         this.accountManager = new AccountManager(userManager);
-
-        this.id = 0;
 	}
 
 	public double getBalance(int id) {
@@ -46,12 +44,25 @@ public class UserController{
         initialController.startProgram();
     }
 
+    public void deleteUser() {
+        try {
+            AccountManager accountManager = new AccountManager(userManager);
+            accountManager.deleteUser(userManager.getCurrentUserId());
+            userManager.clearCurrentUser();
+            logout();
+        } catch (UserNotFoundException | DbConnectionException e) {
+            ErrorsView.showError(frameController.getMainFram() ,e.getMessage());
+        }
+    }
+
     public void signUpLogic(String email, char[] password, char[] confirmedPassword, String username) throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException {
-            id = accountManager.signUpLogic(email, password, confirmedPassword, username);
+        int id = accountManager.signUpLogic(email, password, confirmedPassword, username);
+        userManager.setCurrentUserId(id);
     }
 
     public void logIn(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException {
-        id = accountManager.logInNormalUser(usernameOrEmail, password);
+        int id = accountManager.logInNormalUser(usernameOrEmail, password);
+        userManager.setCurrentUserId(id);
     }
 
     public void registerBalanceListener(BalanceListener listener) {

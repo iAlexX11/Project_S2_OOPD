@@ -1,5 +1,7 @@
 package org.cryptoBros.business;
 import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.persistence.SQL.UserSQL;
+import org.cryptoBros.persistence.UserPersistence;
 import org.passay.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -11,9 +13,12 @@ import static org.passay.EnglishCharacterData.*;
 
 public class AccountManager {
 	private final UserManager userManager;
+    private final UserPersistence userPersistence;
+
 
 	public AccountManager(UserManager userManager) {
 		this.userManager = userManager;
+        userPersistence = new UserSQL();
 	}
 
 	public int signUpLogic(String email, char[] password, char[] confirmPassword, String username)
@@ -33,8 +38,6 @@ public class AccountManager {
 		} catch (UserNotFoundException e) {
 			User user = new User(username, email, hashedPassword);
 			User userWithId = userManager.addUser(user);
-            user = null;
-            userWithId = null;
             return userWithId.getId();
 		} catch (DbConnectionException ex) {
 			throw ex;
@@ -108,4 +111,8 @@ public class AccountManager {
 			throw e;
 		}
 	}
+
+    public void deleteUser(int id) throws UserNotFoundException, DbConnectionException {
+        userPersistence.removeUser(id);
+    }
 }

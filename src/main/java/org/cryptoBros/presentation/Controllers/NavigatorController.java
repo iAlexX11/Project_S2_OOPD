@@ -9,6 +9,7 @@ public class NavigatorController implements Navigation {
     private final CryptoMarketController cryptoMarketController;
     private final FrameController frameController;
     private final SettingController settingController;
+    private final PortfolioController portfolioController;
     private final UserController userController;
 
     public NavigatorController(FrameController frameController, UserController userController) {
@@ -16,8 +17,10 @@ public class NavigatorController implements Navigation {
         this.userController = userController;
         this.cryptoMarketController = new CryptoMarketController(userController, this);
         this.settingController = new SettingController(userController, this);
+        this.portfolioController = new PortfolioController(userController, this);
 
-        userController.registerBalanceListener(settingController);
+        userController.registerBalanceListener(cryptoMarketController);
+        userController.pushCurrentBalance(cryptoMarketController);
         frameController.displayContent(cryptoMarketController.getView());
     }
 
@@ -32,7 +35,13 @@ public class NavigatorController implements Navigation {
             }
             case CRYPTO_MARKET ->  {
                 userController.registerBalanceListener(cryptoMarketController);
+                userController.pushCurrentBalance(cryptoMarketController);
                 frameController.displayContent(cryptoMarketController.getView());
+            }
+            case PORTFOLIO ->  {
+                userController.registerBalanceListener(portfolioController);
+                userController.pushCurrentBalance(portfolioController);
+                frameController.displayContent(portfolioController.getView());
             }
         }
     }

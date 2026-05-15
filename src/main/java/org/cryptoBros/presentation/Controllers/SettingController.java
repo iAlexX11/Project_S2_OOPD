@@ -19,7 +19,7 @@ public class SettingController implements ActionListener, BalanceListener {
 
     public SettingController(UserController userController, Navigation navigation) {
         this.userController = userController;
-        this.navigation =navigation;
+        this.navigation = navigation;
         this.settingsView = new SettingsView();
         settingsView.setActions(this);
     }
@@ -30,10 +30,10 @@ public class SettingController implements ActionListener, BalanceListener {
         switch (buttonEnumeration) {
             case SETTINGS -> navigation.navigate(PagesName.SETTING);
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
-            case PORTFOLIO -> System.out.println("PORTFOLIO");
+            case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
             case LOGOUT -> userController.logout();
             case ACCOUNT -> System.out.println("Account");
-            case DELETE -> System.out.println("Delete");
+            case DELETE -> userController.deleteUser();
         }
     }
 
