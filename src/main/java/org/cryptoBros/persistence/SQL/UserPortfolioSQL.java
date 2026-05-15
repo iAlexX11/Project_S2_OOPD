@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class UserPortfolioSQL implements UserPortfolioPersistence {
 
     @Override
-    public void buyCrypto(int userId, String cryptoSymbol, double currentPrice, double units)
+    public void buyCrypto(long userId, String cryptoSymbol, double currentPrice, double units)
             throws PurchaseNotAddedException, DbConnectionException {
 
         if (units <= 0) {
@@ -38,7 +38,7 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
                 .connect()
                 .prepareStatement(query)) {
 
-            ps.setInt(1, userId);
+            ps.setLong(1, userId);
             ps.setString(2, cryptoSymbol);
             ps.setDouble(3, units);
             ps.setDouble(4, currentPrice);
@@ -55,7 +55,7 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
     }
 
     @Override
-    public void sellCrypto(int userId, String cryptoSymbol, double units)
+    public void sellCrypto(long userId, String cryptoSymbol, double units)
             throws CryptoNotFoundException, SaleNotAddedException, DbConnectionException {
 
         // Fetch current units first so we can decide whether to UPDATE or DELETE.
@@ -71,7 +71,7 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
             // Read how many units the user currently holds.
             double currentUnits;
             try (PreparedStatement ps = conn.prepareStatement(selectQuery)) {
-                ps.setInt(1, userId);
+                ps.setLong(1, userId);
                 ps.setString(2, cryptoSymbol);
 
                 ResultSet rs = ps.executeQuery();
@@ -96,12 +96,12 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
                 // (triggering the 1% price drop) and then DELETE the zeroed row.
                 try (PreparedStatement ps = conn.prepareStatement(updateQuery)) {
                     ps.setDouble(1, units);
-                    ps.setInt(2, userId);
+                    ps.setLong(2, userId);
                     ps.setString(3, cryptoSymbol);
                     ps.executeUpdate(); // trigger fires here
                 }
                 try (PreparedStatement ps = conn.prepareStatement(deleteQuery)) {
-                    ps.setInt(1, userId);
+                    ps.setLong(1, userId);
                     ps.setString(2, cryptoSymbol);
                     ps.executeUpdate();
                 }
@@ -109,7 +109,7 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
                 // Partial sell → just update units (trigger fires automatically).
                 try (PreparedStatement ps = conn.prepareStatement(updateQuery)) {
                     ps.setDouble(1, units);
-                    ps.setInt(2, userId);
+                    ps.setLong(2, userId);
                     ps.setString(3, cryptoSymbol);
 
                     int affectedRows = ps.executeUpdate();

@@ -85,7 +85,11 @@ public class CryptoSQL implements CryptoPersistence {
 
     @Override
     public void addCrypto(Crypto newCrypto) throws CryptoNotAddedException,DbConnectionException {
-        String query = "INSERT INTO cryptocurrency (symbol, name, current_price, original_price, volatility) VALUES (?, ?, ?, ?, ?)";
+        String query = """
+            INSERT INTO Cryptocurrency (symbol, name, current_price, original_price, volatility)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT (symbol) DO NOTHING
+        """;
 
         try (PreparedStatement ps = db.connect().prepareStatement(query)) {
             ps.setString(1, newCrypto.getSymbol());

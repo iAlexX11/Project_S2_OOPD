@@ -3,10 +3,12 @@ package org.cryptoBros.presentation.Views;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DynamicTable extends JPanel {
 
+    private Map<String, Integer> cryptos = new HashMap<>();
 	private static final String[] columns = { "#", "Cryptocurrency", "Price (€)", "Change (€)", "% Change"};
 
 	private DefaultTableModel model;
@@ -81,7 +83,30 @@ public class DynamicTable extends JPanel {
 		add(sp, BorderLayout.CENTER);
 	}
 
-	public void addRow(Object[] row) { model.addRow(row); }
+    public void update(String name, double price, double change, double percentage) {
+        if (cryptos.containsKey(name)) {
+            String priceStr      = "€ " + price;
+            String changeStr     = (change >= 0 ? "+" : "") + "€ " + change;
+            String percentageStr = (percentage >= 0 ? "+" : "") + percentage + "%";
+
+            int row = cryptos.get(name);
+            model.setValueAt(name, row, 1);
+            model.setValueAt(priceStr, row, 2);
+            model.setValueAt(changeStr, row, 3);
+            model.setValueAt(percentageStr, row, 4);
+        } else {
+            addRow(name, price, change, percentage);
+        }
+    }
+
+    private void addRow(String name, double price, double change, double percentage) {
+        String priceStr      = "€ " + price;
+        String changeStr     = (change >= 0 ? "+" : "-") + "€ " + change;
+        String percentageStr = (percentage >= 0 ? "+" : "-") + percentage + "%";
+        int rowNum           = model.getRowCount() + 1;
+
+        cryptos.put(name, rowNum);
+        model.addRow(new Object[]{ rowNum, name, priceStr, changeStr, percentageStr });
+    }
 	public void clearRows() { model.setRowCount(0); }
-	public void setValueAt(Object value, int row, int col) { model.setValueAt(value, row, col); }
 }

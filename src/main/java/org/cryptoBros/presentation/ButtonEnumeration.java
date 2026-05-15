@@ -10,5 +10,6 @@ public enum ButtonEnumeration {
     LOGOUT,
     ACCOUNT,
     DELETE,
-    HOME
+    HOME,
+    CONFIRM_BALANCE
 }
