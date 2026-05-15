@@ -74,7 +74,7 @@ public class UserController{
     }
 
     public void pushCurrentBalance(BalanceListener listener) {
-        double balance = getBalance(userManager.getCurrentUserId());
+        double balance = getBalance(id);
         listener.balanceChanged(balance);
     }
 }
