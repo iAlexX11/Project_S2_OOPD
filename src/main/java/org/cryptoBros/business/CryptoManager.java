@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CryptoManager {
 
-    private final CryptoListener cryptoListener;
-    private final CryptoPersistence cryptoPersistence;
+    private CryptoListener cryptoListener;
+    private CryptoPersistence cryptoPersistence;
     private final Map<String, Bot> activeBots;
     private final AtomicPersistence atomicDb;
     private final UserPortfolioPersistence portfolioPersistence;
@@ -25,10 +25,8 @@ public class CryptoManager {
 
     /**
      * Builds a manager with its associated listener
-     * @param cryptoListener the listener
      */
-    public CryptoManager(CryptoListener cryptoListener) {
-        this.cryptoListener = cryptoListener;
+    public CryptoManager() {
         this.cryptoPersistence = new CryptoSQL();
         this.activeBots = new ConcurrentHashMap<>();
         this.atomicDb = new AtomicSQL();
@@ -110,4 +108,7 @@ public class CryptoManager {
     }
 
 
+    public void addCryptoListener(CryptoListener listener) {
+        this.cryptoListener = listener;
+    }
 }

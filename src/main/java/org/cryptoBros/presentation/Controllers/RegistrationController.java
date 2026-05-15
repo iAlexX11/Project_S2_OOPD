@@ -2,27 +2,20 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
-import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
-import org.cryptoBros.presentation.ButtonEnumeration;
-import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
-import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.Exceptions.UserNotAddException;
-import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
+import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 public class RegistrationController implements ActionListener {
 
 	private final FrameController frameController;
 	private final LoginView loginView;
 	private final SignUpView signUpView;
-	private final AccountManager accountManager;
 	private final UserManager userManager;
     private final UserController userController;
 
@@ -31,46 +24,39 @@ public class RegistrationController implements ActionListener {
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.userManager = new UserManager();
-		this.accountManager = new AccountManager(this.userManager);
         this.userController = new UserController(frameController, initialController);
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
 
-	public void login() {
+	public void displayLogin() {
 		frameController.displayContent(loginView);
 	}
 
-	public void signUp() {
+	public void displaySignUp() {
 		frameController.displayContent(signUpView);
 	}
 
-	public void signUpLogic() {
-		try {
-			int id = accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-            userController.displayHome(id);
-		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
-			frameController.showError(e.getMessage());
-		} catch (DbConnectionException ex) {
-			// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
-		}
-	}
+    private void signup (){
+        try {
+            userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
+            NavigatorController navigatorController = new NavigatorController(frameController, userController);
+        } catch (UserNotAddException |UserAlreadyExistsException | CredentialsErrorFormatException e) {
+            frameController.showError(e.getMessage());
+        } catch (DbConnectionException ex) {
+            //Never print this error in screen
+        }
+    }
 
-    private void logInUser() {
-        String usernameOrEmail = loginView.getUsername();
+    private void login () {
+        try {
+            userController.logIn(loginView.getUsername(), loginView.getPassword());
+            NavigatorController navigatorController = new NavigatorController(frameController, userController);
 
-        if (usernameOrEmail.compareTo("admin") == 0) {
-            logInAdmin();
-        } else {
-			try {
-				int id = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
-                userController.displayHome(id);
-			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
-				frameController.showError(e.getMessage());
-			} catch (DbConnectionException ex) {
-				// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
-			}
-
+        } catch (UserNotFoundException | CredentialsErrorFormatException e) {
+            frameController.showError(e.getMessage());
+        } catch (DbConnectionException ex) {
+            // NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
         }
     }
 
@@ -95,12 +81,10 @@ public class RegistrationController implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
 		switch (buttonEnumeration) {
-			case CONFIRM_SIGNUP -> signUpLogic();
-			case LOGIN -> login();
-			case CONFIRM_LOGIN -> logInUser();
-			case SIGNUP -> signUp();
+			case CONFIRM_SIGNUP -> signup();
+			case LOGIN -> displayLogin();
+			case CONFIRM_LOGIN -> login();
+			case SIGNUP -> displaySignUp();
 		}
 	}
-
-
 }

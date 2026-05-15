@@ -2,14 +2,12 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.persistence.SQL.DbConnectionSingleton;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
-import org.cryptoBros.presentation.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.ErrorsView;
 import org.cryptoBros.presentation.Views.WelcomeView;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -48,8 +46,8 @@ public class InitialController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
         switch (buttonEnumeration) {
-            case LOGIN -> registrationController.login();
-            case SIGNUP -> registrationController.signUp();
+            case LOGIN -> registrationController.displayLogin();
+            case SIGNUP -> registrationController.displaySignUp();
         }
     }
 }

@@ -1,8 +1,11 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
-import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Enum.PagesName;
+import org.cryptoBros.presentation.ListenersPersistence.Navigation;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
+import org.cryptoBros.presentation.Views.BaseView;
+import org.cryptoBros.presentation.Views.Pages;
 import org.cryptoBros.presentation.Views.SettingsView;
 
 import java.awt.event.ActionEvent;
@@ -10,30 +13,36 @@ import java.awt.event.ActionListener;
 
 public class SettingController implements ActionListener, BalanceListener {
 
-    private final FrameController frameController;
-    PagesListeners pagesListeners;
+    private final UserController userController;
+    private final Navigation navigation;
     private final SettingsView settingsView;
 
-    public SettingController(FrameController frameController, PagesListeners pagesListeners) {
-        this.frameController = frameController;
-        this.pagesListeners = pagesListeners;
+    public SettingController(UserController userController, Navigation navigation) {
+        this.userController = userController;
+        this.navigation = navigation;
         this.settingsView = new SettingsView();
         settingsView.setActions(this);
-    }
-
-    public void displaySettings(double currentBalance) {
-        frameController.displayContent(settingsView);
-        settingsView.updateBalance(currentBalance);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
-        pagesListeners.setAction(buttonEnumeration);
+        switch (buttonEnumeration) {
+            case SETTINGS -> navigation.navigate(PagesName.SETTING);
+            case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
+            case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
+            case LOGOUT -> userController.logout();
+            case ACCOUNT -> System.out.println("Account");
+            case DELETE -> userController.deleteUser();
+        }
     }
 
     @Override
     public void balanceChanged(double balance) {
         settingsView.updateBalance(balance);
+    }
+
+    public BaseView getView() {
+        return settingsView;
     }
 }
