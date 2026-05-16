@@ -34,7 +34,6 @@ public class AccountManager {
 			User user = new User(username, email, hashedPassword);
 			User userWithId = userManager.addUser(user);
             user = null;
-            userWithId = null;
             return userWithId.getId();
 		} catch (DbConnectionException ex) {
 			throw ex;
