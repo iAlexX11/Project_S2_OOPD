@@ -2,8 +2,7 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AdminManager;
 import org.cryptoBros.business.CryptoManager;
-import org.cryptoBros.presentation.ButtonEnumeration;
-import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 
 public class AdminController implements PagesListeners {
 
