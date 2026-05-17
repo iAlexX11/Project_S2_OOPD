@@ -13,4 +13,5 @@ public interface AtomicPersistence {
 
     void deleteCryptoWithBot(String symbol)
             throws DbConnectionException, CryptoNotFoundException;
+
 }

@@ -2,39 +2,35 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
-import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Enum.PagesName;
+import org.cryptoBros.presentation.ListenersPersistence.Navigation;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
+import org.cryptoBros.presentation.Views.BaseView;
 import org.cryptoBros.presentation.Views.CryptoMarketView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener {
 
-    private final FrameController frameController;
     private final CryptoMarketView cryptoMarketView;
-    PagesListeners pagesListeners;
+    private final Navigation navigation;
 
-    public CryptoMarketController(FrameController frameController, PagesListeners pagesListeners) {
-        this.frameController = frameController;
+    public CryptoMarketController(UserController userController, Navigation navigation) {
+        this.navigation = navigation;
         this.cryptoMarketView = new CryptoMarketView();
-        this.pagesListeners = pagesListeners;
         cryptoMarketView.setActions(this);
         updateData("Bitcoin", 12.32, -1.32, -0.02);
-    }
-
-    public void displayCryptoMarketView(boolean isAdmin, double balance) {
-		cryptoMarketView.setTypeUser(isAdmin);
-        frameController.displayContent(cryptoMarketView);
-        if (!isAdmin) {cryptoMarketView.updateBalance(balance);}
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
-        pagesListeners.setAction(buttonEnumeration);
+        switch (buttonEnumeration) {
+            case SETTINGS -> navigation.navigate(PagesName.SETTING);
+            case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
+            case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
+        }
     }
 
     @Override
@@ -45,5 +41,9 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     @Override
     public void updateData(String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
+    }
+
+    public BaseView getView() {
+        return cryptoMarketView;
     }
 }

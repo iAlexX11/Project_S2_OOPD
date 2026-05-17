@@ -1,4 +1,4 @@
-package org.cryptoBros.presentation;
+package org.cryptoBros.presentation.Enum;
 
 public enum ButtonEnumeration {
     SIGNUP,
@@ -7,7 +7,6 @@ public enum ButtonEnumeration {
     CONFIRM_LOGIN,
 	SETTINGS,
 	PORTFOLIO,
-    BACK,
     LOGOUT,
     ACCOUNT,
     DELETE,
