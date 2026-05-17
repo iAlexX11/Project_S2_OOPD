@@ -16,7 +16,6 @@ public class UserController{
     private final AccountManager accountManager;
 	private final UserManager userManager;
 
-
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.initialController = initialController;
@@ -74,7 +73,7 @@ public class UserController{
     }
 
     public void pushCurrentBalance(BalanceListener listener) {
-        double balance = getBalance(id);
+        double balance = getBalance(userManager.getCurrentUserId());
         listener.balanceChanged(balance);
     }
 }
