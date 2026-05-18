@@ -77,4 +77,12 @@ public class UserController{
         double balance = getBalance();
         listener.balanceChanged(balance);
     }
+
+    public void addBalance(double addBalanceAmount) {
+        try {
+            userManager.addBalance(addBalanceAmount);
+        } catch (UserNotFoundException | DbConnectionException e){
+            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+        }
+    }
 }
