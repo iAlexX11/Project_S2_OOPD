@@ -25,9 +25,9 @@ public class UserController {
         this.accountManager = new AccountManager();
 	}
 
-	public double getBalance(int id) {
+	public double getBalance(int userId) {
 		try {
-			return userManager.getUserBalance(id);
+			return userManager.getUserBalance();
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
@@ -70,6 +70,15 @@ public class UserController {
 
     public void pushCurrentBalance(BalanceListener listener) {
         double balance = getBalance(userManager.getCurrentUserId());
+
         listener.balanceChanged(balance);
+    }
+
+    public void addBalance(double addBalanceAmount) {
+        try {
+            userManager.addBalance(addBalanceAmount);
+        } catch (UserNotFoundException | DbConnectionException e){
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+        }
     }
 }

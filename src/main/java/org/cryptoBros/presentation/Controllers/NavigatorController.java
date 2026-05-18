@@ -21,7 +21,7 @@ public class NavigatorController implements Navigation {
 		this.adminController = adminController;
         this.cryptoMarketController = new CryptoMarketController(userController, adminController, this, isAdmin);
         this.settingController = new SettingController(userController, this, adminController, isAdmin);
-        this.portfolioController = new PortfolioController(userController, this, adminController);
+        this.portfolioController = new PortfolioController(userController, this);
 		this.manageCryptoController = new ManageCryptoController(frameController, this, adminController, isAdmin);
         frameController.displayContent(cryptoMarketController.getView());
 		this.isAdmin = isAdmin;

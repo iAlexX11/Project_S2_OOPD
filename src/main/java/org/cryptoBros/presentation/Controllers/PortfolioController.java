@@ -1,6 +1,8 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
+import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
@@ -14,14 +16,13 @@ public class PortfolioController implements ActionListener, BalanceListener {
 
     private final Navigation navigation;
     private final PortfolioView portfolioView;
-	private final UserController userController;
-	private final AdminController adminController;
+    private final UserController userController;
 
-    public PortfolioController(UserController userController, Navigation navigation, AdminController adminController) {
-		this.userController = userController;
-		this.adminController = adminController;
-		this.portfolioView = new PortfolioView();
+    public PortfolioController(UserController userController,  Navigation navigation) {
+        this.portfolioView = new PortfolioView();
         this.navigation = navigation;
+        this.userController = userController;
+
         portfolioView.setActions(this);
     }
 
@@ -45,7 +46,12 @@ public class PortfolioController implements ActionListener, BalanceListener {
             case SETTINGS -> navigation.navigate(PagesName.SETTING);
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
             case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
+            case CONFIRM -> addBalance();
         }
+    }
+
+    private void addBalance () {
+        userController.addBalance(portfolioView.getAddBalanceAmount());
     }
 
     @Override
