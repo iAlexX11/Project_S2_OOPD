@@ -1,8 +1,7 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
-import org.cryptoBros.presentation.ButtonEnumeration;
-import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.ManageCryptoView;
 
 import javax.swing.*;
@@ -14,12 +13,10 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 
     private final FrameController frameController;
     private final ManageCryptoView manageCryptoView;
-    private final PagesListeners pagesListeners;
 
-    public ManageCryptoController(FrameController frameController, PagesListeners pagesListeners) {
+    public ManageCryptoController(FrameController frameController) {
         this.frameController = frameController;
         this.manageCryptoView = new ManageCryptoView();
-        this.pagesListeners = pagesListeners;
 
         manageCryptoView.setActions(this);
     }
@@ -62,12 +59,10 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
         String command = e.getActionCommand();
 
         // TODO: Addition of a new cryptocurrency
-        if (ButtonEnumeration.ADD_CRYPTO.name().equals(command)) {
+		if (ButtonEnumeration.ADD_CRYPTO.name().equals(command)) {
             handleAddCrypto();
             return;
         }
-
-        pagesListeners.setAction(ButtonEnumeration.valueOf(command));
     }
 
     @Override

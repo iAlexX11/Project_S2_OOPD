@@ -8,7 +8,7 @@ import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.ErrorsView;
 
-public class UserController{
+public class UserController {
 
     private final InitialController initialController;
 	private final FrameController frameController;
@@ -22,7 +22,7 @@ public class UserController{
 
         this.userManager = new UserManager();
         this.cryptoManager = new CryptoManager();
-        this.accountManager = new AccountManager(userManager);
+        this.accountManager = new AccountManager();
 	}
 
 	public double getBalance(int id) {
@@ -45,7 +45,7 @@ public class UserController{
 
     public void deleteUser() {
         try {
-            AccountManager accountManager = new AccountManager(userManager);
+            AccountManager accountManager = new AccountManager();
             accountManager.deleteUser(userManager.getCurrentUserId());
             userManager.clearCurrentUser();
             logout();
@@ -66,10 +66,6 @@ public class UserController{
 
     public void registerBalanceListener(BalanceListener listener) {
         userManager.changeBalanceListener(listener);
-    }
-
-    public void registerCryptoListener(CryptoListener listener) {
-        cryptoManager.addCryptoListener(listener);
     }
 
     public void pushCurrentBalance(BalanceListener listener) {

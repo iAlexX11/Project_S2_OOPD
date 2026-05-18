@@ -14,9 +14,13 @@ public class PortfolioController implements ActionListener, BalanceListener {
 
     private final Navigation navigation;
     private final PortfolioView portfolioView;
+	private final UserController userController;
+	private final AdminController adminController;
 
-    public PortfolioController(UserController userController,  Navigation navigation) {
-        this.portfolioView = new PortfolioView();
+    public PortfolioController(UserController userController, Navigation navigation, AdminController adminController) {
+		this.userController = userController;
+		this.adminController = adminController;
+		this.portfolioView = new PortfolioView();
         this.navigation = navigation;
 
         portfolioView.setActions(this);
@@ -50,7 +54,15 @@ public class PortfolioController implements ActionListener, BalanceListener {
         portfolioView.updateBalance(balance);
     }
 
-    public BaseView getView() {
+	private void setSettings(boolean isAdmin) {
+		if (!isAdmin) {
+			userController.registerBalanceListener(this);
+			userController.pushCurrentBalance(this);
+		}
+	}
+
+    public BaseView getView(boolean isAdmin) {
+		setSettings(isAdmin);
         return portfolioView;
     }
 }

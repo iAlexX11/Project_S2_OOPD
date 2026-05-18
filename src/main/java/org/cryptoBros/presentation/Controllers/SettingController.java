@@ -16,11 +16,13 @@ public class SettingController implements ActionListener, BalanceListener {
     private final UserController userController;
     private final Navigation navigation;
     private final SettingsView settingsView;
+	private final AdminController adminController;
 
-    public SettingController(UserController userController, Navigation navigation) {
+    public SettingController(UserController userController, Navigation navigation, AdminController adminController) {
         this.userController = userController;
         this.navigation = navigation;
         this.settingsView = new SettingsView();
+		this.adminController = adminController;
         settingsView.setActions(this);
     }
 
@@ -37,12 +39,20 @@ public class SettingController implements ActionListener, BalanceListener {
         }
     }
 
+	private void setSettings(boolean isAdmin) {
+		if (!isAdmin) {
+			userController.registerBalanceListener(this);
+			userController.pushCurrentBalance(this);
+		}
+	}
+
     @Override
     public void balanceChanged(double balance) {
         settingsView.updateBalance(balance);
     }
 
-    public BaseView getView() {
+    public BaseView getView(boolean isAdmin) {
+		setSettings(isAdmin);
         return settingsView;
     }
 }

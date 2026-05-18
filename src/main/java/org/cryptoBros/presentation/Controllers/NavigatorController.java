@@ -11,37 +11,38 @@ public class NavigatorController implements Navigation {
     private final SettingController settingController;
     private final PortfolioController portfolioController;
     private final UserController userController;
+	private final AdminController adminController;
+	private boolean isAdmin = false;
 
-    public NavigatorController(FrameController frameController, UserController userController) {
+    public NavigatorController(FrameController frameController, UserController userController, AdminController adminController) {
         this.frameController = frameController;
         this.userController = userController;
-        this.cryptoMarketController = new CryptoMarketController(userController, this);
-        this.settingController = new SettingController(userController, this);
-        this.portfolioController = new PortfolioController(userController, this);
+		this.adminController = adminController;
+        this.cryptoMarketController = new CryptoMarketController(userController, adminController, this);
+        this.settingController = new SettingController(userController, this, adminController);
+        this.portfolioController = new PortfolioController(userController, this, adminController);
 
         userController.registerBalanceListener(cryptoMarketController);
         userController.pushCurrentBalance(cryptoMarketController);
-        frameController.displayContent(cryptoMarketController.getView());
+        frameController.displayContent(cryptoMarketController.getView(isAdmin));
     }
 
+	public void setUSerType(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 
+	// TODO: MOVE EVERYTHING TO THE CORRESPONDING CONTROLLER
     @Override
     public void navigate(PagesName name) {
         switch (name) {
             case SETTING -> {
-                userController.registerBalanceListener(settingController);
-                userController.pushCurrentBalance(settingController);
-                frameController.displayContent(settingController.getView());
+                frameController.displayContent(settingController.getView(isAdmin));
             }
             case CRYPTO_MARKET ->  {
-                userController.registerBalanceListener(cryptoMarketController);
-                userController.pushCurrentBalance(cryptoMarketController);
-                frameController.displayContent(cryptoMarketController.getView());
+				frameController.displayContent(cryptoMarketController.getView(isAdmin));
             }
             case PORTFOLIO ->  {
-                userController.registerBalanceListener(portfolioController);
-                userController.pushCurrentBalance(portfolioController);
-                frameController.displayContent(portfolioController.getView());
+                frameController.displayContent(portfolioController.getView(isAdmin));
             }
         }
     }

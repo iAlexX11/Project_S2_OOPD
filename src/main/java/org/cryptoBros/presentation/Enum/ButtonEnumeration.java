@@ -13,5 +13,6 @@ public enum ButtonEnumeration {
     HOME,
 	MANAGE_CRYPTO,
     CONFIRM_BALANCE,
-    ADD_CRYPTO
+    ADD_CRYPTO,
+	BACK
 }
