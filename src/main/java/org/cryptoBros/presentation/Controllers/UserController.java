@@ -26,9 +26,9 @@ public class UserController{
         this.accountManager = new AccountManager(userManager);
 	}
 
-	public double getBalance(int id) {
+	public double getBalance() {
 		try {
-			return userManager.getUserBalance(id);
+			return userManager.getUserBalance();
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
@@ -74,7 +74,7 @@ public class UserController{
     }
 
     public void pushCurrentBalance(BalanceListener listener) {
-        double balance = getBalance(id);
+        double balance = getBalance();
         listener.balanceChanged(balance);
     }
 }
