@@ -143,4 +143,12 @@ public class Bot implements Runnable {
         }
         return 0.0;
     }
+
+    public long getBotUserId() {
+        return botUserId;
+    }
+
+    public String getCryptoSymbol() {
+        return cryptoSymbol;
+    }
 }

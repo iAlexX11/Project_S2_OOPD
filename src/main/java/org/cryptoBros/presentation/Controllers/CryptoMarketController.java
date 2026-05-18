@@ -2,6 +2,7 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.User;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
@@ -15,13 +16,17 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 
     private final CryptoMarketView cryptoMarketView;
     private final Navigation navigation;
+    private UserController userController;
 
     public CryptoMarketController(UserController userController, Navigation navigation) {
         this.navigation = navigation;
         this.cryptoMarketView = new CryptoMarketView();
+        this.userController = userController;
         cryptoMarketView.setActions(this);
-        updateData("Bitcoin", 12.32, -1.32, -0.02);
+        userController.registerCryptoListener(this);
+        userController.getAllCrypto();
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {

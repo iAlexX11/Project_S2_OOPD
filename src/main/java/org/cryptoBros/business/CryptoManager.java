@@ -11,6 +11,8 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
 
+import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -110,5 +112,31 @@ public class CryptoManager {
 
     public void addCryptoListener(CryptoListener listener) {
         this.cryptoListener = listener;
+    }
+
+    public void getAllCrypto() throws DbConnectionException, CryptoNotFoundException {
+        List<Crypto> cryptos = cryptoPersistence.getAllCrypto();
+
+        for (Crypto crypto : cryptos) {
+            double currentPrice = cryptoPersistence.getCrypto(crypto.getSymbol()).getCurrentPrice();
+            double initialPrice = cryptoPersistence.getCrypto(crypto.getSymbol()).getInitialPrice();
+            cryptoListener.updateData(
+                crypto.getName(),
+                currentPrice,
+                    currentPrice - initialPrice,
+                    ((initialPrice - currentPrice) / initialPrice) * 100
+            );
+        }
+    }
+
+    public void loadInitialCrypto()
+            throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
+
+        List<Bot> bots = atomicDb.loadInitialData();
+
+        for (Bot bot : bots) {
+            activeBots.put(bot.getCryptoSymbol(), bot);
+            bot.start();
+        }
     }
 }

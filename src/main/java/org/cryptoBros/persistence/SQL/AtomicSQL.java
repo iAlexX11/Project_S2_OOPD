@@ -1,17 +1,31 @@
 package org.cryptoBros.persistence.SQL;
 
+import com.google.gson.Gson;
+import org.cryptoBros.business.Bot;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AtomicSQL implements AtomicPersistence {
+
+    private static final String CRYPTO_FILEPATH = "src/main/java/org/cryptoBros/crypto.json";
 
     private static final String INSERT_USER = """
         INSERT INTO Users (username, email, password)
         VALUES (?, ?, ?)
         """;
+
+    private static final String CHECK_CRYPTO_EXISTS = """
+    SELECT 1
+    FROM Cryptocurrency
+    WHERE symbol = ?
+    """;
 
     private static final String INSERT_CRYPTO = """
         INSERT INTO Cryptocurrency (symbol, name, current_price, original_price, volatility)
@@ -34,6 +48,11 @@ public class AtomicSQL implements AtomicPersistence {
 
     private static final String DELETE_USER = """
     DELETE FROM Users WHERE user_id = ?
+    """;
+
+    private static final String SELECT_EXISTING_BOTS = """
+    SELECT bot_id, crypto_id, volatility
+    FROM Bots
     """;
 
     /**
@@ -178,6 +197,65 @@ public class AtomicSQL implements AtomicPersistence {
                 throw new CryptoNotFoundException(
                         "No bot found for crypto '" + symbol + "'.");
             return rs.getLong("bot_id");
+        }
+    }
+
+
+    private boolean cryptoExists(Connection conn, String symbol) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(CHECK_CRYPTO_EXISTS)) {
+            ps.setString(1, symbol);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private List<Bot> loadExistingBots(Connection conn) throws SQLException {
+        List<Bot> bots = new java.util.ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(SELECT_EXISTING_BOTS);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                bots.add(new Bot(
+                        rs.getLong("bot_id"),
+                        rs.getString("crypto_id"),
+                        rs.getDouble("volatility")
+                ));
+            }
+        }
+
+        return bots;
+    }
+
+    @Override
+    public List<Bot> loadInitialData()
+            throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
+
+        Gson gson = new Gson();
+        List<Bot> bots = new java.util.ArrayList<>();
+
+        try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
+            FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
+
+            Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
+
+            if (cryptos != null) {
+                for (Crypto crypto : cryptos) {
+                    if (!cryptoExists(conn, crypto.getSymbol())) {
+                        long botUserId = createCryptoWithBot(crypto);
+                        bots.add(new Bot(botUserId, crypto.getSymbol(), crypto.getVolatility()));
+                    }
+                }
+            }
+
+            // also rebuild bots that already existed in the DB before startup
+            bots.addAll(loadExistingBots(conn));
+
+            return bots;
+
+        } catch (SQLException e) {
+            throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
         }
     }
 

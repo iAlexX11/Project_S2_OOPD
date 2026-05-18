@@ -85,4 +85,12 @@ public class UserController{
             ErrorsView.showError(frameController.getMainFram(), e.getMessage());
         }
     }
+
+    public void getAllCrypto() {
+        try {
+            cryptoManager.getAllCrypto();
+        } catch (DbConnectionException | CryptoNotFoundException e) {
+            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+        }
+    }
 }

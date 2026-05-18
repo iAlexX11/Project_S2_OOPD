@@ -5,6 +5,7 @@ import org.cryptoBros.persistence.Exceptions.CryptoNotAddedException;
 import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 
+import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -63,4 +64,5 @@ public interface CryptoPersistence {
      * @throws DbConnectionException if there is a problem with the database connection
      */
     Map<Instant, Double> getPriceHistory(String symbol) throws CryptoNotFoundException, DbConnectionException;
+
 }
