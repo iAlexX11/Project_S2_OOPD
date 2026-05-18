@@ -50,7 +50,7 @@ public class UserController {
             userManager.clearCurrentUser();
             logout();
         } catch (UserNotFoundException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFram() ,e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 

@@ -26,7 +26,7 @@ public class FrameController {
         this.mainFrame.displayContent(view);
     }
 
-    public MainFrame getMainFram() {
+    public MainFrame getMainFrame() {
         return mainFrame;
     }
 }
