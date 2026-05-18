@@ -14,6 +14,7 @@ public class PortfolioView extends Pages{
     private JTextField jTFAddBalance;
     private JLabel jLBalance;
     private JLabel jLProfit;
+    private JButton confirmButton;
 
     @Override
     protected void configureView() {
@@ -27,6 +28,9 @@ public class PortfolioView extends Pages{
     @Override
     public void setActions(ActionListener listener) {
         addHeaderActions(listener);
+
+        confirmButton.setActionCommand(ButtonEnumeration.CONFIRM.name());
+        confirmButton.addActionListener(listener);
     }
 
     private JPanel setCore() {
@@ -89,7 +93,7 @@ public class PortfolioView extends Pages{
         inputRow.add(quantityLabel);
         inputRow.add(jTFAddBalance);
 
-        JButton confirmButton = new JButton("Confirm");
+        confirmButton = new JButton("Confirm");
         confirmButton.setActionCommand(ButtonEnumeration.CONFIRM_BALANCE.name());
         confirmButton.setFont(new Font("SansSerif", Font.BOLD, 14));
         confirmButton.setBackground(new Color(99, 125, 217));
