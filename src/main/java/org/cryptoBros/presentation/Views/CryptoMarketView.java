@@ -12,43 +12,19 @@ public class CryptoMarketView extends Pages {
 
 	@Override
 	protected void configureView() {
-		JPanel header;
-		if (isAdmin) {
-			header = setAdminHeader();
-		} else {
-			header = setHeader();
-		}
-		JPanel core = setCore();
-		getContent().add(header, BorderLayout.NORTH);
-		getContent().add(core, BorderLayout.CENTER);
+		getContent().add(setCore(), BorderLayout.CENTER);
 	}
 
 	@Override
 	public void setActions(ActionListener listener) {
-		this.currentListener = listener;
-		applyActions();
+		getContent().add(setHeader(), BorderLayout.NORTH);
+		addHeaderActions(listener);
+		getContent().revalidate();
 	}
 
 	private void applyActions() {
 		if (currentListener == null) return;
-		if (isAdmin) {
-			addAdminHeaderActions(currentListener);
-		} else {
-			addHeaderActions(currentListener);
-		}
-	}
-
-	public void setTypeUser(boolean isAdmin) {
-		this.isAdmin = isAdmin;
-		reconfigure();
-	}
-
-	private void reconfigure() {
-		getContent().removeAll();
-		configureView();
-		applyActions();
-		getContent().revalidate();
-		getContent().repaint();
+		addHeaderActions(currentListener);
 	}
 
 	private JPanel setCore() {

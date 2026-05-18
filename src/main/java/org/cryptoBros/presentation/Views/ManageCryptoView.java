@@ -8,21 +8,16 @@ public class ManageCryptoView extends Pages {
 
     private ManageCryptoTable manageCryptoTable;
 
-    @Override
-    protected void configureView() {
-        // TODO: Make sure header is from admin
-        JPanel header = setHeader();
-        JPanel core = setCore();
+	@Override
+	protected void configureView() {
+		getContent().add(setCore(), BorderLayout.CENTER);
+	}
 
-        getContent().add(header, BorderLayout.NORTH);
-        getContent().add(core, BorderLayout.CENTER);
-    }
-
-    @Override
-    public void setActions(ActionListener listener) {
-        // TODO: Implement the new header for the Admin
-        addHeaderActions(listener);
-    }
+	@Override
+	public void setActions(ActionListener listener) {
+		getContent().add(setHeader(), BorderLayout.NORTH);
+		addHeaderActions(listener);
+	}
 
     private JPanel setCore() {
         JPanel core = new JPanel(new BorderLayout());

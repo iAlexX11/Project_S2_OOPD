@@ -44,7 +44,7 @@ public class RegistrationController implements ActionListener {
     private void signup (){
         try {
             userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-            NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController);
+            NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
         } catch (UserNotAddException |UserAlreadyExistsException | CredentialsErrorFormatException e) {
             frameController.showError(e.getMessage());
         } catch (DbConnectionException ex) {
@@ -58,7 +58,7 @@ public class RegistrationController implements ActionListener {
 		} else {
 			try {
 				userController.logIn(loginView.getUsername(), loginView.getPassword());
-				NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController);
+				NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
@@ -72,9 +72,8 @@ public class RegistrationController implements ActionListener {
            String adminPassword = credentialManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
            char[] password = loginView.getPassword();
            if (credentialManager.checkHashedPassword(password, adminPassword)) {
-               System.out.println("Admin logIn successfully");
-			   NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController);
-			   navigatorController.setUSerType(true);
+			   NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, true);
+			   System.out.println("Admin logIn successfully");
            }
            else {
 			   frameController.showError("This username or password are wrong!");

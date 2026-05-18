@@ -31,11 +31,12 @@ public class AdminController {
 		this.accountManager = new AccountManager();
 	}
 
-	private void adminLogout() {
+	public void adminLogout() {
 		initialController.startProgram();
 	}
 
 	public void registerCryptoListener(CryptoListener listener) {
 		cryptoManager.addCryptoListener(listener);
 	}
+
 }
