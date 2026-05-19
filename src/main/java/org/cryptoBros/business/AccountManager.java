@@ -12,24 +12,26 @@ import java.util.List;
 import static org.passay.EnglishCharacterData.*;
 
 public class AccountManager {
+
 	private final UserManager userManager;
     private final UserPersistence userPersistence;
+	private final CredentialManager credentialManager;
 
-
-	public AccountManager(UserManager userManager) {
-		this.userManager = userManager;
+	public AccountManager() {
+		this.userManager = new  UserManager();
         userPersistence = new UserSQL();
+		this.credentialManager = new CredentialManager();
 	}
 
 	public int signUpLogic(String email, char[] password, char[] confirmPassword, String username)
 			throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException  {
 
-		String errorCredentials = checkCredentials(email, password, confirmPassword);
+		String errorCredentials = credentialManager.checkCredentials(email, password, confirmPassword);
 		if (!errorCredentials.equals("ok")) {
 			throw new CredentialsErrorFormatException(errorCredentials);
 		}
 
-		String hashedPassword = hashPassword(password);
+		String hashedPassword = credentialManager.hashPassword(password);
 
 		try {
 			userManager.getUser(username, email);
@@ -44,65 +46,10 @@ public class AccountManager {
 		}
 	}
 
-	private String checkCredentials(String email, char[] password, char[] confirmPassword) {
-		List<String> errors = new ArrayList<>();
-
-		if (!checkEmail(email)) {
-			errors.add("Error email format");
-		}
-
-		if (!Arrays.equals(password, confirmPassword)) {
-			errors.add(("The password doesn't match"));
-		} else {
-
-			String passwordCheck = checkPassword(password);
-			if (!passwordCheck.equals("ok")) {
-				errors.add(passwordCheck);
-			}
-		}
-
-		return errors.isEmpty() ? "ok" : String.join("\n", errors);
-	}
-
-	private String checkPassword(char[] password) {
-		String passwordFormat = ("Password must be 6–20 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. Spaces are not allowed.");
-
-		PasswordValidator validator = new PasswordValidator(
-				new LengthRule(6, 20),
-				new CharacterRule(UpperCase, 1),
-				new CharacterRule(LowerCase, 1),
-				new CharacterRule(Digit, 1),
-				new CharacterRule(Special, 1),
-				new WhitespaceRule()
-		);
-
-		PasswordData data = new PasswordData(new String(password));
-		RuleResult result = validator.validate(data);
-		data = null;
-
-		if (result.isValid()) {
-			return "ok";
-		}
-
-		return passwordFormat;
-	}
-
-	public String hashPassword(char[] password) {
-		return BCrypt.hashpw(new String(password), BCrypt.gensalt(12));
-	}
-
-	public boolean checkHashedPassword(char[] password,  String hashedPassword) {
-		return BCrypt.checkpw(new String(password), hashedPassword);
-	}
-
-	private boolean checkEmail(String email) {
-		return email.matches("^(?![.])[A-Za-z0-9+_-]+(\\.[A-Za-z0-9+_-]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)+$");
-	}
-
 	public int logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, CredentialsErrorFormatException, DbConnectionException {
 		try {
 			User user = userManager.getUser(usernameOrEmail, usernameOrEmail);
-			if (checkHashedPassword(password, user.getPassword())) {
+			if (credentialManager.checkHashedPassword(password, user.getPassword())) {
 				return user.getId();
 			} else {
 				throw new CredentialsErrorFormatException("The username/email or password is incorrect.");

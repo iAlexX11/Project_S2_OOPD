@@ -5,6 +5,8 @@ import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.SQL.DbConnectionSingleton;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
+import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;
+import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import org.cryptoBros.presentation.Views.ErrorsView;
 import org.cryptoBros.presentation.Views.WelcomeView;
 
@@ -35,13 +37,13 @@ public class InitialController implements ActionListener {
         try {
             DbConnectionSingleton.getInstance().loadConfig();
         } catch (ConfigFileNotFoundException | ConfigFileCorruptedException e) {
-            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
             System.exit(1);
         }
         try {
             credentialManager.readAdminPassword();
         } catch (ConfigFileNotFoundException e) {
-            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
         }
     }
 

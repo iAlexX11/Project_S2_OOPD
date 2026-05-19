@@ -2,7 +2,6 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
-import org.cryptoBros.business.User;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
@@ -16,15 +15,21 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 
     private final CryptoMarketView cryptoMarketView;
     private final Navigation navigation;
-    private UserController userController;
+	private final UserController userController;
+	private final AdminController adminController;
 
-    public CryptoMarketController(UserController userController, Navigation navigation) {
+    public CryptoMarketController(UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
         this.navigation = navigation;
-        this.cryptoMarketView = new CryptoMarketView();
-        this.userController = userController;
+		this.userController = userController;
+		this.adminController = adminController;
+		this.cryptoMarketView = new CryptoMarketView();
+		cryptoMarketView.setTypeUser(isAdmin);
         cryptoMarketView.setActions(this);
+		if (!isAdmin) {
+			userController.registerBalanceListener(this);
+			userController.pushCurrentBalance(this);
+		}
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -33,7 +38,8 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
             case SETTINGS -> navigation.navigate(PagesName.SETTING);
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
             case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
-        }
+			case MANAGE_CRYPTO -> navigation.navigate(PagesName.MANAGE_CRYPTO);
+		}
     }
 
     @Override
@@ -44,10 +50,6 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     @Override
     public void updateData(String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
-    }
-
-    public void onDestroy() {
-        userController.removeCryptoListener();
     }
 
     public void clearTable() {

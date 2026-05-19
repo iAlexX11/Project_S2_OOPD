@@ -10,16 +10,21 @@ public class NavigatorController implements Navigation {
     private final FrameController frameController;
     private final SettingController settingController;
     private final PortfolioController portfolioController;
+	private final ManageCryptoController manageCryptoController;
     private final UserController userController;
+	private final AdminController adminController;
+	private boolean isAdmin = false;
 
-    public NavigatorController(FrameController frameController, UserController userController) {
+    public NavigatorController(FrameController frameController, UserController userController, AdminController adminController, boolean isAdmin) {
         this.frameController = frameController;
         this.userController = userController;
+        this.adminController = adminController;
 
         userController.initCrypto();
 
-        this.cryptoMarketController = new CryptoMarketController(userController, this);
-        this.settingController = new SettingController(userController, this);
+        this.manageCryptoController = new ManageCryptoController(frameController, this, adminController, isAdmin);
+        this.cryptoMarketController = new CryptoMarketController(userController,  adminController,this, isAdmin);
+        this.settingController = new SettingController(userController, this, adminController, isAdmin);
         this.portfolioController = new PortfolioController(userController, this);
 
         userController.registerCryptoListener(cryptoMarketController);
@@ -27,6 +32,7 @@ public class NavigatorController implements Navigation {
         userController.registerBalanceListener(cryptoMarketController);
         userController.pushCurrentBalance(cryptoMarketController);
         frameController.displayContent(cryptoMarketController.getView());
+		this.isAdmin = isAdmin;
     }
 
 
@@ -53,6 +59,9 @@ public class NavigatorController implements Navigation {
                 userController.pushCurrentBalance(portfolioController);
                 frameController.displayContent(portfolioController.getView());
             }
+			case MANAGE_CRYPTO ->  {
+				frameController.displayContent(manageCryptoController.getView());
+			}
         }
     }
 }

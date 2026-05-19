@@ -18,13 +18,17 @@ public class RegistrationController implements ActionListener {
 	private final SignUpView signUpView;
 	private final UserManager userManager;
     private final UserController userController;
+	private final AdminController adminController;
+	private final CredentialManager credentialManager;
 
 	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.userManager = new UserManager();
+		this.adminController = new AdminController(initialController, frameController);
         this.userController = new UserController(frameController, initialController);
+		this.credentialManager = new CredentialManager();
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
@@ -40,7 +44,7 @@ public class RegistrationController implements ActionListener {
     private void signup (){
         try {
             userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-            NavigatorController navigatorController = new NavigatorController(frameController, userController);
+            NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
         } catch (UserNotAddException |UserAlreadyExistsException | CredentialsErrorFormatException e) {
             frameController.showError(e.getMessage());
         } catch (DbConnectionException ex) {
@@ -49,25 +53,27 @@ public class RegistrationController implements ActionListener {
     }
 
     private void login () {
-        try {
-            userController.logIn(loginView.getUsername(), loginView.getPassword());
-            NavigatorController navigatorController = new NavigatorController(frameController, userController);
-
-        } catch (UserNotFoundException | CredentialsErrorFormatException e) {
-            frameController.showError(e.getMessage());
-        } catch (DbConnectionException ex) {
-            // NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
-        }
+		if (loginView.getUsername().equals("admin")) {
+			logInAdmin();
+		} else {
+			try {
+				userController.logIn(loginView.getUsername(), loginView.getPassword());
+				NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
+			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
+				frameController.showError(e.getMessage());
+			} catch (DbConnectionException ex) {
+				// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
+			}
+		}
     }
 
     private void logInAdmin() {
-        CredentialManager credentialManager = new CredentialManager();
-        AccountManager accountManager = new AccountManager(userManager);
        try {
-           String adminPassword = accountManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
+           String adminPassword = credentialManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
            char[] password = loginView.getPassword();
-           if (accountManager.checkHashedPassword(password, adminPassword)) {
-               System.out.println("Admin logIn successfully");
+           if (credentialManager.checkHashedPassword(password, adminPassword)) {
+			   NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, true);
+			   System.out.println("Admin logIn successfully");
            }
            else {
 			   frameController.showError("This username or password are wrong!");

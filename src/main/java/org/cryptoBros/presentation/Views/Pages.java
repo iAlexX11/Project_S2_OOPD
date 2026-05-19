@@ -10,69 +10,108 @@ public abstract class Pages extends BaseView{
 
 	private JLabel jLBalance;
     private JLabel jLEstimatedProfit;
-    private JButton jBHome;
-    private JButton jBSettings;
-    private JButton jBPortfolio;
+	private JButton jBHome;
+	private JButton jBSettings;
+	private JButton jBPortfolio;
+	private JButton jBManageCrypto;
+	private boolean isAdmin = false;
 
-    public JPanel setHeader() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(83, 136, 252));
-        header.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 0));
-        header.setOpaque(true);
+	public void setTypeUser(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 
-        JPanel col1 = new JPanel();
-        col1.setLayout(new BoxLayout(col1, BoxLayout.X_AXIS));
-        col1.setOpaque(false);
+	public JPanel setHeader() {
+		return buildHeader(isAdmin ? buildAdminButtons() : buildButtons());
+	}
 
-        jBHome = createIconButton("images/home.png");
-        jBSettings = createIconButton("images/settings.png");
-        jBPortfolio = createIconButton("images/portfolio.png");
+	public void addHeaderActions(ActionListener listener) {
+		bindButton(jBHome, ButtonEnumeration.HOME, listener);
+		bindButton(jBSettings, ButtonEnumeration.SETTINGS, listener);
+		if (!isAdmin) bindButton(jBPortfolio, ButtonEnumeration.PORTFOLIO, listener);
+		if (isAdmin) bindButton(jBManageCrypto, ButtonEnumeration.MANAGE_CRYPTO, listener);
+	}
 
-        col1.add(Box.createHorizontalGlue());
-        col1.add(jBHome);
-        col1.add(Box.createHorizontalStrut(20));
-        col1.add(jBSettings);
-        col1.add(Box.createHorizontalStrut(20));
-        col1.add(jBPortfolio);
-        col1.add(Box.createHorizontalGlue());
+	private JPanel buildHeader(JPanel navWrapper) {
+		JPanel header = new JPanel(new BorderLayout());
+		header.setBackground(new Color(83, 136, 252));
+		header.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 0));
+		header.setOpaque(true);
+		header.add(navWrapper, BorderLayout.WEST);
+		header.add(buildBalancePanel(), BorderLayout.EAST);
+		return header;
+	}
 
-        JPanel col1Wrapper = new JPanel(new BorderLayout());
-        col1Wrapper.setOpaque(false);
-        col1Wrapper.add(col1, BorderLayout.CENTER);
+	private JPanel buildButtons() {
+		jBHome = createIconButton("images/home.png");
+		jBSettings = createIconButton("images/settings.png");
+		jBPortfolio = createIconButton("images/portfolio.png");
 
-        JPanel col2 = new JPanel(new GridLayout(2, 1, 0, 5));
-        col2.setOpaque(false);
-        col2.add(setBalance());
+		JPanel col1 = new JPanel();
+		col1.setLayout(new BoxLayout(col1, BoxLayout.X_AXIS));
+		col1.setOpaque(false);
+		col1.add(Box.createHorizontalGlue());
+		col1.add(jBHome);
+		col1.add(Box.createHorizontalStrut(20));
+		col1.add(jBSettings);
+		col1.add(Box.createHorizontalStrut(20));
+		col1.add(jBPortfolio);
+		col1.add(Box.createHorizontalGlue());
+
+		return wrapPanel(col1);
+	}
+
+	private JPanel buildAdminButtons() {
+		jBHome = createIconButton("images/home.png");
+		jBSettings = createIconButton("images/settings.png");
+		jBManageCrypto = createIconButton("images/manage_crypto.png");
+
+		JPanel col1 = new JPanel();
+		col1.setLayout(new BoxLayout(col1, BoxLayout.X_AXIS));
+		col1.setOpaque(false);
+		col1.add(Box.createHorizontalGlue());
+		col1.add(jBHome);
+		col1.add(Box.createHorizontalStrut(20));
+		col1.add(jBSettings);
+		col1.add(Box.createHorizontalStrut(20));
+		col1.add(jBManageCrypto);
+		col1.add(Box.createHorizontalGlue());
+
+		return wrapPanel(col1);
+	}
+
+	private JPanel wrapPanel(JPanel panel) {
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.setOpaque(false);
+		wrapper.add(panel, BorderLayout.CENTER);
+		return wrapper;
+	}
+
+	private JPanel buildBalancePanel() {
+		JPanel col2 = new JPanel(new GridLayout(2, 1, 0, 5));
+		col2.setOpaque(false);
+		col2.add(setBalance());
         col2.add(setEstimatedProfit());
-        col2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
+		col2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
+		return col2;
+	}
 
-        header.add(col1Wrapper, BorderLayout.WEST);
-        header.add(col2, BorderLayout.EAST);
+	private JButton createIconButton(String imagePath) {
+		JButton jButton = new JButton(new ImageIcon(imagePath));
+		jButton.setBackground(Color.WHITE);
+		jButton.setOpaque(true);
+		jButton.setContentAreaFilled(true);
+		jButton.setBorderPainted(false);
+		jButton.setFocusPainted(false);
+		jButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		jButton.setPreferredSize(new Dimension(90, 35));
+		jButton.setMaximumSize(new Dimension(90, 35));
+		return jButton;
+	}
 
-        return header;
-    }
-
-    private JButton createIconButton(String imagePath) {
-        JButton jButton = new JButton(new ImageIcon(imagePath));
-        jButton.setBackground(Color.WHITE);
-        jButton.setOpaque(true);
-        jButton.setContentAreaFilled(true);
-        jButton.setBorderPainted(false);
-        jButton.setFocusPainted(false);
-        jButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        jButton.setPreferredSize(new Dimension(90, 35));
-        jButton.setMaximumSize(new Dimension(90, 35));
-        return jButton;
-    }
-
-    public void addHeaderActions(ActionListener listener) {
-        jBSettings.setActionCommand(ButtonEnumeration.SETTINGS.name());
-        jBPortfolio.setActionCommand(ButtonEnumeration.PORTFOLIO.name());
-        jBHome.setActionCommand(ButtonEnumeration.HOME.name());
-        jBSettings.addActionListener(listener);
-        jBPortfolio.addActionListener(listener);
-        jBHome.addActionListener(listener);
-    }
+	private void bindButton(JButton button, ButtonEnumeration command, ActionListener listener) {
+		button.setActionCommand(command.name());
+		button.addActionListener(listener);
+	}
 
 	public JLabel setBalance() {
 		jLBalance = new JLabel();

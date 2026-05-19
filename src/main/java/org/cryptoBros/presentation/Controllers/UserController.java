@@ -25,7 +25,7 @@ public class UserController{
 
         this.userManager = new UserManager();
         this.cryptoManager = new CryptoManager();
-        this.accountManager = new AccountManager(userManager);
+        this.accountManager = new AccountManager();
 	}
 
 	public double getBalance() {
@@ -48,12 +48,12 @@ public class UserController{
 
     public void deleteUser() {
         try {
-            AccountManager accountManager = new AccountManager(userManager);
+            AccountManager accountManager = new AccountManager();
             accountManager.deleteUser(userManager.getCurrentUserId());
             userManager.clearCurrentUser();
             logout();
         } catch (UserNotFoundException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFram() ,e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -81,6 +81,7 @@ public class UserController{
 
     public void pushCurrentBalance(BalanceListener listener) {
         double balance = getBalance();
+
         listener.balanceChanged(balance);
     }
 
@@ -88,7 +89,7 @@ public class UserController{
         try {
             userManager.addBalance(addBalanceAmount);
         } catch (UserNotFoundException | DbConnectionException e){
-            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -96,7 +97,7 @@ public class UserController{
         try {
             cryptoManager.getAllCrypto();
         } catch (DbConnectionException | CryptoNotFoundException  e) {
-            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
         }
     }
 
@@ -104,7 +105,7 @@ public class UserController{
         try {
             cryptoManager.loadInitialCrypto();
         } catch (CryptoNotAddedException | FileNotFoundException | BotGenerationException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFram() ,e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 }
