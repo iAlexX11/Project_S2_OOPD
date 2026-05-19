@@ -13,18 +13,18 @@ public class NavigatorController implements Navigation {
 	private final ManageCryptoController manageCryptoController;
     private final UserController userController;
 	private final AdminController adminController;
-	private boolean isAdmin = false;
+	private final ProfileController profileController;
 
     public NavigatorController(FrameController frameController, UserController userController, AdminController adminController, boolean isAdmin) {
         this.frameController = frameController;
         this.userController = userController;
 		this.adminController = adminController;
-        this.cryptoMarketController = new CryptoMarketController(userController, adminController, this, isAdmin);
+		this.profileController = new ProfileController(userController, this, adminController, isAdmin);
+		this.cryptoMarketController = new CryptoMarketController(userController, adminController, this, isAdmin);
         this.settingController = new SettingController(userController, this, adminController, isAdmin);
         this.portfolioController = new PortfolioController(userController, this);
 		this.manageCryptoController = new ManageCryptoController(frameController, this, adminController, isAdmin);
         frameController.displayContent(cryptoMarketController.getView());
-		this.isAdmin = isAdmin;
     }
 
     @Override
@@ -41,6 +41,9 @@ public class NavigatorController implements Navigation {
             }
 			case MANAGE_CRYPTO ->  {
 				frameController.displayContent(manageCryptoController.getView());
+			}
+			case PROFILE ->  {
+				frameController.displayContent(profileController.getView());
 			}
         }
     }
