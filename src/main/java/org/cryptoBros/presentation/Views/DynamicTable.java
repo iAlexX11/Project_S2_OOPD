@@ -88,9 +88,9 @@ public class DynamicTable extends JPanel {
 
     public void update(String name, double price, double change, double percentage) {
         if (cryptos.containsKey(name)) {
-            String priceStr      = "€ " + price;
-            String changeStr     = (change >= 0 ? "+" : "") + "€ " + change;
-            String percentageStr = (percentage >= 0 ? "+" : "") + percentage + "%";
+            String priceStr      = String.format("€ %.4f", price);
+            String changeStr     = String.format("%s€ %.4f", change >= 0 ? "+" : "", change);
+            String percentageStr = String.format("%s%.4f%%", percentage >= 0 ? "+" : "", percentage);
 
             int row = cryptos.get(name);
             model.setValueAt(name, row, 0);
@@ -109,7 +109,10 @@ public class DynamicTable extends JPanel {
 
         model.addRow(new Object[]{name, priceStr, changeStr, percentageStr });
 
-        cryptos.put(name, model.getRowCount());
+        cryptos.put(name, model.getRowCount() - 1);
     }
-	public void clearRows() { model.setRowCount(0); }
+	public void clearRows() {
+        model.setRowCount(0);
+        cryptos.clear();
+    }
 }
