@@ -8,7 +8,7 @@ import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.ErrorsView;
 
-public class UserController{
+public class UserController {
 
     private final InitialController initialController;
 	private final FrameController frameController;
@@ -16,17 +16,16 @@ public class UserController{
     private final AccountManager accountManager;
 	private final UserManager userManager;
 
-
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.initialController = initialController;
 
         this.userManager = new UserManager();
         this.cryptoManager = new CryptoManager();
-        this.accountManager = new AccountManager(userManager);
+        this.accountManager = new AccountManager();
 	}
 
-	public double getBalance() {
+	public double getBalance(int userId) {
 		try {
 			return userManager.getUserBalance();
 		} catch (UserNotFoundException ex) {
@@ -46,12 +45,12 @@ public class UserController{
 
     public void deleteUser() {
         try {
-            AccountManager accountManager = new AccountManager(userManager);
+            AccountManager accountManager = new AccountManager();
             accountManager.deleteUser(userManager.getCurrentUserId());
             userManager.clearCurrentUser();
             logout();
         } catch (UserNotFoundException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFram() ,e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -69,12 +68,9 @@ public class UserController{
         userManager.changeBalanceListener(listener);
     }
 
-    public void registerCryptoListener(CryptoListener listener) {
-        cryptoManager.addCryptoListener(listener);
-    }
-
     public void pushCurrentBalance(BalanceListener listener) {
-        double balance = getBalance();
+        double balance = getBalance(userManager.getCurrentUserId());
+
         listener.balanceChanged(balance);
     }
 
@@ -82,7 +78,7 @@ public class UserController{
         try {
             userManager.addBalance(addBalanceAmount);
         } catch (UserNotFoundException | DbConnectionException e){
-            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 }

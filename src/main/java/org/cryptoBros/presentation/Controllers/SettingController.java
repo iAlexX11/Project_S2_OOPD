@@ -16,12 +16,19 @@ public class SettingController implements ActionListener, BalanceListener {
     private final UserController userController;
     private final Navigation navigation;
     private final SettingsView settingsView;
+	private final AdminController adminController;
 
-    public SettingController(UserController userController, Navigation navigation) {
+    public SettingController(UserController userController, Navigation navigation, AdminController adminController, boolean	isAdmin) {
         this.userController = userController;
         this.navigation = navigation;
         this.settingsView = new SettingsView();
+		this.adminController = adminController;
+		settingsView.setTypeUser(isAdmin);
         settingsView.setActions(this);
+		if (!isAdmin) {
+			userController.registerBalanceListener(this);
+			userController.pushCurrentBalance(this);
+		}
     }
 
     @Override
@@ -34,6 +41,8 @@ public class SettingController implements ActionListener, BalanceListener {
             case LOGOUT -> userController.logout();
             case ACCOUNT -> System.out.println("Account");
             case DELETE -> userController.deleteUser();
+			case MANAGE_CRYPTO ->  navigation.navigate(PagesName.MANAGE_CRYPTO);
+
         }
     }
 
