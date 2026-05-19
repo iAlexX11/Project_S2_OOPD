@@ -88,7 +88,7 @@ public class UserSQL implements UserPersistence {
 				);
 			}
             else {
-                throw new UserNotFoundException("User with username " + username + " and email" + email + " not found");
+                throw new UserNotFoundException("User not found");
             }
         } catch (SQLException e) {
             throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
