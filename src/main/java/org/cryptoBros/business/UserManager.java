@@ -61,7 +61,6 @@ public class UserManager {
 		}
 	}
 
-
 	public double addBalance(double amount) throws UserNotFoundException, DbConnectionException {
 		if (currentUserId == -1) {
 			throw new UserNotFoundException();
@@ -123,4 +122,12 @@ public class UserManager {
     public void clearBalanceListener() {
         balanceListeners = null;
     }
+
+	public void changeUsername(String username) {
+		userPersistence.changeUsername(username, currentUserId);
+	}
+
+	public void changeUserPassword(String password) {
+		userPersistence.changePassword(password, currentUserId);
+	}
 }

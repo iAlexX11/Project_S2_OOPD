@@ -152,4 +152,30 @@ public class UserSQL implements UserPersistence {
 			throw new DbConnectionException("Error adjusting balance: " + e.getMessage());
 		}
 	}
+
+	@Override
+	public void changeUsername(String username, int userId) throws DbConnectionException {
+		String query = "UPDATE users SET username = ? WHERE user_id = ?";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setString(1, username);
+			ps.setInt(2, userId);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DbConnectionException("Something happened, please try again later!");
+		}
+	}
+
+	@Override
+	public void changePassword(String password, int userId) throws DbConnectionException {
+		String query = "UPDATE users SET password = ? WHERE user_id = ?";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setString(1, password);
+			ps.setInt(2, userId);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DbConnectionException("Something happened, please try again later!");
+		}
+	}
 }

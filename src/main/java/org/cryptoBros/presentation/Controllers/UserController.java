@@ -1,6 +1,7 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
+import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
@@ -15,11 +16,12 @@ public class UserController {
     private final CryptoManager cryptoManager;
     private final AccountManager accountManager;
 	private final UserManager userManager;
+	private final CredentialManager credentialManager;
 
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.initialController = initialController;
-
+		this.credentialManager = new CredentialManager();
         this.userManager = new UserManager();
         this.cryptoManager = new CryptoManager();
         this.accountManager = new AccountManager();
@@ -81,4 +83,12 @@ public class UserController {
 			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
+
+	public void changeUserPassword(char[] password) {
+		userManager.changeUserPassword(credentialManager.hashPassword(password));
+	}
+
+	public void changeUsername(String username) {
+		userManager.changeUsername(username);
+	}
 }
