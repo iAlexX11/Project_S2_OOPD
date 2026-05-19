@@ -55,22 +55,35 @@ public class CryptoManager {
     }
 
     /**
-     * Deletes a crypto from the db, with its associated bot
+     * Deletes a crypto from the db, refunding all holders and removing its associated bot.
      *
      * @param symbol symbol of the crypto to be deleted
+     * @return map of userId to refundAmount for each refunded holder
      * @throws DbConnectionException if there was a problem connecting to the {@link AtomicPersistence}
      * @throws CryptoNotFoundException if the {@link Crypto} could not be found
      */
-    public void deleteCrypto(String symbol) throws
+    public Map<Long, Double> deleteCrypto(String symbol) throws
             DbConnectionException,
             CryptoNotFoundException
     {
-        // One transaction: crypto + bot user gone or neither is
-        atomicDb.deleteCryptoWithBot(symbol);
+        // One transaction: refund holders, then crypto + bot user gone or neither is
+        Map<Long, Double> refunds = atomicDb.deleteCryptoWithBot(symbol);
 
         // DB succeeded: stop in-memory bot
         Bot bot = activeBots.remove(symbol);
         if (bot != null) bot.stop();
+
+        return refunds;
+    }
+
+    /**
+     * Retrieves all cryptocurrencies from the database.
+     * @return list of all cryptos
+     * @throws CryptoNotFoundException if no cryptos exist
+     * @throws DbConnectionException if the db connection fails
+     */
+    public java.util.List<Crypto> getAllCrypto() throws CryptoNotFoundException, DbConnectionException {
+        return cryptoPersistence.getAllCrypto();
     }
 
 
