@@ -3,6 +3,7 @@ package org.cryptoBros.persistence.SQL;
 import com.google.gson.Gson;
 import org.cryptoBros.business.Bot;
 import org.cryptoBros.business.Crypto;
+import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
 
@@ -210,7 +211,7 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
-    private List<Bot> loadExistingBots(Connection conn) throws SQLException {
+    private List<Bot> loadExistingBots(Connection conn, CryptoManager cryptoManager) throws SQLException {
         List<Bot> bots = new java.util.ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(SELECT_EXISTING_BOTS);
@@ -220,7 +221,8 @@ public class AtomicSQL implements AtomicPersistence {
                 bots.add(new Bot(
                         rs.getLong("bot_id"),
                         rs.getString("crypto_id"),
-                        rs.getDouble("volatility")
+                        rs.getDouble("volatility"),
+                        cryptoManager
                 ));
             }
         }
@@ -229,34 +231,37 @@ public class AtomicSQL implements AtomicPersistence {
     }
 
     @Override
-    public List<Bot> loadInitialData()
+    public List<Bot> loadInitialData(CryptoManager cryptoManager)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
 
-        Gson gson = new Gson();
-        List<Bot> bots = new java.util.ArrayList<>();
+            Gson gson = new Gson();
+            List<Bot> bots = new ArrayList<>();
 
-        try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
-            FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
+            try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
+                FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
+                Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
 
-            Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
-
-            if (cryptos != null) {
-                for (Crypto crypto : cryptos) {
-                    if (!cryptoExists(conn, crypto.getSymbol())) {
-                        long botUserId = createCryptoWithBot(crypto);
-                        bots.add(new Bot(botUserId, crypto.getSymbol(), crypto.getVolatility()));
+                List<Bot> newBots = new ArrayList<>();
+                if (cryptos != null) {
+                    for (Crypto crypto : cryptos) {
+                        if (!cryptoExists(conn, crypto.getSymbol())) {
+                            long botUserId = createCryptoWithBot(crypto);
+                            newBots.add(new Bot(botUserId, crypto.getSymbol(), crypto.getVolatility(), cryptoManager));
+                        }
                     }
                 }
+
+                List<Bot> existingBots = loadExistingBots(conn, cryptoManager);
+                existingBots.removeIf(b -> newBots.stream()
+                        .anyMatch(n -> n.getCryptoSymbol().equals(b.getCryptoSymbol())));
+
+                bots.addAll(newBots);
+                bots.addAll(existingBots);
+                return bots;
+
+            } catch (SQLException e) {
+                throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
             }
-
-            // also rebuild bots that already existed in the DB before startup
-            bots.addAll(loadExistingBots(conn));
-
-            return bots;
-
-        } catch (SQLException e) {
-            throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
         }
     }
 
-}

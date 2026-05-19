@@ -2,6 +2,7 @@ package org.cryptoBros.persistence;
 
 import org.cryptoBros.business.Bot;
 import org.cryptoBros.business.Crypto;
+import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.Exceptions.BotGenerationException;
 import org.cryptoBros.persistence.Exceptions.CryptoNotAddedException;
 import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
@@ -18,7 +19,7 @@ public interface AtomicPersistence {
     void deleteCryptoWithBot(String symbol)
             throws DbConnectionException, CryptoNotFoundException;
 
-    List<Bot> loadInitialData()
+    List<Bot> loadInitialData(CryptoManager cryptoManager)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException;
 
 }

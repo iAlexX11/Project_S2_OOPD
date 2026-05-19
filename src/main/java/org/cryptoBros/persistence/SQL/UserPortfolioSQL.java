@@ -70,8 +70,8 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
 
         String deleteQuery = "DELETE FROM Portfolio WHERE user_id = ? AND crypto_id = ?";
 
-        try {
-            var conn = DbConnectionSingleton.getInstance().connect();
+
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();){
 
             // Read how many units the user currently holds.
             double currentUnits;

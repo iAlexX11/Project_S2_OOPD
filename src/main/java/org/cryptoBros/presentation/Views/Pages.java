@@ -8,8 +8,8 @@ import java.awt.event.ActionListener;
 
 public abstract class Pages extends BaseView{
 
-	private double balance;
 	private JLabel jLBalance;
+    private JLabel jLEstimatedProfit;
     private JButton jBHome;
     private JButton jBSettings;
     private JButton jBPortfolio;
@@ -43,6 +43,7 @@ public abstract class Pages extends BaseView{
         JPanel col2 = new JPanel(new GridLayout(2, 1, 0, 5));
         col2.setOpaque(false);
         col2.add(setBalance());
+        col2.add(setEstimatedProfit());
         col2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
 
         header.add(col1Wrapper, BorderLayout.WEST);
@@ -81,7 +82,6 @@ public abstract class Pages extends BaseView{
 	}
 
 	public void updateBalance(double balance){
-		this.balance = balance;
 		jLBalance.setText("The balance is: " + String.format("%.2f", balance) + "€");
 		jLBalance.setForeground(Color.WHITE);
 		jLBalance.setFont(new Font("Apple Casual", Font.PLAIN, 18));
@@ -89,4 +89,19 @@ public abstract class Pages extends BaseView{
 		jLBalance.repaint();
 	}
 
+    public JLabel setEstimatedProfit() {
+        jLEstimatedProfit = new JLabel();
+        jLEstimatedProfit.setForeground(Color.WHITE);
+        jLEstimatedProfit.setFont(new Font("Apple Casual", Font.PLAIN, 18));
+        return jLEstimatedProfit;
+    }
+
+    public void updateEstimatedProfit(double profit) {
+        String sign = profit >= 0 ? "+" : "";
+        jLEstimatedProfit.setText("Estimated Profit: " + sign + String.format("%,.2f", profit) + "€");
+        jLEstimatedProfit.setForeground(Color.WHITE);
+        jLEstimatedProfit.setFont(new Font("Apple Casual", Font.BOLD, 18));
+        jLEstimatedProfit.revalidate();
+        jLEstimatedProfit.repaint();
+    }
 }

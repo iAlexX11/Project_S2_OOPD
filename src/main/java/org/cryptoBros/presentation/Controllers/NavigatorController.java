@@ -15,10 +15,15 @@ public class NavigatorController implements Navigation {
     public NavigatorController(FrameController frameController, UserController userController) {
         this.frameController = frameController;
         this.userController = userController;
+
+        userController.initCrypto();
+
         this.cryptoMarketController = new CryptoMarketController(userController, this);
         this.settingController = new SettingController(userController, this);
         this.portfolioController = new PortfolioController(userController, this);
 
+        userController.registerCryptoListener(cryptoMarketController);
+        userController.getAllCrypto();
         userController.registerBalanceListener(cryptoMarketController);
         userController.pushCurrentBalance(cryptoMarketController);
         frameController.displayContent(cryptoMarketController.getView());
@@ -27,6 +32,8 @@ public class NavigatorController implements Navigation {
 
     @Override
     public void navigate(PagesName name) {
+        userController.removeCryptoListener();
+
         switch (name) {
             case SETTING -> {
                 userController.registerBalanceListener(settingController);
@@ -34,6 +41,9 @@ public class NavigatorController implements Navigation {
                 frameController.displayContent(settingController.getView());
             }
             case CRYPTO_MARKET ->  {
+                userController.registerCryptoListener(cryptoMarketController);
+                cryptoMarketController.clearTable();
+                userController.getAllCrypto();
                 userController.registerBalanceListener(cryptoMarketController);
                 userController.pushCurrentBalance(cryptoMarketController);
                 frameController.displayContent(cryptoMarketController.getView());

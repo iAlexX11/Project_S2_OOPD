@@ -43,17 +43,6 @@ public class InitialController implements ActionListener {
         } catch (ConfigFileNotFoundException e) {
             ErrorsView.showError(frameController.getMainFram(), e.getMessage());
         }
-
-        try {
-            cryptoManager.loadInitialCrypto();
-        } catch (
-                CryptoNotAddedException |
-                DbConnectionException |
-                FileNotFoundException |
-                BotGenerationException e
-        ) {
-            ErrorsView.showError(frameController.getMainFram(), e.getMessage());
-        }
     }
 
     @Override

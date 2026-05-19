@@ -23,8 +23,6 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
         this.cryptoMarketView = new CryptoMarketView();
         this.userController = userController;
         cryptoMarketView.setActions(this);
-        userController.registerCryptoListener(this);
-        userController.getAllCrypto();
     }
 
 
@@ -46,6 +44,14 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     @Override
     public void updateData(String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
+    }
+
+    public void onDestroy() {
+        userController.removeCryptoListener();
+    }
+
+    public void clearTable() {
+        cryptoMarketView.clearCryptoTable();
     }
 
     public BaseView getView() {
