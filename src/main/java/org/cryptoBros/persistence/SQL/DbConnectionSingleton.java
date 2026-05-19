@@ -9,67 +9,39 @@ import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 
 import java.sql.*;
 
-/**
- * The SQLConnector class will abstract the specifics of the connection to a MySQL database.
- *
- * This class follows the Singleton design pattern to facilitate outside access while maintaining
- * a single instance, as having multiple connectors to a database is generally discouraged.
- *
- * Be aware that this class presents a simplified approach. Configuration parameters SHOULD NOT be
- * hardcoded and the use of Statements COULD be replaced by PreparedStatements to avoid SQL Injection.
- */
 public class DbConnectionSingleton {
 
-    // The static attribute to implement the singleton design pattern.
-    private static DbConnectionSingleton instance = null;
+    private static volatile DbConnectionSingleton instance = null;
 
     private final ConfigPersistence configPersistence;
 
-
-    /**
-     * Static method that returns the shared instance managed by the singleton.
-     *
-     * @return The shared SQLConnector instance.
-     */
     public static DbConnectionSingleton getInstance() {
-        if (instance == null ){
-            instance = new DbConnectionSingleton();
+        if (instance == null) {
+            synchronized (DbConnectionSingleton.class) {
+                if (instance == null) {
+                    instance = new DbConnectionSingleton();
+                }
+            }
         }
         return instance;
     }
 
-    // Attributes to connect to the database.
     private String username;
     private String password;
     private String url;
-    private Connection conn;
 
-    // Parametrized constructor
     private DbConnectionSingleton() {
         configPersistence = new ConfigJson();
     }
 
-
-    /**
-     * Method that starts the inner connection to the database. Ideally, users would disconnect after
-     * using the shared instance.
-     * @return The connection to the database.
-     * @throws SQLException if there is a problem when connecting to the database
-     */
     public Connection connect() throws SQLException {
-        conn = DriverManager.getConnection(url, username, password);
-        return conn;
+        return DriverManager.getConnection(url, username, password);
     }
 
-    /**
-     * Method that closes the inner connection to the database. Ideally, users would disconnect after
-     * using the shared instance.
-     * @throws SQLException if there is a problem when disconnecting from the database
-     */
-    public void disconnect() throws SQLException {
-        if (conn == null) return;
-        conn.close();
-        conn = null;
+    public void disconnect(Connection conn) throws SQLException {
+        if (conn != null && !conn.isClosed()) {
+            conn.close();
+        }
     }
 
     /**
