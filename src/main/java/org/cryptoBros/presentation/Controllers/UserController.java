@@ -85,10 +85,18 @@ public class UserController {
     }
 
 	public void changeUserPassword(char[] password) {
-		userManager.changeUserPassword(credentialManager.hashPassword(password));
+		try {
+			userManager.changeUserPassword(credentialManager.hashPassword(password));
+		} catch (DbConnectionException e) {
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+		}
 	}
 
 	public void changeUsername(String username) {
-		userManager.changeUsername(username);
+		try {
+			userManager.changeUsername(username);
+		} catch (DbConnectionException e) {
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+		}
 	}
 }

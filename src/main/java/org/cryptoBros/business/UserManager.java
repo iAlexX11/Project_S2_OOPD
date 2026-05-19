@@ -123,11 +123,11 @@ public class UserManager {
         balanceListeners = null;
     }
 
-	public void changeUsername(String username) {
+	public void changeUsername(String username) throws DbConnectionException{
 		userPersistence.changeUsername(username, currentUserId);
 	}
 
-	public void changeUserPassword(String password) {
+	public void changeUserPassword(String password) throws DbConnectionException{
 		userPersistence.changePassword(password, currentUserId);
 	}
 }
