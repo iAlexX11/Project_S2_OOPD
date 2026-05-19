@@ -4,6 +4,7 @@ import org.cryptoBros.persistence.Config;
 import org.cryptoBros.persistence.ConfigJson;
 import org.cryptoBros.persistence.ConfigPersistence;
 import org.cryptoBros.persistence.DbCredentials;
+import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 
 import java.sql.*;
@@ -43,7 +44,13 @@ public class DbConnectionSingleton {
         }
     }
 
-    public void loadConfig() throws ConfigFileNotFoundException {
+    /**
+     * This method needs to be called when initializing the singleton
+     * for the first time
+     * @throws ConfigFileNotFoundException if the configuration file is not found
+     */
+
+    public void loadConfig() throws ConfigFileNotFoundException, ConfigFileCorruptedException {
         DbCredentials dbCredentials = configPersistence.readCredentials();
         this.username = dbCredentials.username();
         this.password = dbCredentials.password();

@@ -1,6 +1,6 @@
 package org.cryptoBros.presentation.Views;
 
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,15 +12,6 @@ public class SettingsView extends Pages{
     private JButton logoutButton;
     private JButton accountManagementButton;
     private JButton deleteAccountButton;
-
-    @Override
-    public void configureView () {
-        JPanel header = setHeader();
-        JPanel core = setCore();
-
-        getContent().add(header, BorderLayout.NORTH);
-        getContent().add(core, BorderLayout.CENTER);
-    }
 
     private JPanel setCore() {
         JPanel core = new JPanel();
@@ -68,17 +59,24 @@ public class SettingsView extends Pages{
         return button;
     }
 
-    @Override
-    public void setActions(ActionListener listener) {
-        addHeaderActions(listener);
+	@Override
+	protected void configureView() {
+		getContent().add(setCore(), BorderLayout.CENTER);
+	}
 
-        logoutButton.setActionCommand(ButtonEnumeration.LOGOUT.name());
-        logoutButton.addActionListener(listener);
+	@Override
+	public void setActions(ActionListener listener) {
+		getContent().add(setHeader(), BorderLayout.NORTH);
+		addHeaderActions(listener);
+		getContent().revalidate();
+		logoutButton.setActionCommand(ButtonEnumeration.LOGOUT.name());
+		logoutButton.addActionListener(listener);
 
-        accountManagementButton.setActionCommand(ButtonEnumeration.ACCOUNT.name());
-        accountManagementButton.addActionListener(listener);
+		accountManagementButton.setActionCommand(ButtonEnumeration.ACCOUNT.name());
+		accountManagementButton.addActionListener(listener);
 
-        deleteAccountButton.setActionCommand(ButtonEnumeration.DELETE.name());
-        deleteAccountButton.addActionListener(listener);
-    }
+		deleteAccountButton.setActionCommand(ButtonEnumeration.DELETE.name());
+		deleteAccountButton.addActionListener(listener);
+
+	}
 }

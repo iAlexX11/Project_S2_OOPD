@@ -2,10 +2,10 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
-import org.cryptoBros.business.User;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.presentation.Enum.ButtonEnumeration;
+import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
@@ -16,63 +16,64 @@ public class RegistrationController implements ActionListener {
 	private final FrameController frameController;
 	private final LoginView loginView;
 	private final SignUpView signUpView;
-	private final AccountManager accountManager;
 	private final UserManager userManager;
+    private final UserController userController;
+	private final AdminController adminController;
+	private final CredentialManager credentialManager;
 
-	public RegistrationController (FrameController frameController) {
+	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.userManager = new UserManager();
-		this.accountManager = new AccountManager(this.userManager);
+		this.adminController = new AdminController(initialController, frameController);
+        this.userController = new UserController(frameController, initialController);
+		this.credentialManager = new CredentialManager();
 		loginView.setActions(this);
 		signUpView.setActions(this);
 	}
 
-	public void login() {
+	public void displayLogin() {
 		frameController.displayContent(loginView);
 	}
 
-	public void signUp() {
+	public void displaySignUp() {
 		frameController.displayContent(signUpView);
 	}
 
-	public void signUpLogic() {
-		try {
-			accountManager.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
-			UserController userController = new UserController(frameController);
-		} catch (UserNotAddException | UserAlreadyExistsException | CredentialsErrorFormatException e) {
-			frameController.showError(e.getMessage());
-		} catch (DbConnectionException ex) {
-			// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
-		}
-	}
+    private void signup (){
+        try {
+            userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
+            NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
+        } catch (UserNotAddException |UserAlreadyExistsException | CredentialsErrorFormatException e) {
+            frameController.showError(e.getMessage());
+        } catch (DbConnectionException ex) {
+            //Never print this error in screen
+        }
+    }
 
-    private void logInUser() {
-        String usernameOrEmail = loginView.getUsername();
-        if (usernameOrEmail.compareTo("admin") == 0) {
-            logInAdmin();
-        } else {
+    private void login () {
+		if (loginView.getUsername().equals("admin")) {
+			logInAdmin();
+		} else {
 			try {
-				User user = accountManager.logInNormalUser(usernameOrEmail, loginView.getPassword());
-				UserController userController = new UserController(frameController);
+				userController.logIn(loginView.getUsername(), loginView.getPassword());
+				NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
 				// NEVER PRINT THIS TYPE OF ERRORS IN SCREEN
 			}
-
-        }
+		}
     }
 
     private void logInAdmin() {
-        CredentialManager credentialManager = new CredentialManager();
-        AccountManager accountManager = new AccountManager(userManager);
        try {
-           String adminPassword = accountManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
+           String adminPassword = credentialManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
            char[] password = loginView.getPassword();
-           if (accountManager.checkHashedPassword(password, adminPassword)) {
-               System.out.println("Admin logIn successfully");
+           if (credentialManager.checkHashedPassword(password, adminPassword)) {
+			   NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, true);
+			   System.out.println("Admin logIn successfully");
            }
            else {
 			   frameController.showError("This username or password are wrong!");
@@ -86,11 +87,10 @@ public class RegistrationController implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
 		switch (buttonEnumeration) {
-			case CONFIRM_SIGNUP -> signUpLogic();
-			case LOGIN -> login();
-			case CONFIRM_LOGIN -> logInUser();
-			case SIGNUP -> signUp();
+			case CONFIRM_SIGNUP -> signup();
+			case LOGIN -> displayLogin();
+			case CONFIRM_LOGIN -> login();
+			case SIGNUP -> displaySignUp();
 		}
 	}
-
 }

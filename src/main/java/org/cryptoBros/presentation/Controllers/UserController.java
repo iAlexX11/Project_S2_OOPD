@@ -1,34 +1,33 @@
 package org.cryptoBros.presentation.Controllers;
 
+import org.cryptoBros.business.AccountManager;
+import org.cryptoBros.business.CryptoManager;
+import org.cryptoBros.business.Liseners.BalanceListener;
+import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
-import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
-import org.cryptoBros.presentation.ListenersPersistence.PagesListeners;
-import org.cryptoBros.presentation.ButtonEnumeration;
+import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.presentation.Views.ErrorsView;
 
-public class UserController implements PagesListeners {
+public class UserController {
 
+    private final InitialController initialController;
 	private final FrameController frameController;
+    private final CryptoManager cryptoManager;
+    private final AccountManager accountManager;
 	private final UserManager userManager;
-    private final SettingController settingController;
-    private final CryptoMarketController cryptoMarketController;
 
-    private String username;
-    private String email;
-
-	public UserController(FrameController frameController) {
+	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
-        this.settingController = new SettingController(frameController, this);
+        this.initialController = initialController;
+
         this.userManager = new UserManager();
-        this.cryptoMarketController = new CryptoMarketController(frameController, this);
-        this.email = email;
-        this.username = username;
-        cryptoMarketController.displayCryptoMarketView(getBalance(userManager.getCurrentUserId()));
+        this.cryptoManager = new CryptoManager();
+        this.accountManager = new AccountManager();
 	}
 
-	public double getBalance(int id) {
+	public double getBalance(int userId) {
 		try {
-			return userManager.getUserBalance(id);
+			return userManager.getUserBalance();
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
@@ -37,28 +36,49 @@ public class UserController implements PagesListeners {
         return 0;
 	}
 
-    private void logout() {
-        InitialController initialController = new InitialController(frameController);
+    public void logout() {
+        userManager.clearCurrentUser();
+        userManager.stopBalanceScheduler();
+        userManager.clearBalanceListener();
         initialController.startProgram();
     }
 
-    @Override
-    public void setAction(ButtonEnumeration action) {
-        switch (action) {
-            case SETTINGS -> {
-                settingController.displaySettings(100); //To be implement the get balance
-                userManager.updateBalanceListener(settingController); // This is so he know how has to notify the change in balance
-            }
-            case HOME -> {
-                cryptoMarketController.displayCryptoMarketView(100);
-                userManager.updateBalanceListener(cryptoMarketController);
-            }
-            case PORTFOLIO -> System.out.println("PORTFOLIO");
-            //TODO: The cryptos table
-            case BACK -> System.out.println("Back");
-            case LOGOUT -> logout();
-            case ACCOUNT -> System.out.println("Account");
-            case DELETE -> System.out.println("Delete");
+    public void deleteUser() {
+        try {
+            AccountManager accountManager = new AccountManager();
+            accountManager.deleteUser(userManager.getCurrentUserId());
+            userManager.clearCurrentUser();
+            logout();
+        } catch (UserNotFoundException | DbConnectionException e) {
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+        }
+    }
+
+    public void signUpLogic(String email, char[] password, char[] confirmedPassword, String username) throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException {
+        int id = accountManager.signUpLogic(email, password, confirmedPassword, username);
+        userManager.setCurrentUserId(id);
+    }
+
+    public void logIn(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException {
+        int id = accountManager.logInNormalUser(usernameOrEmail, password);
+        userManager.setCurrentUserId(id);
+    }
+
+    public void registerBalanceListener(BalanceListener listener) {
+        userManager.changeBalanceListener(listener);
+    }
+
+    public void pushCurrentBalance(BalanceListener listener) {
+        double balance = getBalance(userManager.getCurrentUserId());
+
+        listener.balanceChanged(balance);
+    }
+
+    public void addBalance(double addBalanceAmount) {
+        try {
+            userManager.addBalance(addBalanceAmount);
+        } catch (UserNotFoundException | DbConnectionException e){
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 }

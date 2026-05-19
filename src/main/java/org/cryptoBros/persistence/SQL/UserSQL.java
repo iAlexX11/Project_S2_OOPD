@@ -96,11 +96,11 @@ public class UserSQL implements UserPersistence {
     }
 
 	@Override
-	public double getUserBalance(int id) throws UserNotFoundException, DbConnectionException {
+	public double getUserBalance(long id) throws UserNotFoundException, DbConnectionException {
 		String query = "SELECT balance FROM users WHERE user_id = ?";
 
 		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
-			ps.setInt(1, id);
+			ps.setLong(1, id);
 
 			var rs = ps.executeQuery();
 			if (rs.next()) {
@@ -112,6 +112,44 @@ public class UserSQL implements UserPersistence {
 
 		} catch (SQLException e) {
 			throw new DbConnectionException("Error fetching user: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void updateUserBalance(long userId, double newBalance) throws UserNotFoundException, DbConnectionException {
+		String query = "UPDATE users SET balance = ? WHERE user_id = ?";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setDouble(1, newBalance);
+			ps.setLong(2, userId);
+
+			int affectedRows = ps.executeUpdate();
+
+			if (affectedRows == 0) {
+				throw new UserNotFoundException("User with user_id " + userId + " not found");
+			}
+		} catch (SQLException e) {
+			throw new DbConnectionException("Error updating balance: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException {
+		String query = "UPDATE users SET balance = balance + ? WHERE user_id = ? RETURNING balance";
+
+		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+			ps.setDouble(1, amount);
+			ps.setLong(2, userId);
+
+			var rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getDouble("balance");
+			} else {
+				throw new UserNotFoundException("User with user_id " + userId + " not found");
+			}
+		} catch (SQLException e) {
+			throw new DbConnectionException("Error adjusting balance: " + e.getMessage());
 		}
 	}
 }
