@@ -6,7 +6,10 @@ import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.presentation.Views.ErrorsView;
+
+import java.util.List;
 
 public class UserController {
 
@@ -79,6 +82,36 @@ public class UserController {
             userManager.addBalance(addBalanceAmount);
         } catch (UserNotFoundException | DbConnectionException e){
 			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+        }
+    }
+
+    public Object[][] getPortfolioData() {
+        try {
+            List<PortfolioPosition> positions = cryptoManager.getUserPortfolio(userManager.getCurrentUserId());
+            Object[][] data = new Object[positions.size()][4];
+            for (int i = 0; i < positions.size(); i++) {
+                PortfolioPosition pos = positions.get(i);
+                double profit = (pos.currentPrice() - pos.buyPrice()) * pos.units();
+                String profitStr = String.format("%s%.2f €", profit >= 0 ? "+" : "", profit);
+                data[i] = new Object[]{
+                        pos.cryptoSymbol(),
+                        pos.units(),
+                        String.format("%.2f €", pos.buyPrice()),
+                        profitStr
+                };
+            }
+            return data;
+        } catch (DbConnectionException e) {
+            return new Object[0][];
+        }
+    }
+
+    public double getTotalProfit() {
+        try {
+            List<PortfolioPosition> positions = cryptoManager.getUserPortfolio(userManager.getCurrentUserId());
+            return cryptoManager.calculateTotalProfit(positions);
+        } catch (DbConnectionException e) {
+            return 0.0;
         }
     }
 }

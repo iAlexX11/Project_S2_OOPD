@@ -4,11 +4,14 @@ import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.PurchaseNotAddedException;
 import org.cryptoBros.persistence.Exceptions.SaleNotAddedException;
+import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserPortfolioSQL implements UserPortfolioPersistence {
 
@@ -123,5 +126,39 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
         } catch (SQLException e) {
             throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
+    }
+
+    @Override
+    public List<PortfolioPosition> getUserPortfolio(long userId) throws DbConnectionException {
+        String query = """
+                SELECT p.crypto_id, p.units, p.buy_price, c.current_price
+                FROM Portfolio p
+                JOIN Cryptocurrency c ON p.crypto_id = c.symbol
+                WHERE p.user_id = ?
+                """;
+
+        List<PortfolioPosition> positions = new ArrayList<>();
+
+        try (PreparedStatement ps = DbConnectionSingleton.getInstance()
+                .connect()
+                .prepareStatement(query)) {
+
+            ps.setLong(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                positions.add(new PortfolioPosition(
+                        rs.getString("crypto_id"),
+                        rs.getDouble("units"),
+                        rs.getDouble("buy_price"),
+                        rs.getDouble("current_price")
+                ));
+            }
+
+        } catch (SQLException e) {
+            throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
+        }
+
+        return positions;
     }
 }

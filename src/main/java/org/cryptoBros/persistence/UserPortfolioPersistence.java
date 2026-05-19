@@ -2,6 +2,8 @@ package org.cryptoBros.persistence;
 
 import org.cryptoBros.persistence.Exceptions.*;
 
+import java.util.List;
+
 public interface UserPortfolioPersistence {
     /**
      * Buys crypto for a user.
@@ -30,4 +32,12 @@ public interface UserPortfolioPersistence {
  * @throws DbConnectionException if there is a connection error with the db.
  */
     void sellCrypto(long userId, String cryptoSymbol, double units) throws CryptoNotFoundException, SaleNotAddedException, DbConnectionException;
+
+    /**
+     * Retrieves all portfolio positions for a user, including current crypto prices.
+     * @param userId the user whose portfolio to retrieve
+     * @return a list of positions (symbol, units, buyPrice, currentPrice); empty if user has no holdings
+     * @throws DbConnectionException if there is a connection error with the db
+     */
+    List<PortfolioPosition> getUserPortfolio(long userId) throws DbConnectionException;
 }

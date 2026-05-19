@@ -4,6 +4,7 @@ import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.persistence.SQL.AtomicSQL;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
 import org.cryptoBros.persistence.SQL.UserPortfolioSQL;
@@ -11,6 +12,7 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -110,5 +112,28 @@ public class CryptoManager {
 
     public void addCryptoListener(CryptoListener listener) {
         this.cryptoListener = listener;
+    }
+
+    /**
+     * Retrieves all portfolio positions for a user, including current crypto prices.
+     * @param userId the user whose portfolio to retrieve
+     * @return list of positions; empty if the user has no holdings
+     * @throws DbConnectionException if the db connection fails
+     */
+    public List<PortfolioPosition> getUserPortfolio(long userId) throws DbConnectionException {
+        return portfolioPersistence.getUserPortfolio(userId);
+    }
+
+    /**
+     * Calculates total estimated profit across all positions.
+     * @param positions the user's portfolio positions
+     * @return total profit (positive means gains, negative means losses)
+     */
+    public double calculateTotalProfit(List<PortfolioPosition> positions) {
+        double total = 0.0;
+        for (PortfolioPosition pos : positions) {
+            total += (pos.currentPrice() - pos.buyPrice()) * pos.units();
+        }
+        return total;
     }
 }
