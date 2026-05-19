@@ -29,12 +29,14 @@ public class NavigatorController implements Navigation {
 
         userController.registerCryptoListener(cryptoMarketController);
         userController.getAllCrypto();
-        userController.registerBalanceListener(cryptoMarketController);
-        userController.pushCurrentBalance(cryptoMarketController);
+        if (!isAdmin) {
+            userController.registerBalanceListener(cryptoMarketController);
+            userController.pushCurrentBalance(cryptoMarketController);
+        }
+
         frameController.displayContent(cryptoMarketController.getView());
 		this.isAdmin = isAdmin;
     }
-
 
     @Override
     public void navigate(PagesName name) {
@@ -42,21 +44,27 @@ public class NavigatorController implements Navigation {
 
         switch (name) {
             case SETTING -> {
-                userController.registerBalanceListener(settingController);
-                userController.pushCurrentBalance(settingController);
+                if (!isAdmin) {
+                    userController.registerBalanceListener(settingController);
+                    userController.pushCurrentBalance(settingController);
+                }
                 frameController.displayContent(settingController.getView());
             }
             case CRYPTO_MARKET ->  {
                 userController.registerCryptoListener(cryptoMarketController);
                 cryptoMarketController.clearTable();
                 userController.getAllCrypto();
-                userController.registerBalanceListener(cryptoMarketController);
-                userController.pushCurrentBalance(cryptoMarketController);
+                if (!isAdmin) {
+                    userController.registerBalanceListener(cryptoMarketController);
+                    userController.pushCurrentBalance(cryptoMarketController);
+                }
                 frameController.displayContent(cryptoMarketController.getView());
             }
             case PORTFOLIO ->  {
-                userController.registerBalanceListener(portfolioController);
-                userController.pushCurrentBalance(portfolioController);
+                if (!isAdmin) {
+                    userController.registerBalanceListener(portfolioController);
+                    userController.pushCurrentBalance(portfolioController);
+                }
                 frameController.displayContent(portfolioController.getView());
             }
 			case MANAGE_CRYPTO ->  {
