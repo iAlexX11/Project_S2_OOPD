@@ -37,7 +37,6 @@ public class ProfileController implements ActionListener, BalanceListener {
 			case SETTINGS -> navigation.navigate(PagesName.SETTING);
 			case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
 			case CHANGE_PASSWORD -> userController.changeUserPassword(profileView.getPassword());
-			case CHANGE_PROFILE_PIC -> System.out.println("Change password");
 			case CHANGE_USERNAME -> userController.changeUsername(profileView.getUsername());
 		}
 	}

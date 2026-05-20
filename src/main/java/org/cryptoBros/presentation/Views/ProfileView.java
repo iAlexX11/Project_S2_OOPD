@@ -13,7 +13,6 @@ public class ProfileView extends Pages {
 
 	private JButton changeUsernameButton;
 	private JButton changePasswordButton;
-	private JButton changePicButton;
 	private ProfilePicture profilePicture;
 	private String confirmedUsername;
 	private char[] confirmedPassword;
@@ -44,10 +43,6 @@ public class ProfileView extends Pages {
 		}
 
 		core.add(Box.createVerticalStrut(20));
-		changePicButton = createButton("Change Profile Picture", new Color(70, 105, 210));
-		core.add(changePicButton);
-		core.add(Box.createVerticalStrut(12));
-
 		changeUsernameButton = createButton("Change Username", new Color(70, 105, 210));
 		core.add(changeUsernameButton);
 		core.add(Box.createVerticalStrut(12));
@@ -86,9 +81,6 @@ public class ProfileView extends Pages {
 		getContent().add(setHeader(), BorderLayout.NORTH);
 		addHeaderActions(listener);
 		getContent().revalidate();
-
-		changePicButton.setActionCommand(ButtonEnumeration.CHANGE_PROFILE_PIC.name());
-		changePicButton.addActionListener(listener);
 
 		changeUsernameButton.setActionCommand(ButtonEnumeration.CHANGE_USERNAME.name());
 		changeUsernameButton.addActionListener(e -> showChangeUsername());
@@ -194,9 +186,5 @@ public class ProfileView extends Pages {
 
 	public char[] getPassword() {
 		return confirmedPassword;
-	}
-
-	public void showChangeProfilePicture() {
-		//TODO: ASK FOR A NEW PICTURE
 	}
 }
