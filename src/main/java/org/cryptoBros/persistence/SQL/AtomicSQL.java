@@ -11,7 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AtomicSQL implements AtomicPersistence {
 
@@ -43,6 +45,18 @@ public class AtomicSQL implements AtomicPersistence {
     SELECT bot_id FROM Bots WHERE crypto_id = ?
     """;
 
+    private static final String SELECT_CURRENT_PRICE = """
+    SELECT current_price FROM Cryptocurrency WHERE symbol = ?
+    """;
+
+    private static final String SELECT_HOLDERS = """
+    SELECT user_id, units FROM Portfolio WHERE crypto_id = ?
+    """;
+
+    private static final String ADJUST_BALANCE = """
+    UPDATE Users SET balance = balance + ? WHERE user_id = ?
+    """;
+
     private static final String DELETE_CRYPTO = """
     DELETE FROM Cryptocurrency WHERE symbol = ?
     """;
@@ -56,17 +70,6 @@ public class AtomicSQL implements AtomicPersistence {
     FROM Bots
     """;
 
-    /**
-     * Inserts a Users row, a Cryptocurrency row, and a Bots row
-     * atomically in one connection/transaction.
-     *
-     * Correct FK order:
-     *   Users  → must exist before Bots (bot_id FK)
-     *   Cryptocurrency → must exist before Bots (crypto_id FK)
-     *   Bots   → inserted last, both FKs satisfied
-     *
-     * @return the generated bot_id (= user_id)
-     */
     @Override
     public long createCryptoWithBot(Crypto crypto)
             throws DbConnectionException, BotGenerationException, CryptoNotAddedException {
@@ -147,17 +150,41 @@ public class AtomicSQL implements AtomicPersistence {
     }
 
     @Override
-    public void deleteCryptoWithBot(String symbol)
+    public Map<Long, Double> deleteCryptoWithBot(String symbol)
             throws DbConnectionException, CryptoNotFoundException {
+
+        Map<Long, Double> refunds = new HashMap<>();
 
         try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
             conn.setAutoCommit(false);
 
             try {
-                // Resolve the bot's user_id before we lose the Bots row
                 long botUserId = fetchBotUserId(conn, symbol);
+                double currentPrice = fetchCurrentPrice(conn, symbol);
 
-                // Delete crypto cascades Bots, Portfolio, Crypto_History
+                // Fetch all holders and compute refunds (skip the bot user)
+                try (PreparedStatement ps = conn.prepareStatement(SELECT_HOLDERS)) {
+                    ps.setString(1, symbol);
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        long userId = rs.getLong("user_id");
+                        double units = rs.getDouble("units");
+                        if (userId != botUserId) {
+                            refunds.put(userId, currentPrice * units);
+                        }
+                    }
+                }
+
+                // Credit each holder's balance
+                for (Map.Entry<Long, Double> entry : refunds.entrySet()) {
+                    try (PreparedStatement ps = conn.prepareStatement(ADJUST_BALANCE)) {
+                        ps.setDouble(1, entry.getValue());
+                        ps.setLong(2, entry.getKey());
+                        ps.executeUpdate();
+                    }
+                }
+
+                // Delete crypto (cascades Bots, Portfolio, Crypto_History)
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_CRYPTO)) {
                     ps.setString(1, symbol);
                     if (ps.executeUpdate() == 0)
@@ -172,6 +199,7 @@ public class AtomicSQL implements AtomicPersistence {
                 }
 
                 conn.commit();
+                return refunds;
 
             } catch (Exception e) {
                 conn.rollback();
@@ -186,7 +214,18 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
+    private double fetchCurrentPrice(Connection conn, String symbol)
+            throws SQLException, CryptoNotFoundException {
 
+        try (PreparedStatement ps = conn.prepareStatement(SELECT_CURRENT_PRICE)) {
+            ps.setString(1, symbol);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next())
+                throw new CryptoNotFoundException(
+                        "Crypto '" + symbol + "' not found.");
+            return rs.getDouble("current_price");
+        }
+    }
 
     private long fetchBotUserId(Connection conn, String symbol)
             throws SQLException, CryptoNotFoundException {
@@ -201,7 +240,6 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
-
     private boolean cryptoExists(Connection conn, String symbol) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(CHECK_CRYPTO_EXISTS)) {
             ps.setString(1, symbol);
@@ -212,7 +250,7 @@ public class AtomicSQL implements AtomicPersistence {
     }
 
     private List<Bot> loadExistingBots(Connection conn, CryptoManager cryptoManager) throws SQLException {
-        List<Bot> bots = new java.util.ArrayList<>();
+        List<Bot> bots = new ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(SELECT_EXISTING_BOTS);
              ResultSet rs = ps.executeQuery()) {
@@ -264,4 +302,3 @@ public class AtomicSQL implements AtomicPersistence {
             }
         }
     }
-

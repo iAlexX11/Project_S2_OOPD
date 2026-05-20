@@ -90,6 +90,14 @@ public class ManageCryptoView extends Pages {
         for (Object[] row : data) manageCryptoTable.addRow(row);
     }
 
+    public void setDeleteCallback(AbstractTable.ButtonRowCallback callback) {
+        manageCryptoTable.setDeleteCallback(callback);
+    }
+
+    public String getCryptoSymbolAtRow(int row) {
+        return (String) manageCryptoTable.model.getValueAt(row, 0);
+    }
+
     public JFileChooser createFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Cryptocurrency JSON file");

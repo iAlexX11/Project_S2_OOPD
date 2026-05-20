@@ -1,5 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
+import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Enum.PagesName;
@@ -11,6 +12,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 public class ManageCryptoController implements ActionListener, BalanceListener {
 
@@ -26,6 +28,7 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 		this.adminController = adminController;
 		manageCryptoView.setTypeUser(isAdmin);
         manageCryptoView.setActions(this);
+        manageCryptoView.setDeleteCallback(this::handleDeleteCrypto);
     }
 
     public BaseView getView() {
@@ -33,22 +36,24 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 		return manageCryptoView;
     }
 
-    //TODO refresh crypto table with information from the database
     private void refreshCryptoData() {
-        // Replace with real data from your business layer
-        Object[][] data = {
-                { "Bitcoin",  "", "" },
-                { "LSCoin",   "", "" },
-                { "Tether",   "", "" },
-                { "Ethereum", "", "" },
-                { "XRP",      "", "" },
-                { "BNB",      "", "" },
-                { "Solana",   "", "" },
-                { "Dogecoin", "", "" },
-                { "Cardano",  "", "" },
-                { "TRON",     "", "" },
-        };
+        List<Crypto> cryptos = adminController.getAllCryptos();
+        Object[][] data = new Object[cryptos.size()][3];
+        for (int i = 0; i < cryptos.size(); i++) {
+            data[i] = new Object[]{ cryptos.get(i).getSymbol(), "", "" };
+        }
         manageCryptoView.setCryptoData(data);
+    }
+
+    private void handleDeleteCrypto(int row) {
+        String symbol = manageCryptoView.getCryptoSymbolAtRow(row);
+        int confirm = JOptionPane.showConfirmDialog(null,
+                "Delete " + symbol + "? All holders will be refunded automatically.",
+                "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            adminController.deleteCrypto(symbol);
+            refreshCryptoData();
+        }
     }
 
     private void handleAddCrypto() {

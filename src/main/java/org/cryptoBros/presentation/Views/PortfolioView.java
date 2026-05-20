@@ -50,12 +50,31 @@ public class PortfolioView extends Pages{
         title.setFont(new Font("SansSerif", Font.BOLD, 30));
         title.setForeground(Color.BLACK);
 
+        jLProfit = new JLabel("Estimated Profit: +0.00 €", SwingConstants.CENTER);
+        jLProfit.setFont(new Font("SansSerif", Font.BOLD, 18));
+        jLProfit.setForeground(Color.BLACK);
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        headerPanel.setBackground(new Color(239, 247, 255));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        jLProfit.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(title);
+        headerPanel.add(Box.createVerticalStrut(6));
+        headerPanel.add(jLProfit);
+
         portfolioTable = new PortfolioTable();
 
-        panel.add(title, BorderLayout.NORTH);
+        panel.add(headerPanel, BorderLayout.NORTH);
         panel.add(portfolioTable, BorderLayout.CENTER);
 
         return panel;
+    }
+
+    public void updateProfit(double totalProfit) {
+        String sign = totalProfit >= 0 ? "+" : "";
+        jLProfit.setText(String.format("Estimated Profit: %s%.2f €", sign, totalProfit));
+        jLProfit.setForeground(totalProfit >= 0 ? new Color(0, 150, 80) : new Color(200, 50, 50));
     }
 
     private JPanel buildBalanceSection() {

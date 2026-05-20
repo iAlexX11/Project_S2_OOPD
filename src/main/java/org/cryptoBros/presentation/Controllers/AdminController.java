@@ -2,17 +2,22 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.AdminManager;
+import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
+import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
+import org.cryptoBros.presentation.Views.ErrorsView;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminController {
 
@@ -37,6 +42,24 @@ public class AdminController {
 
 	public void registerCryptoListener(CryptoListener listener) {
 		cryptoManager.addCryptoListener(listener);
+	}
+
+	public void deleteCrypto(String symbol) {
+		try {
+			cryptoManager.deleteCrypto(symbol);
+		} catch (CryptoNotFoundException e) {
+			ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
+		} catch (DbConnectionException e) {
+			ErrorsView.showError(frameController.getMainFrame(), "An error occurred while deleting the cryptocurrency.");
+		}
+	}
+
+	public List<Crypto> getAllCryptos() {
+		try {
+			return cryptoManager.getAllCryptoList();
+		} catch (CryptoNotFoundException | DbConnectionException e) {
+			return new ArrayList<>();
+		}
 	}
 
 }

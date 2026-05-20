@@ -61,6 +61,7 @@ public class NavigatorController implements Navigation {
                 frameController.displayContent(cryptoMarketController.getView());
             }
             case PORTFOLIO ->  {
+                userController.registerCryptoListener(portfolioController);
                 if (!isAdmin) {
                     userController.registerBalanceListener(portfolioController);
                     userController.pushCurrentBalance(portfolioController);

@@ -12,7 +12,7 @@ public class ManageCryptoTable extends AbstractTable {
 
     @Override
     protected boolean isColumnEditable(int col) {
-        return false;
+        return col == 1 || col == 2;
     }
 
     @Override
@@ -38,8 +38,11 @@ public class ManageCryptoTable extends AbstractTable {
         setButtonColumn(1, "Edit", new Color(99, 125, 217),
                 row -> System.out.println("Edit clicked on row: " + row));
 
-        // TODO: Delete button action
         setButtonColumn(2, "Delete", new Color(200, 50, 50),
-                row -> System.out.println("Delete clicked on row: " + row));
+                row -> {});
+    }
+
+    public void setDeleteCallback(ButtonRowCallback callback) {
+        setButtonColumn(2, "Delete", new Color(200, 50, 50), callback);
     }
 }

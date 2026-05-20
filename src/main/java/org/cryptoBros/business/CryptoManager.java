@@ -4,6 +4,7 @@ import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.persistence.SQL.AtomicSQL;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
 import org.cryptoBros.persistence.SQL.UserPortfolioSQL;
@@ -59,19 +60,34 @@ public class CryptoManager {
      * Deletes a crypto from the db, with its associated bot
      *
      * @param symbol symbol of the crypto to be deleted
+     * @return map of userId to refundAmount for each refunded holder
      * @throws DbConnectionException if there was a problem connecting to the {@link AtomicPersistence}
      * @throws CryptoNotFoundException if the {@link Crypto} could not be found
      */
-    public void deleteCrypto(String symbol) throws
+    public Map<Long, Double> deleteCrypto(String symbol) throws
             DbConnectionException,
             CryptoNotFoundException
     {
         // One transaction: crypto + bot user gone or neither is
-        atomicDb.deleteCryptoWithBot(symbol);
+        Map<Long, Double> refunds = atomicDb.deleteCryptoWithBot(symbol);
 
         // DB succeeded: stop in-memory bot
         Bot bot = activeBots.remove(symbol);
         if (bot != null) bot.stop();
+
+        return refunds;
+    }
+
+    public void getAllCrypto() throws DbConnectionException, CryptoNotFoundException {
+        List<Crypto> cryptos = cryptoPersistence.getAllCrypto();
+
+        for (Crypto crypto : cryptos) {
+            notifyListener(crypto);
+        }
+    }
+
+    public List<Crypto> getAllCryptoList() throws CryptoNotFoundException, DbConnectionException {
+        return cryptoPersistence.getAllCrypto();
     }
 
     public void sell(long userId, String symbol, double units) throws
@@ -158,19 +174,16 @@ public class CryptoManager {
         this.cryptoListener = listener;
     }
 
-    public void getAllCrypto() throws DbConnectionException, CryptoNotFoundException {
-        List<Crypto> cryptos = cryptoPersistence.getAllCrypto();
+    public List<PortfolioPosition> getUserPortfolio(long userId) throws DbConnectionException {
+        return portfolioPersistence.getUserPortfolio(userId);
+    }
 
-        for (Crypto crypto : cryptos) {
-            double currentPrice = cryptoPersistence.getCrypto(crypto.getSymbol()).getCurrentPrice();
-            double initialPrice = cryptoPersistence.getCrypto(crypto.getSymbol()).getInitialPrice();
-            cryptoListener.updateData(
-                crypto.getName(),
-                currentPrice,
-                    currentPrice - initialPrice,
-                    ((initialPrice - currentPrice) / initialPrice) * 100
-            );
+    public double calculateTotalProfit(List<PortfolioPosition> positions) {
+        double total = 0.0;
+        for (PortfolioPosition pos : positions) {
+            total += (pos.currentPrice() - pos.buyPrice()) * pos.units();
         }
+        return total;
     }
 
     public void loadInitialCrypto()
