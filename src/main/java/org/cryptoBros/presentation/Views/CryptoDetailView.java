@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.List;
 
 public class CryptoDetailView extends Pages {
 
@@ -16,6 +17,7 @@ public class CryptoDetailView extends Pages {
     private JLabel jLCurrentPrice;
     private JLabel jLOwnedCrypto;
     private JTextField jTFQuantity;
+    private PriceChart priceChart;
 
     @Override
     protected void configureView() {
@@ -40,14 +42,20 @@ public class CryptoDetailView extends Pages {
         core.setOpaque(true);
 
         core.add(topPanel(), BorderLayout.NORTH);
-       // core.add(graphPanel(), BorderLayout.CENTER);
+        core.add(chartWrapper(), BorderLayout.CENTER);
         core.add(buyPanel(), BorderLayout.SOUTH);
         
         return core;
     }
 
-    private String graphPanel() {
-        return " ";
+    private JPanel chartWrapper() {
+        priceChart = new PriceChart();
+
+        JPanel wrapper = new JPanel(new GridBagLayout()); // centers the chart
+        wrapper.setBackground(new Color(239, 247, 255));
+        wrapper.add(priceChart);
+
+        return wrapper;
     }
 
     private JPanel topPanel() {
@@ -154,6 +162,18 @@ public class CryptoDetailView extends Pages {
 
     public void setOwnedCrypto(double units, String symbol) {
         jLOwnedCrypto.setText("Current owned crypto : " + String.format("%.4f", units) + " " + symbol);
+    }
+
+    public void clearChart() {
+        priceChart.clear();
+    }
+
+    public void addChartPoint(double price, String date) {
+        priceChart.addPoint(price, date);
+    }
+
+    public void loadAllHistory(List<Double> prices, List<String> dates) {
+        priceChart.loadData(prices, dates);
     }
 
     public double getQuantity() {

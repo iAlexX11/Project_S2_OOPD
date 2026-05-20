@@ -3,6 +3,7 @@ package org.cryptoBros.presentation.Controllers;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.presentation.Enum.PagesName;
+import org.cryptoBros.presentation.ListenersPersistence.CryptoSelectedListener;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.BaseView;
@@ -11,7 +12,7 @@ import org.cryptoBros.presentation.Views.CryptoMarketView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener {
+public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener, CryptoSelectedListener {
 
     private final CryptoMarketView cryptoMarketView;
     private final Navigation navigation;
@@ -25,6 +26,7 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 		this.cryptoMarketView = new CryptoMarketView();
 		cryptoMarketView.setTypeUser(isAdmin);
         cryptoMarketView.setActions(this);
+        cryptoMarketView.setOnRowClick(this);
 		if (!isAdmin) {
 			userController.registerBalanceListener(this);
 			userController.pushCurrentBalance(this);
@@ -58,5 +60,10 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 
     public BaseView getView() {
         return cryptoMarketView;
+    }
+
+    @Override
+    public void cryptoSelected(String name) {
+        navigation.navigateToCryptoDetail(name);
     }
 }

@@ -1,5 +1,7 @@
 package org.cryptoBros.presentation.Views;
 
+import org.cryptoBros.presentation.ListenersPersistence.CryptoSelectedListener;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -10,8 +12,9 @@ public class DynamicTable extends JPanel {
 
     private Map<String, Integer> cryptos;
 	private static String[] columns;
-
 	private DefaultTableModel model;
+    private JTable table;
+    private CryptoSelectedListener onRowClick;
 
 	public DynamicTable() {
         cryptos = new HashMap<>();
@@ -24,7 +27,7 @@ public class DynamicTable extends JPanel {
 			@Override public boolean isCellEditable(int r, int c) { return false; }
 		};
 
-		JTable table = new JTable(model);
+		table = new JTable(model);
 		table.setBackground(Color.WHITE);
 		table.setForeground(Color.BLACK);
 		table.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -84,6 +87,17 @@ public class DynamicTable extends JPanel {
 		sp.getViewport().setBackground(Color.WHITE);
 		sp.setBackground(Color.WHITE);
 		add(sp, BorderLayout.CENTER);
+
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row >= 0 && onRowClick != null) {
+                    String name = (String) model.getValueAt(row, 0);
+                    onRowClick.cryptoSelected(name);
+                }
+            }
+        });
 	}
 
     public void update(String name, double price, double change, double percentage) {
@@ -114,5 +128,9 @@ public class DynamicTable extends JPanel {
 	public void clearRows() {
         model.setRowCount(0);
         cryptos.clear();
+    }
+
+    public void setOnRowClick(CryptoSelectedListener listener) {
+        onRowClick = listener;
     }
 }

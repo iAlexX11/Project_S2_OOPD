@@ -14,6 +14,7 @@ public class NavigatorController implements Navigation {
     private final UserController userController;
 	private final AdminController adminController;
 	private final ProfileController profileController;
+    private final CryptoDetailController cryptoDetailController;
 	private boolean isAdmin = false;
 
     public NavigatorController(FrameController frameController, UserController userController, AdminController adminController, boolean isAdmin) {
@@ -25,6 +26,7 @@ public class NavigatorController implements Navigation {
 		this.profileController = new ProfileController(userController, this, adminController, isAdmin);
         this.settingController = new SettingController(userController, this, adminController, isAdmin);
         this.portfolioController = new PortfolioController(userController, this);
+        this.cryptoDetailController = new CryptoDetailController(userController, adminController, this, isAdmin);
 		this.isAdmin = isAdmin;
 
         userController.initCrypto();
@@ -74,6 +76,19 @@ public class NavigatorController implements Navigation {
 			case PROFILE ->  {
 				frameController.displayContent(profileController.getView());
 			}
+            case CRYPTO_DETAIL -> {
+                if (!isAdmin) {
+                    userController.registerBalanceListener(portfolioController);
+                    userController.pushCurrentBalance(portfolioController);
+                }
+                frameController.displayContent(cryptoDetailController.getView());
+            }
         }
+    }
+
+    public void navigateToCryptoDetail(String cryptoName) {
+        userController.removeCryptoListener();
+        cryptoDetailController.displayContent(cryptoName);
+        frameController.displayContent(cryptoDetailController.getView());
     }
 }

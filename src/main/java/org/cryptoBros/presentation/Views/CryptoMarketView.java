@@ -1,5 +1,7 @@
 package org.cryptoBros.presentation.Views;
 
+import org.cryptoBros.presentation.ListenersPersistence.CryptoSelectedListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -26,6 +28,10 @@ public class CryptoMarketView extends Pages {
 		if (currentListener == null) return;
 		addHeaderActions(currentListener);
 	}
+
+    public void setOnRowClick(CryptoSelectedListener listener) {
+        cryptoTable.setOnRowClick(listener);
+    }
 
 	private JPanel setCore() {
 		JPanel core = new JPanel(new BorderLayout());
