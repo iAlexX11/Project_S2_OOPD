@@ -1,28 +1,28 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
+import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.ErrorsView;
-
 import java.io.FileNotFoundException;
 
-public class UserController{
+public class UserController {
 
     private final InitialController initialController;
 	private final FrameController frameController;
     private final CryptoManager cryptoManager;
     private final AccountManager accountManager;
 	private final UserManager userManager;
-
+	private final CredentialManager credentialManager;
 
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.initialController = initialController;
-
+		this.credentialManager = new CredentialManager();
         this.userManager = new UserManager();
         this.cryptoManager = new CryptoManager();
         this.accountManager = new AccountManager();
@@ -92,6 +92,22 @@ public class UserController{
 			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
+
+	public void changeUserPassword(char[] password) {
+		try {
+			userManager.changeUserPassword(credentialManager.hashPassword(password));
+		} catch (DbConnectionException e) {
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+		}
+	}
+
+	public void changeUsername(String username) {
+		try {
+			userManager.changeUsername(username);
+		} catch (DbConnectionException e) {
+			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+		}
+	}
 
     public void getAllCrypto() {
         try {

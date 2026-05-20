@@ -4,5 +4,6 @@ public enum PagesName {
     SETTING,
     CRYPTO_MARKET,
     PORTFOLIO,
-	MANAGE_CRYPTO
+	MANAGE_CRYPTO,
+	PROFILE
 }
