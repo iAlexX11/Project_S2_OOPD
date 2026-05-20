@@ -16,13 +16,12 @@ public class SettingController implements ActionListener, BalanceListener {
     private final UserController userController;
     private final Navigation navigation;
     private final SettingsView settingsView;
-	private final AdminController adminController;
 
     public SettingController(UserController userController, Navigation navigation, AdminController adminController, boolean	isAdmin) {
         this.userController = userController;
         this.navigation = navigation;
-        this.settingsView = new SettingsView();
-		this.adminController = adminController;
+        this.settingsView = new SettingsView(isAdmin);
+		settingsView.init();
 		settingsView.setTypeUser(isAdmin);
         settingsView.setActions(this);
 		if (!isAdmin) {

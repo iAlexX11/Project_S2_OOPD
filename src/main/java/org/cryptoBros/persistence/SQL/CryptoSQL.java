@@ -185,4 +185,27 @@ public class CryptoSQL implements CryptoPersistence {
 
         return priceHistory;
     }
+
+	@Override
+	public void changeCryptoName(String symbol, String name) throws CryptoNotFoundException, DbConnectionException{
+		String query = "UPDATE cryptocurrency SET name = ? WHERE symbol = ?";
+
+		try (Connection conn = db.connect();
+			 PreparedStatement ps = conn.prepareStatement(query)) {
+
+			ps.setString(1, name);
+			ps.setString(2, symbol);
+
+			int affectedRows = ps.executeUpdate();
+
+			if (affectedRows == 0)
+			{
+				throw new CryptoNotFoundException("Crypto with name '" + symbol + "' not found.");
+			}
+
+		} catch (SQLException e) {
+			throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
+		}
+	}
+
 }
