@@ -1,6 +1,8 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.CredentialManager;
+import org.cryptoBros.business.CryptoManager;
+import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.SQL.DbConnectionSingleton;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;
@@ -10,6 +12,7 @@ import org.cryptoBros.presentation.Views.WelcomeView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 
 public class InitialController implements ActionListener {
 
@@ -17,6 +20,7 @@ public class InitialController implements ActionListener {
     private final WelcomeView welcomeView;
     private final RegistrationController registrationController;
     private final CredentialManager credentialManager;
+    private final CryptoManager cryptoManager;
 
     public InitialController(FrameController frameController) {
         this.registrationController = new RegistrationController(frameController, this);
@@ -24,6 +28,7 @@ public class InitialController implements ActionListener {
         welcomeView.setActions(this);
         this.frameController = frameController;
         this.credentialManager = new CredentialManager();
+        this.cryptoManager = new CryptoManager();
     }
 
     public void startProgram() {
@@ -32,13 +37,13 @@ public class InitialController implements ActionListener {
         try {
             DbConnectionSingleton.getInstance().loadConfig();
         } catch (ConfigFileNotFoundException | ConfigFileCorruptedException e) {
-            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
             System.exit(1);
         }
         try {
             credentialManager.readAdminPassword();
         } catch (ConfigFileNotFoundException e) {
-            ErrorsView.showError(frameController.getMainFrame(),e.getMessage());
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
         }
     }
 

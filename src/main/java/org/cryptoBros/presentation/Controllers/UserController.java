@@ -9,6 +9,7 @@ import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.presentation.Views.ErrorsView;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class UserController {
@@ -19,6 +20,7 @@ public class UserController {
     private final AccountManager accountManager;
 	private final UserManager userManager;
 
+
 	public UserController(FrameController frameController, InitialController initialController) {
 		this.frameController = frameController;
         this.initialController = initialController;
@@ -28,7 +30,7 @@ public class UserController {
         this.accountManager = new AccountManager();
 	}
 
-	public double getBalance(int userId) {
+	public double getBalance() {
 		try {
 			return userManager.getUserBalance();
 		} catch (UserNotFoundException ex) {
@@ -71,8 +73,16 @@ public class UserController {
         userManager.changeBalanceListener(listener);
     }
 
+    public void registerCryptoListener(CryptoListener listener) {
+        cryptoManager.addCryptoListener(listener);
+    }
+
+    public void removeCryptoListener() {
+        cryptoManager.addCryptoListener((name, price, change, pct) -> {});
+    }
+
     public void pushCurrentBalance(BalanceListener listener) {
-        double balance = getBalance(userManager.getCurrentUserId());
+        double balance = getBalance();
 
         listener.balanceChanged(balance);
     }
@@ -112,6 +122,22 @@ public class UserController {
             return cryptoManager.calculateTotalProfit(positions);
         } catch (DbConnectionException e) {
             return 0.0;
+        }
+    }
+
+    public void getAllCrypto() {
+        try {
+            cryptoManager.getAllCrypto();
+        } catch (DbConnectionException | CryptoNotFoundException  e) {
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
+        }
+    }
+
+    public void initCrypto() {
+        try {
+            cryptoManager.loadInitialCrypto();
+        } catch (CryptoNotAddedException | FileNotFoundException | BotGenerationException | DbConnectionException e) {
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
         }
     }
 }

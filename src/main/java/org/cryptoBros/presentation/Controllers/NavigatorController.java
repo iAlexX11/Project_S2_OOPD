@@ -2,7 +2,7 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
-
+import org.cryptoBros.presentation.Views.Pages;
 
 public class NavigatorController implements Navigation {
 
@@ -18,25 +18,54 @@ public class NavigatorController implements Navigation {
     public NavigatorController(FrameController frameController, UserController userController, AdminController adminController, boolean isAdmin) {
         this.frameController = frameController;
         this.userController = userController;
-		this.adminController = adminController;
-        this.cryptoMarketController = new CryptoMarketController(userController, adminController, this, isAdmin);
+        this.adminController = adminController;
+
+        userController.initCrypto();
+
+        this.manageCryptoController = new ManageCryptoController(frameController, this, adminController, isAdmin);
+        this.cryptoMarketController = new CryptoMarketController(userController,  adminController,this, isAdmin);
         this.settingController = new SettingController(userController, this, adminController, isAdmin);
         this.portfolioController = new PortfolioController(userController, this);
-		this.manageCryptoController = new ManageCryptoController(frameController, this, adminController, isAdmin);
+
+        userController.registerCryptoListener(cryptoMarketController);
+        userController.getAllCrypto();
+        if (!isAdmin) {
+            userController.registerBalanceListener(cryptoMarketController);
+            userController.pushCurrentBalance(cryptoMarketController);
+        }
+
         frameController.displayContent(cryptoMarketController.getView());
 		this.isAdmin = isAdmin;
     }
 
     @Override
     public void navigate(PagesName name) {
+        userController.removeCryptoListener();
+
         switch (name) {
             case SETTING -> {
+                if (!isAdmin) {
+                    userController.registerBalanceListener(settingController);
+                    userController.pushCurrentBalance(settingController);
+                }
                 frameController.displayContent(settingController.getView());
             }
             case CRYPTO_MARKET ->  {
-				frameController.displayContent(cryptoMarketController.getView());
+                userController.registerCryptoListener(cryptoMarketController);
+                cryptoMarketController.clearTable();
+                userController.getAllCrypto();
+                if (!isAdmin) {
+                    userController.registerBalanceListener(cryptoMarketController);
+                    userController.pushCurrentBalance(cryptoMarketController);
+                }
+                frameController.displayContent(cryptoMarketController.getView());
             }
             case PORTFOLIO ->  {
+                userController.registerCryptoListener(portfolioController);
+                if (!isAdmin) {
+                    userController.registerBalanceListener(portfolioController);
+                    userController.pushCurrentBalance(portfolioController);
+                }
                 frameController.displayContent(portfolioController.getView());
             }
 			case MANAGE_CRYPTO ->  {

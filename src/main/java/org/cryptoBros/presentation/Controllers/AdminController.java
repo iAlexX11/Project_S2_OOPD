@@ -56,7 +56,7 @@ public class AdminController {
 
 	public List<Crypto> getAllCryptos() {
 		try {
-			return cryptoManager.getAllCrypto();
+			return cryptoManager.getAllCryptoList();
 		} catch (CryptoNotFoundException | DbConnectionException e) {
 			return new ArrayList<>();
 		}

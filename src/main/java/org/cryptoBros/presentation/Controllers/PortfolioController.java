@@ -1,6 +1,7 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
+import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
@@ -10,7 +11,7 @@ import org.cryptoBros.presentation.Views.PortfolioView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PortfolioController implements ActionListener, BalanceListener {
+public class PortfolioController implements ActionListener, BalanceListener, CryptoListener {
 
     private final Navigation navigation;
     private final PortfolioView portfolioView;
@@ -49,6 +50,11 @@ public class PortfolioController implements ActionListener, BalanceListener {
     @Override
     public void balanceChanged(double balance) {
         portfolioView.updateBalance(balance);
+    }
+
+    @Override
+    public void updateData(String name, double currentPrice, double change, double percentage) {
+        refreshPortfolioData();
     }
 
     public BaseView getView() {

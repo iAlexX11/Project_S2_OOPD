@@ -6,6 +6,7 @@ import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 import org.cryptoBros.persistence.UserPersistence;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -52,7 +53,8 @@ public class UserSQL implements UserPersistence {
     public void removeUser(int id) throws UserNotFoundException, DbConnectionException {
         String query = "DELETE FROM users WHERE user_id = ?";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setInt(1, id);
 
@@ -72,7 +74,8 @@ public class UserSQL implements UserPersistence {
     public User getUser(String username, String email) throws UserNotFoundException, DbConnectionException {
         String query = "SELECT * FROM users WHERE username = ? OR email = ?";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, username);
             ps.setString(2, email);
@@ -99,7 +102,8 @@ public class UserSQL implements UserPersistence {
 	public double getUserBalance(long id) throws UserNotFoundException, DbConnectionException {
 		String query = "SELECT balance FROM users WHERE user_id = ?";
 
-		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setLong(1, id);
 
 			var rs = ps.executeQuery();
@@ -119,7 +123,8 @@ public class UserSQL implements UserPersistence {
 	public void updateUserBalance(long userId, double newBalance) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = ? WHERE user_id = ?";
 
-		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setDouble(1, newBalance);
 			ps.setLong(2, userId);
 

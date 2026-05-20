@@ -12,7 +12,7 @@ public class ManageCryptoTable extends AbstractTable {
 
     @Override
     protected boolean isColumnEditable(int col) {
-        return false;
+        return col == 1 || col == 2;
     }
 
     @Override
