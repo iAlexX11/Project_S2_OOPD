@@ -1,6 +1,7 @@
 package org.cryptoBros.business;
 
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Workers.Bot;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
