@@ -189,7 +189,15 @@ public class CryptoManager {
     public void loadInitialCrypto()
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
 
-        List<Bot> bots = atomicDb.loadInitialData(this);
+        boolean dbEmpty;
+        try {
+            cryptoPersistence.getAllCrypto();
+            dbEmpty = false;
+        } catch (CryptoNotFoundException e) {
+            dbEmpty = true;
+        }
+
+        List<Bot> bots = atomicDb.loadInitialData(this, dbEmpty);
 
         for (Bot bot : bots) {
             activeBots.put(bot.getCryptoSymbol(), bot);

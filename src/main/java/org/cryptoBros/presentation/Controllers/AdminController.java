@@ -27,12 +27,12 @@ public class AdminController {
 	private final AccountManager accountManager;
 	private final AdminManager adminManager;
 
-	public AdminController(InitialController initialController, FrameController frameController) {
+	public AdminController(InitialController initialController, FrameController frameController, CryptoManager cryptoManager) {
 		this.frameController = frameController;
 		this.initialController = initialController;
 
 		this.adminManager = new AdminManager();
-		this.cryptoManager = new CryptoManager();
+		this.cryptoManager = cryptoManager;
 		this.accountManager = new AccountManager();
 	}
 

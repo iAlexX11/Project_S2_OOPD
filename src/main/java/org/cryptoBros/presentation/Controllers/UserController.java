@@ -21,12 +21,12 @@ public class UserController {
 	private final UserManager userManager;
 	private final CredentialManager credentialManager;
 
-	public UserController(FrameController frameController, InitialController initialController) {
+	public UserController(FrameController frameController, InitialController initialController, CryptoManager cryptoManager) {
 		this.frameController = frameController;
         this.initialController = initialController;
 		this.credentialManager = new CredentialManager();
         this.userManager = new UserManager();
-        this.cryptoManager = new CryptoManager();
+        this.cryptoManager = cryptoManager;
         this.accountManager = new AccountManager();
 	}
 

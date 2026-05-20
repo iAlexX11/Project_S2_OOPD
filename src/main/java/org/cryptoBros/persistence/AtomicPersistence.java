@@ -28,7 +28,7 @@ public interface AtomicPersistence {
     Map<Long, Double> deleteCryptoWithBot(String symbol)
             throws DbConnectionException, CryptoNotFoundException;
 
-    List<Bot> loadInitialData(CryptoManager cryptoManager)
+    List<Bot> loadInitialData(CryptoManager cryptoManager, boolean seedFromJson)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException;
 
 }

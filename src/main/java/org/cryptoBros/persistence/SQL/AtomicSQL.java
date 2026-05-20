@@ -269,33 +269,24 @@ public class AtomicSQL implements AtomicPersistence {
     }
 
     @Override
-    public List<Bot> loadInitialData(CryptoManager cryptoManager)
+    public List<Bot> loadInitialData(CryptoManager cryptoManager, boolean seedFromJson)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
 
-            Gson gson = new Gson();
-            List<Bot> bots = new ArrayList<>();
-
             try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
-                FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
-                Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
 
-                List<Bot> newBots = new ArrayList<>();
-                if (cryptos != null) {
-                    for (Crypto crypto : cryptos) {
-                        if (!cryptoExists(conn, crypto.getSymbol())) {
-                            long botUserId = createCryptoWithBot(crypto);
-                            newBots.add(new Bot(botUserId, crypto.getSymbol(), crypto.getVolatility(), cryptoManager));
+                if (seedFromJson) {
+                    Gson gson = new Gson();
+                    FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
+                    Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
+
+                    if (cryptos != null) {
+                        for (Crypto crypto : cryptos) {
+                            createCryptoWithBot(crypto);
                         }
                     }
                 }
 
-                List<Bot> existingBots = loadExistingBots(conn, cryptoManager);
-                existingBots.removeIf(b -> newBots.stream()
-                        .anyMatch(n -> n.getCryptoSymbol().equals(b.getCryptoSymbol())));
-
-                bots.addAll(newBots);
-                bots.addAll(existingBots);
-                return bots;
+                return loadExistingBots(conn, cryptoManager);
 
             } catch (SQLException e) {
                 throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
