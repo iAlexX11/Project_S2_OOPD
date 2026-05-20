@@ -2,11 +2,15 @@ package org.cryptoBros.presentation.Views;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ManageCryptoView extends Pages {
 
     private ManageCryptoTable manageCryptoTable;
+	private JButton changeCryptoNameButton;;
+	private String confirmedCryptoName;
+	private ActionListener actionListener;
 
 	@Override
 	protected void configureView() {
@@ -15,6 +19,7 @@ public class ManageCryptoView extends Pages {
 
 	@Override
 	public void setActions(ActionListener listener) {
+		this.actionListener = listener;
 		getContent().add(setHeader(), BorderLayout.NORTH);
 		addHeaderActions(listener);
 	}
@@ -94,6 +99,58 @@ public class ManageCryptoView extends Pages {
         manageCryptoTable.setDeleteCallback(callback);
     }
 
+	public void setEditCallback(AbstractTable.ButtonRowCallback callback) {
+		manageCryptoTable.setEditCallback(row -> {
+			askNewCryptoName();
+			callback.onButtonClicked(row);
+		});
+	}
+
+	private JDialog createBaseDialog(String title) {
+		JDialog dialog = new JDialog();
+		dialog.setTitle(title);
+		dialog.setModal(true);
+		return dialog;
+	}
+
+	private GridBagConstraints createFieldConstraints(int column, int row) {
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = column;
+		constraints.gridy = row;
+		constraints.insets = new Insets(8, 10, 8, 10);
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = column == 1 ? 1.0 : 0;
+		return constraints;
+	}
+
+	private void askNewCryptoName() {
+		JDialog dialog = createBaseDialog("Change Crypto Name");
+		JPanel formPanel = new JPanel(new GridBagLayout());
+		formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+		JTextField usernameField = new JTextField(15);
+		formPanel.add(new JLabel("New Name:"), createFieldConstraints(0, 0));
+		formPanel.add(usernameField, createFieldConstraints(1, 0));
+
+		JButton submitButton = new JButton("Confirm");
+		submitButton.addActionListener(e -> {
+			confirmedCryptoName = usernameField.getText().trim();
+			actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ButtonEnumeration.EDIT_CRYPTO.name()));
+			dialog.dispose();
+		});
+
+		GridBagConstraints buttonConstraints = createFieldConstraints(0, 1);
+		buttonConstraints.gridwidth = 2;
+		buttonConstraints.fill = GridBagConstraints.NONE;
+		buttonConstraints.anchor = GridBagConstraints.CENTER;
+		formPanel.add(submitButton, buttonConstraints);
+
+		dialog.add(formPanel);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
+	}
+
     public String getCryptoSymbolAtRow(int row) {
         return (String) manageCryptoTable.model.getValueAt(row, 0);
     }
@@ -104,4 +161,8 @@ public class ManageCryptoView extends Pages {
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON files", "json"));
         return fileChooser;
     }
+
+	public String getUsername() {
+		return confirmedCryptoName;
+	}
 }

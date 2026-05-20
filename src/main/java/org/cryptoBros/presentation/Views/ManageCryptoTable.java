@@ -34,13 +34,16 @@ public class ManageCryptoTable extends AbstractTable {
                 }
         );
 
-        // TODO: Edit button action
         setButtonColumn(1, "Edit", new Color(99, 125, 217),
-                row -> System.out.println("Edit clicked on row: " + row));
+                row ->{});
 
         setButtonColumn(2, "Delete", new Color(200, 50, 50),
                 row -> {});
     }
+
+	public void setEditCallback(ButtonRowCallback callback) {
+		setButtonColumn(1, "Edit", new Color(125, 200, 50), callback);
+	}
 
     public void setDeleteCallback(ButtonRowCallback callback) {
         setButtonColumn(2, "Delete", new Color(200, 50, 50), callback);

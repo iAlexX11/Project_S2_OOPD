@@ -5,8 +5,10 @@ import org.cryptoBros.business.AdminManager;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.persistence.Exceptions.CryptoNameAlreadyExists;
 import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
+import org.cryptoBros.persistence.Exceptions.ErrorChangingCryptoName;
 import org.cryptoBros.presentation.Views.DisplayMessage;
 
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ public class AdminController {
 	public AdminController(InitialController initialController, FrameController frameController) {
 		this.frameController = frameController;
 		this.initialController = initialController;
-
 		this.adminManager = new AdminManager();
 		this.cryptoManager = new CryptoManager();
 		this.accountManager = new AccountManager();
@@ -55,4 +56,11 @@ public class AdminController {
 		}
 	}
 
+	public void changeCryptoName(String symbol, String newName) {
+		try {
+			cryptoManager.changeCryptoName(symbol, newName);
+		} catch (CryptoNameAlreadyExists | ErrorChangingCryptoName e) {
+			DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
+		}
+	}
 }

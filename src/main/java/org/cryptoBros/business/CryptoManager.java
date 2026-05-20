@@ -196,4 +196,28 @@ public class CryptoManager {
             bot.start();
         }
     }
+
+	public void changeCryptoName(String symbol, String name)
+			throws ErrorChangingCryptoName, CryptoNameAlreadyExists {
+		try {
+			List<Crypto> cryptos = cryptoPersistence.getAllCrypto();
+
+			boolean alreadyExists = false;
+			for (Crypto crypto : cryptos) {
+				if (crypto.getSymbol().equals(name)) {
+					alreadyExists = true;
+					break;
+				}
+			}
+
+			if (alreadyExists) {
+				throw new CryptoNameAlreadyExists("This name already exists.");
+			}
+
+			cryptoPersistence.changeCryptoName(symbol, name);
+
+		} catch (CryptoNotFoundException | DbConnectionException e) {
+			throw new ErrorChangingCryptoName("Something happened, please try again later.");
+		}
+	}
 }
