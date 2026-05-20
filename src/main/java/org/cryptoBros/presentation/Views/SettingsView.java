@@ -12,6 +12,11 @@ public class SettingsView extends Pages{
     private JButton logoutButton;
     private JButton accountManagementButton;
     private JButton deleteAccountButton;
+	private boolean isAdmin = false;
+
+	public SettingsView(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 
     private JPanel setCore() {
         JPanel core = new JPanel();
@@ -36,11 +41,11 @@ public class SettingsView extends Pages{
         core.add(accountManagementButton);
         core.add(Box.createVerticalStrut(12));
 
-        deleteAccountButton = createButton("Delete your account", new Color(220, 40, 40));
-        core.add(deleteAccountButton);
-
+		if (!isAdmin) {
+			deleteAccountButton = createButton("Delete your account", new Color(220, 40, 40));
+			core.add(deleteAccountButton);
+		}
         core.add(Box.createVerticalGlue());
-
         return core;
     }
 
@@ -74,9 +79,10 @@ public class SettingsView extends Pages{
 
 		accountManagementButton.setActionCommand(ButtonEnumeration.PROFILE.name());
 		accountManagementButton.addActionListener(listener);
-
-		deleteAccountButton.setActionCommand(ButtonEnumeration.DELETE.name());
-		deleteAccountButton.addActionListener(listener);
+		if (!isAdmin) {
+			deleteAccountButton.setActionCommand(ButtonEnumeration.DELETE.name());
+			deleteAccountButton.addActionListener(listener);
+		}
 
 	}
 }
