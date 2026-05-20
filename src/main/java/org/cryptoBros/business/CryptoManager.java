@@ -214,4 +214,15 @@ public class CryptoManager {
     public void stopGraphWorker() {
         graphPriceWorker.stop();
     }
+
+    public double getOwnedUnits(String symbol, int currentUserId) throws DbConnectionException {
+        List<PortfolioPosition> userPortfolio = getUserPortfolio(currentUserId);
+
+        for (int i = 0; i < userPortfolio.size(); i++) {
+            if (userPortfolio.get(i).cryptoSymbol().equals(symbol)) {
+                return userPortfolio.get(i).units();
+            }
+        }
+        return 0;
+    }
 }

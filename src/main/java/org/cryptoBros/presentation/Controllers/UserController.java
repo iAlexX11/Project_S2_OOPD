@@ -170,4 +170,12 @@ public class UserController {
     public String getCryptoName(String symbol) throws DbConnectionException, CryptoNotFoundException {
         return cryptoManager.getCryptoName(symbol);
     }
+
+    public double getOwnedUnits(String symbol) {
+        try {
+            return cryptoManager.getOwnedUnits(symbol, userManager.getCurrentUserId());
+        } catch (DbConnectionException e) {
+            return 0;
+        }
+    }
 }

@@ -73,7 +73,7 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
         try {
             view.setCryptoName(userController.getCryptoName(symbol));
            // view.setCurrentPrice(userController.getCryptoPrice(symbol));
-           // view.setOwnedCrypto(userController.getOwnedUnits(symbol), symbol);
+            view.setOwnedCrypto(userController.getOwnedUnits(symbol), symbol);
             userController.setGraphicWorker(this, symbol);
         } catch (DbConnectionException | CryptoNotFoundException e) {
             view.setCryptoName("<Crypto>");
