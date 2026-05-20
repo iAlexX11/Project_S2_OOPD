@@ -78,7 +78,6 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 			case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
 			case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
 			case LOGOUT -> adminController.adminLogout();
-			case ACCOUNT -> System.out.println("Account");
 		}
 	}
 
