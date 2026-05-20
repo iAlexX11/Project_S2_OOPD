@@ -31,6 +31,10 @@ public abstract class Pages extends BaseView{
 		if (isAdmin) bindButton(jBManageCrypto, ButtonEnumeration.MANAGE_CRYPTO, listener);
 	}
 
+	public void init() {
+		configureView();
+	}
+
 	private JPanel buildHeader(JPanel navWrapper) {
 		JPanel header = new JPanel(new BorderLayout());
 		header.setBackground(new Color(83, 136, 252));

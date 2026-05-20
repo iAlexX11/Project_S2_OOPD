@@ -8,7 +8,7 @@ import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.PortfolioPosition;
-import org.cryptoBros.presentation.Views.ErrorsView;
+import org.cryptoBros.presentation.Views.DisplayMessage;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class UserController {
             userManager.clearCurrentUser();
             logout();
         } catch (UserNotFoundException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+            DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -91,7 +91,7 @@ public class UserController {
         try {
             userManager.addBalance(addBalanceAmount);
         } catch (UserNotFoundException | DbConnectionException e){
-			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -128,16 +128,18 @@ public class UserController {
 	public void changeUserPassword(char[] password) {
 		try {
 			userManager.changeUserPassword(credentialManager.hashPassword(password));
+			DisplayMessage.showMessage(frameController.getMainFrame(), "The password has been changed!");
 		} catch (DbConnectionException e) {
-			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
 		}
 	}
 
 	public void changeUsername(String username) {
 		try {
 			userManager.changeUsername(username);
+			DisplayMessage.showMessage(frameController.getMainFrame(), "The username has been changed!");
 		} catch (DbConnectionException e) {
-			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
 		}
 	}
 
@@ -145,7 +147,7 @@ public class UserController {
         try {
             cryptoManager.getAllCrypto();
         } catch (DbConnectionException | CryptoNotFoundException  e) {
-            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
+            DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
         }
     }
 
@@ -153,7 +155,7 @@ public class UserController {
         try {
             cryptoManager.loadInitialCrypto();
         } catch (CryptoNotAddedException | FileNotFoundException | BotGenerationException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+            DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
         }
     }
 }

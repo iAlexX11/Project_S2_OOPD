@@ -2,8 +2,8 @@ package org.cryptoBros.presentation.Views;
 
 import javax.swing.*;
 
-public class ErrorsView {
-	public static void showError(MainFrame mainFrame, String error){
+public class DisplayMessage {
+	public static void showMessage(MainFrame mainFrame, String error){
 		JOptionPane.showMessageDialog(mainFrame,error);
 	}
 }
