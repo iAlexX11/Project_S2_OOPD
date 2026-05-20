@@ -89,7 +89,13 @@ public class NavigatorController implements Navigation {
 
     public void navigateToCryptoDetail(String type) {
         userController.removeCryptoListener();
+        cryptoDetailController.stop();
+        userController.registerCryptoListener(cryptoDetailController);
         cryptoDetailController.displayContent(type);
+        if (!isAdmin) {
+            userController.registerBalanceListener(cryptoDetailController);
+            userController.pushCurrentBalance(cryptoDetailController);
+        }
         frameController.displayContent(cryptoDetailController.getView());
     }
 }

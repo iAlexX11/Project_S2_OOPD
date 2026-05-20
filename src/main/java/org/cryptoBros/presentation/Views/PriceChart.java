@@ -13,7 +13,7 @@ public class PriceChart extends JPanel {
     private static final int MAX_POINTS = 120;
     private static final double Y_MARGIN = 0.05;
     private static final int PAD_LEFT = 70;
-    private static final int PAD_RIGHT = 70;
+    private static final int PAD_RIGHT = 20;
     private static final int PAD_TOP = 20;
     private static final int PAD_BOTTOM = 40;
     private static final int GRID_LINES = 5;
@@ -26,7 +26,7 @@ public class PriceChart extends JPanel {
         times = new ArrayList<>();
 
         setBackground(new Color(20, 20, 35));
-        setPreferredSize(new Dimension(400, 350));
+        setPreferredSize(new Dimension(400, 450));
     }
 
     public void addPoint (double price, String time) {
@@ -127,7 +127,7 @@ public class PriceChart extends JPanel {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, 11));
         for (int i = 0; i < times.size(); i += step) {
             float x = PAD_LEFT + (float) i / (times.size() - 1) * chartW;
-            g2d.drawString(times.get(i), x - 10, getHeight() - 10);
+            g2d.drawString(times.get(i), x - 15, getHeight() - 10);
         }
     }
 

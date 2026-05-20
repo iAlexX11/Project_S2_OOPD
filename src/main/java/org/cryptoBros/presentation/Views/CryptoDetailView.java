@@ -40,11 +40,12 @@ public class CryptoDetailView extends Pages {
         JPanel core = new JPanel(new BorderLayout(0, 15));
         core.setBackground(new Color(239, 247, 255));
         core.setOpaque(true);
+        core.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
         core.add(topPanel(), BorderLayout.NORTH);
         core.add(chartWrapper(), BorderLayout.CENTER);
         core.add(buyPanel(), BorderLayout.SOUTH);
-        
+
         return core;
     }
 
@@ -74,10 +75,11 @@ public class CryptoDetailView extends Pages {
         jLCurrentPrice.setFont(new Font("Apple Casual", Font.BOLD, 16));
         jLCurrentPrice.setForeground(Color.BLACK);
 
-        jLOwnedCrypto = new JLabel("Current owned crypto : 0.0 <CRYPTO>", SwingConstants.RIGHT);
+        jLOwnedCrypto = new JLabel("Current owned crypto : 0 <CRYPTO>", SwingConstants.RIGHT);
         jLOwnedCrypto.setFont(new Font("Apple Casual", Font.BOLD, 16));
         jLOwnedCrypto.setForeground(Color.BLACK);
 
+        jPCryptoInfo.add(Box.createVerticalStrut(8));
         jPCryptoInfo.add(jLCurrentPrice, BorderLayout.WEST);
         jPCryptoInfo.add(jLOwnedCrypto, BorderLayout.EAST);
 
@@ -95,19 +97,20 @@ public class CryptoDetailView extends Pages {
         JPanel buyBox = new JPanel();
         buyBox.setLayout(new BoxLayout(buyBox, BoxLayout.Y_AXIS));
         buyBox.setBackground(new Color(190, 210, 255));
-        buyBox.setBorder(new EmptyBorder(15, 30, 15, 30));
+        buyBox.setBorder(new EmptyBorder(8, 20, 8, 20));
 
         JLabel buyTitle = new JLabel("Buy Crypto", SwingConstants.CENTER);
-        buyTitle.setFont(new Font("Apple Casual", Font.BOLD, 18));
+        buyTitle.setFont(new Font("Apple Casual", Font.BOLD, 14));
         buyTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel quantityRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel quantityRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 3));
         quantityRow.setOpaque(false);
 
         JLabel quantityLabel = new JLabel("Quantity:");
-        quantityLabel.setFont(new Font("Apple Casual", Font.BOLD, 15));
+        quantityLabel.setFont(new Font("Apple Casual", Font.BOLD, 13));
 
         jTFQuantity = new JTextField();
+        jTFQuantity.setPreferredSize(new Dimension(80, 25));
         jTFQuantity.addFocusListener(new FocusListener() {
 
             @Override
@@ -136,17 +139,17 @@ public class CryptoDetailView extends Pages {
         jBConfirm.setAlignmentX(Component.CENTER_ALIGNMENT);
         jBConfirm.setBackground(new Color(83, 136, 252));
         jBConfirm.setForeground(Color.WHITE);
-        jBConfirm.setFont(new Font("Apple Casual", Font.BOLD, 14));
+        jBConfirm.setFont(new Font("Apple Casual", Font.BOLD, 13));
         jBConfirm.setFocusPainted(false);
         jBConfirm.setBorderPainted(false);
         jBConfirm.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        jBConfirm.setPreferredSize(new Dimension(120, 35));
-        jBConfirm.setMaximumSize(new Dimension(120, 35));
+        jBConfirm.setPreferredSize(new Dimension(100, 28));
+        jBConfirm.setMaximumSize(new Dimension(100, 28));
 
         buyBox.add(buyTitle);
-        buyBox.add(Box.createVerticalStrut(8));
+        buyBox.add(Box.createVerticalStrut(5));
         buyBox.add(quantityRow);
-        buyBox.add(Box.createVerticalStrut(8));
+        buyBox.add(Box.createVerticalStrut(5));
         buyBox.add(jBConfirm);
 
         jPBlock.add(buyBox);
@@ -162,27 +165,10 @@ public class CryptoDetailView extends Pages {
     }
 
     public void setOwnedCrypto(double units, String symbol) {
-        jLOwnedCrypto.setText("Current owned crypto : " + String.format("%.4f", units) + " " + symbol);
-    }
-
-    public void clearChart() {
-        priceChart.clear();
-    }
-
-    public void addChartPoint(double price, String date) {
-        priceChart.addPoint(price, date);
+        jLOwnedCrypto.setText("Current owned crypto : " + String.format("%.0f", units) + " " + symbol);
     }
 
     public void loadAllHistory(List<Double> prices, List<String> dates) {
         priceChart.loadData(prices, dates);
     }
-
-    public double getQuantity() {
-        try {
-            return Double.parseDouble(jTFQuantity.getText());
-        } catch (NumberFormatException e) {
-            return 0.0;
-        }
-    }
-
 }

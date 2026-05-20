@@ -23,12 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CryptoDetailController implements ActionListener, BalanceListener, GraphPriceListener {
+public class CryptoDetailController implements ActionListener, BalanceListener, CryptoListener, GraphPriceListener {
 
     private final UserController userController;
     private final AdminController adminController;
     private final Navigation navigation;
     private final CryptoDetailView view;
+    private String currentSymbol;
 
     public CryptoDetailController (UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
         this.userController = userController;
@@ -53,7 +54,12 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
             case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
             case MANAGE_CRYPTO -> navigation.navigate(PagesName.MANAGE_CRYPTO);
+            case CONFIRM_PURCHASE -> buyCrypto();
         }
+    }
+
+    private void buyCrypto() {
+        //TODO: Call function to buy crypto
     }
 
     @Override
@@ -70,9 +76,9 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
     }
 
     public void displayContent(String symbol) {
+        this.currentSymbol = symbol;
         try {
             view.setCryptoName(userController.getCryptoName(symbol));
-           // view.setCurrentPrice(userController.getCryptoPrice(symbol));
             view.setOwnedCrypto(userController.getOwnedUnits(symbol), symbol);
             userController.setGraphicWorker(this, symbol);
         } catch (DbConnectionException | CryptoNotFoundException e) {
@@ -92,4 +98,10 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
         });
     }
 
+    @Override
+    public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
+        if (symbol.equals(currentSymbol)) {
+            view.setCurrentPrice(currentPrice);
+        }
+    }
 }
