@@ -11,6 +11,9 @@ import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
 
+import javax.swing.*;
+import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,7 +50,7 @@ public class CryptoManager {
         long botUserId = atomicDb.createCryptoWithBot(newCrypto);
 
         // DB succeeded: start in-memory bot
-        Bot bot = new Bot(botUserId, newCrypto.getSymbol(), newCrypto.getVolatility());
+        Bot bot = new Bot(botUserId, newCrypto.getSymbol(), newCrypto.getVolatility(), this);
         activeBots.put(newCrypto.getSymbol(), bot);
         bot.start();
     }
@@ -69,6 +72,16 @@ public class CryptoManager {
         // DB succeeded: stop in-memory bot
         Bot bot = activeBots.remove(symbol);
         if (bot != null) bot.stop();
+    }
+
+    public void sell(long userId, String symbol, double units) throws
+            DbConnectionException,
+            SaleNotAddedException,
+            CryptoNotFoundException
+    {
+        portfolioPersistence.sellCrypto(userId, symbol, units);
+        Crypto updatedCrypto = cryptoPersistence.getCrypto(symbol);
+        notifyListener(updatedCrypto);
     }
 
 
@@ -105,10 +118,69 @@ public class CryptoManager {
 
         // if price found and user has enough balance -> execute purchase
         portfolioPersistence.buyCrypto(userId, symbol, currentPrice, units);
+        Crypto updatedCrypto = cryptoPersistence.getCrypto(symbol);
+        notifyListener(updatedCrypto);
     }
 
+    public void botPurchase(long userId, String symbol, double units) throws
+            DbConnectionException, CryptoNotFoundException, PurchaseNotAddedException {
+
+        if (units <= 0)
+            throw new PurchaseNotAddedException("Units must be greater than zero.");
+
+        double currentPrice = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
+        portfolioPersistence.buyCrypto(userId, symbol, currentPrice, units);
+        notifyListener(cryptoPersistence.getCrypto(symbol));
+    }
+
+    private void notifyListener(Crypto crypto) {
+        if (cryptoListener == null) return;
+        double current = crypto.getCurrentPrice();
+        double initial = crypto.getInitialPrice();
+        SwingUtilities.invokeLater(() ->
+                cryptoListener.updateData(
+                        crypto.getName(),
+                        current,
+                        current - initial,
+                        ((current - initial) / initial) * 100  // ← correct percentage
+                )
+        );
+    }
+
+    public void botSell(long userId, String symbol, double units) throws
+            DbConnectionException, CryptoNotFoundException, SaleNotAddedException {
+
+        portfolioPersistence.sellCrypto(userId, symbol, units);
+        notifyListener(cryptoPersistence.getCrypto(symbol));
+    }
 
     public void addCryptoListener(CryptoListener listener) {
         this.cryptoListener = listener;
+    }
+
+    public void getAllCrypto() throws DbConnectionException, CryptoNotFoundException {
+        List<Crypto> cryptos = cryptoPersistence.getAllCrypto();
+
+        for (Crypto crypto : cryptos) {
+            double currentPrice = cryptoPersistence.getCrypto(crypto.getSymbol()).getCurrentPrice();
+            double initialPrice = cryptoPersistence.getCrypto(crypto.getSymbol()).getInitialPrice();
+            cryptoListener.updateData(
+                crypto.getName(),
+                currentPrice,
+                    currentPrice - initialPrice,
+                    ((initialPrice - currentPrice) / initialPrice) * 100
+            );
+        }
+    }
+
+    public void loadInitialCrypto()
+            throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
+
+        List<Bot> bots = atomicDb.loadInitialData(this);
+
+        for (Bot bot : bots) {
+            activeBots.put(bot.getCryptoSymbol(), bot);
+            bot.start();
+        }
     }
 }

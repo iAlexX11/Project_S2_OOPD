@@ -8,6 +8,7 @@ import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.ErrorsView;
+import java.io.FileNotFoundException;
 
 public class UserController {
 
@@ -27,7 +28,7 @@ public class UserController {
         this.accountManager = new AccountManager();
 	}
 
-	public double getBalance(int userId) {
+	public double getBalance() {
 		try {
 			return userManager.getUserBalance();
 		} catch (UserNotFoundException ex) {
@@ -70,8 +71,16 @@ public class UserController {
         userManager.changeBalanceListener(listener);
     }
 
+    public void registerCryptoListener(CryptoListener listener) {
+        cryptoManager.addCryptoListener(listener);
+    }
+
+    public void removeCryptoListener() {
+        cryptoManager.addCryptoListener((name, price, change, pct) -> {}); // no-op until next view registers
+    }
+
     public void pushCurrentBalance(BalanceListener listener) {
-        double balance = getBalance(userManager.getCurrentUserId());
+        double balance = getBalance();
 
         listener.balanceChanged(balance);
     }
@@ -99,4 +108,20 @@ public class UserController {
 			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
 		}
 	}
+
+    public void getAllCrypto() {
+        try {
+            cryptoManager.getAllCrypto();
+        } catch (DbConnectionException | CryptoNotFoundException  e) {
+            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
+        }
+    }
+
+    public void initCrypto() {
+        try {
+            cryptoManager.loadInitialCrypto();
+        } catch (CryptoNotAddedException | FileNotFoundException | BotGenerationException | DbConnectionException e) {
+            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+        }
+    }
 }

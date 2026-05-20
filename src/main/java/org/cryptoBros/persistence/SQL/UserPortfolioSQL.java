@@ -6,11 +6,17 @@ import org.cryptoBros.persistence.Exceptions.PurchaseNotAddedException;
 import org.cryptoBros.persistence.Exceptions.SaleNotAddedException;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserPortfolioSQL implements UserPortfolioPersistence {
+    private final DbConnectionSingleton db;
+
+    public UserPortfolioSQL() {
+        this.db = DbConnectionSingleton.getInstance();
+    }
 
     @Override
     public void buyCrypto(long userId, String cryptoSymbol, double currentPrice, double units)
@@ -34,9 +40,8 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
                 DO UPDATE SET units = Portfolio.units + EXCLUDED.units
                 """;
 
-        try (PreparedStatement ps = DbConnectionSingleton.getInstance()
-                .connect()
-                .prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setLong(1, userId);
             ps.setString(2, cryptoSymbol);
@@ -65,8 +70,8 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
 
         String deleteQuery = "DELETE FROM Portfolio WHERE user_id = ? AND crypto_id = ?";
 
-        try {
-            var conn = DbConnectionSingleton.getInstance().connect();
+
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();){
 
             // Read how many units the user currently holds.
             double currentUnits;

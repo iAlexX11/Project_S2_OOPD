@@ -1,11 +1,15 @@
 package org.cryptoBros.persistence.SQL;
 
+import com.google.gson.Gson;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.CryptoNotAddedException;
 import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +34,8 @@ public class CryptoSQL implements CryptoPersistence {
     public Crypto getCrypto(String symbol) throws CryptoNotFoundException, DbConnectionException {
         String query = "SELECT * FROM cryptocurrency WHERE symbol = ?";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, symbol);
             ResultSet rs = ps.executeQuery();
@@ -91,7 +96,8 @@ public class CryptoSQL implements CryptoPersistence {
             ON CONFLICT (symbol) DO NOTHING
         """;
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, newCrypto.getSymbol());
             ps.setString(2, newCrypto.getName());
             ps.setDouble(3, newCrypto.getCurrentPrice());
@@ -114,7 +120,8 @@ public class CryptoSQL implements CryptoPersistence {
     public void removeCrypto(String symbol) throws CryptoNotFoundException, DbConnectionException {
         String query = "DELETE FROM cryptocurrency WHERE symbol = ?";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, symbol);
             int affectedRows = ps.executeUpdate();
@@ -132,7 +139,8 @@ public class CryptoSQL implements CryptoPersistence {
     public void updatePrice(String symbol, double newPrice) throws CryptoNotFoundException, DbConnectionException {
         String query = "UPDATE cryptocurrency SET current_price = ? WHERE symbol = ?";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setDouble(1, newPrice);
             ps.setString(2, symbol);
@@ -157,7 +165,8 @@ public class CryptoSQL implements CryptoPersistence {
 
         Map<Instant, Double> priceHistory = new HashMap<>();
 
-        try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, symbol);
             ResultSet rs = ps.executeQuery();

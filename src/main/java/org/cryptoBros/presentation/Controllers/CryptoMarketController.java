@@ -2,13 +2,11 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
-import org.cryptoBros.business.User;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.BaseView;
 import org.cryptoBros.presentation.Views.CryptoMarketView;
-import org.cryptoBros.presentation.Views.SettingsView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,6 +50,10 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     @Override
     public void updateData(String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
+    }
+
+    public void clearTable() {
+        cryptoMarketView.clearCryptoTable();
     }
 
     public BaseView getView() {
