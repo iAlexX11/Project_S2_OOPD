@@ -14,10 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class
@@ -160,11 +157,14 @@ public class CryptoSQL implements CryptoPersistence {
     @Override
     public Map<Instant, Double> getPriceHistory(String symbol) throws CryptoNotFoundException, DbConnectionException {
         String query = """
-            SELECT time_stamp, price FROM crypto_history ch
-                WHERE ch.crypto_id = ? ORDER BY ch.time_stamp;""";
+                SELECT time_stamp, price
+                FROM crypto_history ch
+                WHERE ch.crypto_id = ?
+                  AND ch.time_stamp >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
+                ORDER BY ch.time_stamp DESC
+            """;
 
-        Map<Instant, Double> priceHistory = new HashMap<>();
-
+        Map<Instant, Double> priceHistory = new LinkedHashMap<>();
         try (Connection conn = db.connect();
              PreparedStatement ps = conn.prepareStatement(query)) {
 

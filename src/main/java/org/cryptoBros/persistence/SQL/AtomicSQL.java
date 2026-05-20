@@ -1,7 +1,7 @@
 package org.cryptoBros.persistence.SQL;
 
 import com.google.gson.Gson;
-import org.cryptoBros.business.Bot;
+import org.cryptoBros.business.Workers.Bot;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.AtomicPersistence;
