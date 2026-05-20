@@ -60,4 +60,8 @@ public interface UserPersistence {
 	 * @throws DbConnectionException if there was an error connecting to the db
 	 */
 	double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException;
+
+	void changeUsername(String username, int currentUserId) throws DbConnectionException;
+
+	void changePassword(String password, int currentUserId) throws DbConnectionException;
 }

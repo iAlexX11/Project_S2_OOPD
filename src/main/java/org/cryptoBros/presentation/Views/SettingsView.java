@@ -72,7 +72,7 @@ public class SettingsView extends Pages{
 		logoutButton.setActionCommand(ButtonEnumeration.LOGOUT.name());
 		logoutButton.addActionListener(listener);
 
-		accountManagementButton.setActionCommand(ButtonEnumeration.ACCOUNT.name());
+		accountManagementButton.setActionCommand(ButtonEnumeration.PROFILE.name());
 		accountManagementButton.addActionListener(listener);
 
 		deleteAccountButton.setActionCommand(ButtonEnumeration.DELETE.name());

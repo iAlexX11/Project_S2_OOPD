@@ -96,8 +96,8 @@ public abstract class AbstractTable extends JPanel {
         });
 
         editor.addActionListener(e -> {
-            callback.onButtonClicked(clickedRow[0]);
             column.getCellEditor().stopCellEditing();
+            callback.onButtonClicked(clickedRow[0]);
         });
     }
 

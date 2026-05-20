@@ -39,7 +39,7 @@ public class SettingController implements ActionListener, BalanceListener {
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
             case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
             case LOGOUT -> userController.logout();
-            case ACCOUNT -> System.out.println("Account");
+            case PROFILE -> navigation.navigate(PagesName.PROFILE);
             case DELETE -> userController.deleteUser();
 			case MANAGE_CRYPTO ->  navigation.navigate(PagesName.MANAGE_CRYPTO);
 
