@@ -2,6 +2,7 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.CryptoSelectedListener;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
@@ -11,6 +12,8 @@ import org.cryptoBros.presentation.Views.CryptoMarketView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Instant;
+import java.util.Map;
 
 public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener, CryptoSelectedListener {
 
@@ -31,6 +34,7 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 			userController.registerBalanceListener(this);
 			userController.pushCurrentBalance(this);
 		}
+
     }
 
     @Override
@@ -50,8 +54,8 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     }
 
     @Override
-    public void updateData(String name, double currentPrice, double change, double percentage) {
-        cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
+    public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
+        cryptoMarketView.updateCryptoTable(symbol, name, currentPrice, change, percentage);
     }
 
     public void clearTable() {
@@ -63,7 +67,7 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     }
 
     @Override
-    public void cryptoSelected(String name) {
-        navigation.navigateToCryptoDetail(name);
+    public void cryptoSelected(String type) {
+        navigation.navigateToCryptoDetail(type);
     }
 }

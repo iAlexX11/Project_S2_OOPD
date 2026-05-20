@@ -93,37 +93,44 @@ public class DynamicTable extends JPanel {
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 int row = table.getSelectedRow();
                 if (row >= 0 && onRowClick != null) {
-                    String name = (String) model.getValueAt(row, 0);
-                    onRowClick.cryptoSelected(name);
+                    String symbol = null;
+                    for (Map.Entry<String, Integer> entry : cryptos.entrySet()) {
+                        if (entry.getValue() == row) {
+                            symbol = entry.getKey();
+                            break;
+                        }
+                    }
+                    if (symbol != null) onRowClick.cryptoSelected(symbol);
                 }
             }
         });
 	}
 
-    public void update(String name, double price, double change, double percentage) {
-        if (cryptos.containsKey(name)) {
+    public void update(String symbol, String name, double price, double change, double percentage) {
+        Integer row = cryptos.get(symbol);
+
+        if (row != null && row < model.getRowCount()) {
             String priceStr      = String.format("€ %.4f", price);
             String changeStr     = String.format("%s€ %.4f", change >= 0 ? "+" : "", change);
             String percentageStr = String.format("%s%.4f%%", percentage >= 0 ? "+" : "", percentage);
 
-            int row = cryptos.get(name);
-            model.setValueAt(name, row, 0);
-            model.setValueAt(priceStr, row, 1);
-            model.setValueAt(changeStr, row, 2);
+            model.setValueAt(name,       row, 0);
+            model.setValueAt(priceStr,   row, 1);
+            model.setValueAt(changeStr,  row, 2);
             model.setValueAt(percentageStr, row, 3);
         } else {
-            addRow(name, price, change, percentage);
+            addRow(symbol, name, price, change, percentage);
         }
     }
 
-    private void addRow(String name, double price, double change, double percentage) {
+    private void addRow(String simbol, String name, double price, double change, double percentage) {
         String priceStr      = "€ " + price;
         String changeStr     = (change >= 0 ? "+" : "") + "€ " + change;
         String percentageStr = (percentage >= 0 ? "+" : "") + percentage + "%";
 
         model.addRow(new Object[]{name, priceStr, changeStr, percentageStr });
 
-        cryptos.put(name, model.getRowCount() - 1);
+        cryptos.put(simbol, model.getRowCount() - 1);
     }
 	public void clearRows() {
         model.setRowCount(0);

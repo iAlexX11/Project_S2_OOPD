@@ -2,6 +2,9 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Liseners.GraphPriceListener;
+import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
@@ -11,8 +14,16 @@ import org.cryptoBros.presentation.Views.CryptoDetailView;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public class CryptoDetailController implements ActionListener, BalanceListener {
+public class CryptoDetailController implements ActionListener, BalanceListener, GraphPriceListener {
 
     private final UserController userController;
     private final AdminController adminController;
@@ -54,7 +65,31 @@ public class CryptoDetailController implements ActionListener, BalanceListener {
         return view;
     }
 
-    public void displayContent(String cryptoName) {
-        view.setCryptoName(cryptoName);
+    public void stop() {
+        userController.stopGraphWorker();
     }
+
+    public void displayContent(String symbol) {
+        try {
+            view.setCryptoName(userController.getCryptoName(symbol));
+           // view.setCurrentPrice(userController.getCryptoPrice(symbol));
+           // view.setOwnedCrypto(userController.getOwnedUnits(symbol), symbol);
+            userController.setGraphicWorker(this, symbol);
+        } catch (DbConnectionException | CryptoNotFoundException e) {
+            view.setCryptoName("<Crypto>");
+        }
+    }
+
+    @Override
+    public void updateGraph(Map<Instant, Double> cryptoHistory) {
+        SwingUtilities.invokeLater(() -> {
+            List<Double> prices = new ArrayList<>(cryptoHistory.values());
+            List<String> times  = cryptoHistory.keySet().stream()
+                    .map(instant -> LocalTime.ofInstant(instant, ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("HH:mm")))
+                    .toList();
+            view.loadAllHistory(prices, times);
+        });
+    }
+
 }

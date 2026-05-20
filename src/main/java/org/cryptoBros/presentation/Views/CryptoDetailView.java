@@ -51,8 +51,9 @@ public class CryptoDetailView extends Pages {
     private JPanel chartWrapper() {
         priceChart = new PriceChart();
 
-        JPanel wrapper = new JPanel(new GridBagLayout()); // centers the chart
+        JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setBackground(new Color(239, 247, 255));
+        wrapper.add(priceChart, BorderLayout.CENTER);
         wrapper.add(priceChart);
 
         return wrapper;
@@ -183,4 +184,5 @@ public class CryptoDetailView extends Pages {
             return 0.0;
         }
     }
+
 }

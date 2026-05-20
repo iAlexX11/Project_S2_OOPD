@@ -51,6 +51,7 @@ public class PriceChart extends JPanel {
     public void clear () {
         prices.clear();
         times.clear();
+        repaint();
     }
 
     @Override
@@ -103,7 +104,7 @@ public class PriceChart extends JPanel {
 
     private void drawLine(Graphics2D g2d, int chartW, int chartH, double max, double drawRange, Color lineColor){
         g2d.setColor(lineColor);
-        //g2d.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2d.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2d.draw(buildPath(chartW, chartH, max, drawRange));
     }
 
@@ -133,7 +134,7 @@ public class PriceChart extends JPanel {
     private void drawGrid(Graphics2D g2d, int chartW, int chartH, double max, double range) {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, 11));
 
-       for (int i = 0; i < GRID_LINES; i++) {
+       for (int i = 0; i <= GRID_LINES; i++) {
             double fraction = (double) i / GRID_LINES;
             int y = PAD_TOP + (int) (chartH * fraction);
             double price = max - fraction * range;

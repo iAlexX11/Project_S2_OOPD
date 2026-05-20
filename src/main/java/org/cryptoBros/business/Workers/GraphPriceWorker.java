@@ -11,17 +11,32 @@ import java.util.logging.Logger;
 public class GraphPriceWorker implements Runnable {
     private static final long UPDATE_INTERVAL_MS = 5000;
 
-    private final GraphPriceListener graphPriceListener;
+    private GraphPriceListener graphPriceListener;
     private final CryptoPersistence cryptoPersistence;
-    private final String cryptoSymbol;
+    private String cryptoSymbol;
+    private Thread workerThread;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GraphPriceWorker(GraphPriceListener listener,
-                            CryptoPersistence persistence,
-                            String symbol) {
-        this.graphPriceListener = listener;
+    public GraphPriceWorker(CryptoPersistence persistence) {
         this.cryptoPersistence = persistence;
+    }
+
+    public void start(GraphPriceListener listener, String symbol) {
+        stop();
+
+        this.graphPriceListener = listener;
         this.cryptoSymbol = symbol;
+
+        workerThread = new Thread(this, "graph-worker-" + symbol);
+        workerThread.setDaemon(true);
+        workerThread.start();
+    }
+
+    public void stop() {
+        if (workerThread != null && workerThread.isAlive()) {
+            workerThread.interrupt();
+            workerThread = null;
+        }
     }
 
     @Override
@@ -31,6 +46,7 @@ public class GraphPriceWorker implements Runnable {
                 graphPriceListener.updateGraph(
                         cryptoPersistence.getPriceHistory(cryptoSymbol)
                 );
+                logger.log(Level.SEVERE, "Graph update Suc ");
                 Thread.sleep(UPDATE_INTERVAL_MS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

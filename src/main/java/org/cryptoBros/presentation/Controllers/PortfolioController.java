@@ -53,7 +53,7 @@ public class PortfolioController implements ActionListener, BalanceListener, Cry
     }
 
     @Override
-    public void updateData(String name, double currentPrice, double change, double percentage) {
+    public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         refreshPortfolioData();
     }
 

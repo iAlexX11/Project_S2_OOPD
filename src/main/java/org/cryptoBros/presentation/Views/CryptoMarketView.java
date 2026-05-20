@@ -61,8 +61,8 @@ public class CryptoMarketView extends Pages {
 		return panel;
 	}
 
-    public void updateCryptoTable(String name, double currentPrice, double change, double percentage) {
-        cryptoTable.update(name, currentPrice, change, percentage);
+    public void updateCryptoTable(String symbol, String name, double currentPrice, double change, double percentage) {
+        cryptoTable.update(symbol, name, currentPrice, change, percentage);
     }
 
     public void clearCryptoTable() {

@@ -1,7 +1,9 @@
 package org.cryptoBros.business;
 
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.business.Workers.Bot;
+import org.cryptoBros.business.Workers.GraphPriceWorker;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
@@ -27,6 +29,7 @@ public class CryptoManager {
     private final AtomicPersistence atomicDb;
     private final UserPortfolioPersistence portfolioPersistence;
     private final UserPersistence userPersistence;
+    private final GraphPriceWorker graphPriceWorker;
 
     /**
      * Builds a manager with its associated listener
@@ -37,6 +40,7 @@ public class CryptoManager {
         this.atomicDb = new AtomicSQL();
         this.portfolioPersistence = new UserPortfolioSQL();
         this.userPersistence = new UserSQL();
+        this.graphPriceWorker = new GraphPriceWorker(cryptoPersistence);
     }
 
     /**
@@ -156,6 +160,7 @@ public class CryptoManager {
         double initial = crypto.getInitialPrice();
         SwingUtilities.invokeLater(() ->
                 cryptoListener.updateData(
+                        crypto.getSymbol(),
                         crypto.getName(),
                         current,
                         current - initial,
@@ -196,5 +201,17 @@ public class CryptoManager {
             activeBots.put(bot.getCryptoSymbol(), bot);
             bot.start();
         }
+    }
+
+    public void setGraphWorker (GraphPriceListener listener, String symbol) {
+        graphPriceWorker.start(listener, symbol);
+    }
+
+    public String getCryptoName(String symbol) throws DbConnectionException, CryptoNotFoundException {
+        return cryptoPersistence.getCrypto(symbol).getName();
+    }
+
+    public void stopGraphWorker() {
+        graphPriceWorker.stop();
     }
 }

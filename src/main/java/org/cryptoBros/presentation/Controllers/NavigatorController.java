@@ -43,6 +43,7 @@ public class NavigatorController implements Navigation {
     @Override
     public void navigate(PagesName name) {
         userController.removeCryptoListener();
+        cryptoDetailController.stop();
 
         switch (name) {
             case SETTING -> {
@@ -86,9 +87,9 @@ public class NavigatorController implements Navigation {
         }
     }
 
-    public void navigateToCryptoDetail(String cryptoName) {
+    public void navigateToCryptoDetail(String type) {
         userController.removeCryptoListener();
-        cryptoDetailController.displayContent(cryptoName);
+        cryptoDetailController.displayContent(type);
         frameController.displayContent(cryptoDetailController.getView());
     }
 }
