@@ -198,8 +198,7 @@ public class CryptoManager {
         List<Bot> bots = atomicDb.loadInitialData(this);
 
         for (Bot bot : bots) {
-            if (!activeBots.containsKey(bot.getCryptoSymbol())) {
-                activeBots.put(bot.getCryptoSymbol(), bot);
+            if (activeBots.putIfAbsent(bot.getCryptoSymbol(), bot) == null) {
                 bot.start();
             }
         }
