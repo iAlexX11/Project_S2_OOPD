@@ -161,7 +161,7 @@ public class CryptoSQL implements CryptoPersistence {
                 FROM crypto_history ch
                 WHERE ch.crypto_id = ?
                   AND ch.time_stamp >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
-                ORDER BY ch.time_stamp DESC
+                ORDER BY ch.time_stamp ASC
             """;
 
         Map<Instant, Double> priceHistory = new LinkedHashMap<>();

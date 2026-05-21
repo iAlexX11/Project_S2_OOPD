@@ -2,7 +2,9 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.presentation.Enum.PagesName;
+import org.cryptoBros.presentation.ListenersPersistence.CryptoSelectedListener;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.BaseView;
@@ -10,8 +12,10 @@ import org.cryptoBros.presentation.Views.CryptoMarketView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Instant;
+import java.util.Map;
 
-public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener {
+public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener, CryptoSelectedListener {
 
     private final CryptoMarketView cryptoMarketView;
     private final Navigation navigation;
@@ -25,10 +29,12 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 		this.cryptoMarketView = new CryptoMarketView();
 		cryptoMarketView.setTypeUser(isAdmin);
         cryptoMarketView.setActions(this);
+        cryptoMarketView.setOnRowClick(this);
 		if (!isAdmin) {
 			userController.registerBalanceListener(this);
 			userController.pushCurrentBalance(this);
 		}
+
     }
 
     @Override
@@ -48,8 +54,8 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     }
 
     @Override
-    public void updateData(String name, double currentPrice, double change, double percentage) {
-        cryptoMarketView.updateCryptoTable(name, currentPrice, change, percentage);
+    public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
+        cryptoMarketView.updateCryptoTable(symbol, name, currentPrice, change, percentage);
     }
 
     public void clearTable() {
@@ -58,5 +64,10 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 
     public BaseView getView() {
         return cryptoMarketView;
+    }
+
+    @Override
+    public void cryptoSelected(String type) {
+        navigation.navigateToCryptoDetail(type);
     }
 }

@@ -5,7 +5,9 @@ import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.business.UserManager;
+import org.cryptoBros.business.Workers.GraphPriceWorker;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.presentation.Views.DisplayMessage;
@@ -78,13 +80,21 @@ public class UserController {
     }
 
     public void removeCryptoListener() {
-        cryptoManager.addCryptoListener((name, price, change, pct) -> {});
+        cryptoManager.addCryptoListener((symbol,name, price, change, pct) -> {});
     }
 
     public void pushCurrentBalance(BalanceListener listener) {
         double balance = getBalance();
 
         listener.balanceChanged(balance);
+    }
+
+    public void setGraphicWorker (GraphPriceListener listener, String symbol){
+        cryptoManager.setGraphWorker(listener, symbol);
+    }
+
+    public void stopGraphWorker() {
+        cryptoManager.stopGraphWorker();
     }
 
     public void addBalance(double addBalanceAmount) {
@@ -156,6 +166,18 @@ public class UserController {
             cryptoManager.loadInitialCrypto();
         } catch (CryptoNotAddedException | FileNotFoundException | BotGenerationException | DbConnectionException e) {
             DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
+        }
+    }
+
+    public String getCryptoName(String symbol) throws DbConnectionException, CryptoNotFoundException {
+        return cryptoManager.getCryptoName(symbol);
+    }
+
+    public double getOwnedUnits(String symbol) {
+        try {
+            return cryptoManager.getOwnedUnits(symbol, userManager.getCurrentUserId());
+        } catch (DbConnectionException e) {
+            return 0;
         }
     }
 }
