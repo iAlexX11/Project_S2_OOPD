@@ -46,7 +46,7 @@ public class GraphPriceWorker implements Runnable {
                 graphPriceListener.updateGraph(
                         cryptoPersistence.getPriceHistory(cryptoSymbol)
                 );
-                logger.log(Level.SEVERE, "Graph update Suc ");
+                logger.log(Level.FINE, "Graph update Succeeded");
                 Thread.sleep(UPDATE_INTERVAL_MS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

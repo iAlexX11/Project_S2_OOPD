@@ -9,6 +9,7 @@ import org.cryptoBros.persistence.Exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -272,33 +273,28 @@ public class AtomicSQL implements AtomicPersistence {
     public List<Bot> loadInitialData(CryptoManager cryptoManager)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
 
-            Gson gson = new Gson();
-            List<Bot> bots = new ArrayList<>();
+        Gson gson = new Gson();
 
-            try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
-                FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
-                Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();
+             FileReader fileReader = new FileReader(CRYPTO_FILEPATH)) {
+            Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
 
-                List<Bot> newBots = new ArrayList<>();
-                if (cryptos != null) {
-                    for (Crypto crypto : cryptos) {
-                        if (!cryptoExists(conn, crypto.getSymbol())) {
-                            long botUserId = createCryptoWithBot(crypto);
-                            newBots.add(new Bot(botUserId, crypto.getSymbol(), crypto.getVolatility(), cryptoManager));
-                        }
+            if (cryptos != null) {
+                for (Crypto crypto : cryptos) {
+                    if (!cryptoExists(conn, crypto.getSymbol())) {
+                        createCryptoWithBot(crypto);
                     }
                 }
-
-                List<Bot> existingBots = loadExistingBots(conn, cryptoManager);
-                existingBots.removeIf(b -> newBots.stream()
-                        .anyMatch(n -> n.getCryptoSymbol().equals(b.getCryptoSymbol())));
-
-                bots.addAll(newBots);
-                bots.addAll(existingBots);
-                return bots;
-
-            } catch (SQLException e) {
-                throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
             }
+
+            return loadExistingBots(conn, cryptoManager);
+
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (IOException e) {
+            throw new DbConnectionException("Error while reading initial crypto data: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
         }
     }
+}
