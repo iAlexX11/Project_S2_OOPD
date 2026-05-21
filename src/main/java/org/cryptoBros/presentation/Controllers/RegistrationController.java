@@ -2,6 +2,7 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
+import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
@@ -26,8 +27,9 @@ public class RegistrationController implements ActionListener {
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
 		this.userManager = new UserManager();
-		this.adminController = new AdminController(initialController, frameController);
-        this.userController = new UserController(frameController, initialController);
+		CryptoManager cryptoManager = new CryptoManager();
+		this.adminController = new AdminController(initialController, frameController, cryptoManager);
+        this.userController = new UserController(frameController, initialController, cryptoManager);
 		this.credentialManager = new CredentialManager();
 		loginView.setActions(this);
 		signUpView.setActions(this);

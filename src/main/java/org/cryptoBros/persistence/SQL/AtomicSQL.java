@@ -270,7 +270,7 @@ public class AtomicSQL implements AtomicPersistence {
     }
 
     @Override
-    public List<Bot> loadInitialData(CryptoManager cryptoManager)
+    public List<Bot> loadInitialData(CryptoManager cryptoManager, boolean seedFromJson)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
 
         Gson gson = new Gson();
@@ -287,7 +287,7 @@ public class AtomicSQL implements AtomicPersistence {
                 }
             }
 
-            return loadExistingBots(conn, cryptoManager);
+                return loadExistingBots(conn, cryptoManager);
 
         } catch (FileNotFoundException e) {
             throw e;
