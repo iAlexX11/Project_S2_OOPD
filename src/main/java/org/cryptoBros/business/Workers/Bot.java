@@ -55,7 +55,7 @@ public class Bot implements Runnable {
         this.rng                = new Random();
         this.cryptoPersistence  = new CryptoSQL();
         this.cryptoManager      = cryptoManager;
-        this.LOG = Logger.getLogger(this.getClass().getName());
+        this.LOG = Logger.getLogger(this.getClass().getName() + "-" + botUserId);
         this.LOG.setUseParentHandlers(false);
 
         ConsoleHandler handler = new ConsoleHandler();
