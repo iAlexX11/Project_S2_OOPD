@@ -1,5 +1,8 @@
-package org.cryptoBros.business;
+package org.cryptoBros.business.Workers;
 
+import org.cryptoBros.business.Crypto;
+import org.cryptoBros.business.CryptoManager;
+import org.cryptoBros.business.User;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
@@ -34,7 +37,7 @@ public class Bot implements Runnable {
     private final UserPortfolioPersistence  portfolio;
     private final CryptoPersistence         cryptoPersistence; // Can be change
     private final Random                    rng;
-    private final CryptoManager             cryptoManager;
+    private final CryptoManager cryptoManager;
 
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?>       taskHandle;
@@ -52,7 +55,7 @@ public class Bot implements Runnable {
         this.rng                = new Random();
         this.cryptoPersistence  = new CryptoSQL();
         this.cryptoManager      = cryptoManager;
-        this.LOG = Logger.getLogger(this.getClass().getName());
+        this.LOG = Logger.getLogger(this.getClass().getName() + "-" + botUserId);
         this.LOG.setUseParentHandlers(false);
 
         ConsoleHandler handler = new ConsoleHandler();

@@ -30,7 +30,11 @@ public class WelcomeView extends BaseView {
         boxLayout.add(jBLogin);
         boxLayout.add(Box.createVerticalStrut(15));
 
-        getContent().add(boxLayout, BorderLayout.CENTER);
+        JPanel centered = new JPanel(new GridBagLayout());
+        centered.setBackground(new Color(239, 247, 255));
+        centered.add(boxLayout);
+
+        getContent().add(centered, BorderLayout.CENTER);
     }
 
     @Override

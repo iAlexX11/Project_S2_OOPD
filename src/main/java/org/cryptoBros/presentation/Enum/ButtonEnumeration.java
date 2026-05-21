@@ -8,6 +8,7 @@ public enum ButtonEnumeration {
 	SETTINGS,
 	PORTFOLIO,
     LOGOUT,
+    ACCOUNT,
     DELETE,
     HOME,
 	MANAGE_CRYPTO,
@@ -15,8 +16,10 @@ public enum ButtonEnumeration {
     ADD_CRYPTO,
 	BACK,
     CONFIRM,
+    CONFIRM_PURCHASE,
 	PROFILE,
 	CHANGE_PASSWORD,
 	CHANGE_USERNAME,
-	CHANGE_PROFILE_PIC
+	CHANGE_PROFILE_PIC,
+	EDIT_CRYPTO
 }

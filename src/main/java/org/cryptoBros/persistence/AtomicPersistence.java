@@ -1,6 +1,6 @@
 package org.cryptoBros.persistence;
 
-import org.cryptoBros.business.Bot;
+import org.cryptoBros.business.Workers.Bot;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.Exceptions.BotGenerationException;

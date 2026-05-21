@@ -17,6 +17,11 @@ public class ProfileView extends Pages {
 	private String confirmedUsername;
 	private char[] confirmedPassword;
 	private ActionListener actionListener;
+	private boolean isAdmin = false;
+
+	public ProfileView(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 
 	private JPanel setCore() {
 		JPanel core = new JPanel();
@@ -39,16 +44,18 @@ public class ProfileView extends Pages {
 			profilePicture.setAlignmentX(Component.CENTER_ALIGNMENT);
 			core.add(profilePicture);
 		} catch (ErrorChangingProfilePictureException e) {
-			ErrorsView.showError(new MainFrame(), e.getMessage());
+			DisplayMessage.showMessage(new MainFrame(), e.getMessage());
 		}
 
-		core.add(Box.createVerticalStrut(20));
-		changeUsernameButton = createButton("Change Username", new Color(70, 105, 210));
-		core.add(changeUsernameButton);
-		core.add(Box.createVerticalStrut(12));
+		if (!isAdmin) {
+			core.add(Box.createVerticalStrut(20));
+			changeUsernameButton = createButton("Change Username", new Color(70, 105, 210));
+			core.add(changeUsernameButton);
+			core.add(Box.createVerticalStrut(12));
 
-		changePasswordButton = createButton("Change Password", new Color(70, 105, 210));
-		core.add(changePasswordButton);
+			changePasswordButton = createButton("Change Password", new Color(70, 105, 210));
+			core.add(changePasswordButton);
+		}
 
 		core.add(Box.createVerticalGlue());
 
@@ -82,11 +89,13 @@ public class ProfileView extends Pages {
 		addHeaderActions(listener);
 		getContent().revalidate();
 
-		changeUsernameButton.setActionCommand(ButtonEnumeration.CHANGE_USERNAME.name());
-		changeUsernameButton.addActionListener(e -> showChangeUsername());
+		if(!isAdmin) {
+			changeUsernameButton.setActionCommand(ButtonEnumeration.CHANGE_USERNAME.name());
+			changeUsernameButton.addActionListener(e -> showChangeUsername());
 
-		changePasswordButton.setActionCommand(ButtonEnumeration.CHANGE_PASSWORD.name());
-		changePasswordButton.addActionListener(e -> showChangePassword());
+			changePasswordButton.setActionCommand(ButtonEnumeration.CHANGE_PASSWORD.name());
+			changePasswordButton.addActionListener(e -> showChangePassword());
+		}
 	}
 
 	private JDialog createBaseDialog(String title) {

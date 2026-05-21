@@ -5,10 +5,12 @@ import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
+import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.business.UserManager;
+import org.cryptoBros.business.Workers.GraphPriceWorker;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.PortfolioPosition;
-import org.cryptoBros.presentation.Views.ErrorsView;
+import org.cryptoBros.presentation.Views.DisplayMessage;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class UserController {
             userManager.clearCurrentUser();
             logout();
         } catch (UserNotFoundException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+            DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -78,7 +80,7 @@ public class UserController {
     }
 
     public void removeCryptoListener() {
-        cryptoManager.addCryptoListener((name, price, change, pct) -> {});
+        cryptoManager.addCryptoListener((symbol,name, price, change, pct) -> {});
     }
 
     public void pushCurrentBalance(BalanceListener listener) {
@@ -87,11 +89,19 @@ public class UserController {
         listener.balanceChanged(balance);
     }
 
+    public void setGraphicWorker (GraphPriceListener listener, String symbol){
+        cryptoManager.setGraphWorker(listener, symbol);
+    }
+
+    public void stopGraphWorker() {
+        cryptoManager.stopGraphWorker();
+    }
+
     public void addBalance(double addBalanceAmount) {
         try {
             userManager.addBalance(addBalanceAmount);
         } catch (UserNotFoundException | DbConnectionException e){
-			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
         }
     }
 
@@ -128,16 +138,18 @@ public class UserController {
 	public void changeUserPassword(char[] password) {
 		try {
 			userManager.changeUserPassword(credentialManager.hashPassword(password));
+			DisplayMessage.showMessage(frameController.getMainFrame(), "The password has been changed!");
 		} catch (DbConnectionException e) {
-			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
 		}
 	}
 
 	public void changeUsername(String username) {
 		try {
 			userManager.changeUsername(username);
+			DisplayMessage.showMessage(frameController.getMainFrame(), "The username has been changed!");
 		} catch (DbConnectionException e) {
-			ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
 		}
 	}
 
@@ -145,7 +157,7 @@ public class UserController {
         try {
             cryptoManager.getAllCrypto();
         } catch (DbConnectionException | CryptoNotFoundException  e) {
-            ErrorsView.showError(frameController.getMainFrame(), e.getMessage());
+            DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
         }
     }
 
@@ -153,7 +165,19 @@ public class UserController {
         try {
             cryptoManager.loadInitialCrypto();
         } catch (CryptoNotAddedException | FileNotFoundException | BotGenerationException | DbConnectionException e) {
-            ErrorsView.showError(frameController.getMainFrame() ,e.getMessage());
+            DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
+        }
+    }
+
+    public String getCryptoName(String symbol) throws DbConnectionException, CryptoNotFoundException {
+        return cryptoManager.getCryptoName(symbol);
+    }
+
+    public double getOwnedUnits(String symbol) {
+        try {
+            return cryptoManager.getOwnedUnits(symbol, userManager.getCurrentUserId());
+        } catch (DbConnectionException e) {
+            return 0;
         }
     }
 }

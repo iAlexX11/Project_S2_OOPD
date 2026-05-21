@@ -29,20 +29,33 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 		manageCryptoView.setTypeUser(isAdmin);
         manageCryptoView.setActions(this);
         manageCryptoView.setDeleteCallback(this::handleDeleteCrypto);
+		manageCryptoView.setEditCallback(this::editCrypto);
     }
 
-    public BaseView getView() {
+	private void editCrypto(int row) {
+		String symbol = manageCryptoView.getCryptoSymbolAtRow(row);
+		String newName = manageCryptoView.getUsername();
+
+		if (newName == null || newName.isBlank()) return;
+
+		adminController.changeCryptoName(symbol, newName);
+		refreshCryptoData();
+	}
+
+	private void refreshCryptoData() {
+		List<Crypto> cryptos = adminController.getAllCryptos();
+		cryptos.forEach(c -> System.out.println("    - " + c.getSymbol()));
+
+		Object[][] data = new Object[cryptos.size()][3];
+		for (int i = 0; i < cryptos.size(); i++) {
+			data[i] = new Object[]{ cryptos.get(i).getName(), "", "" };
+		}
+		manageCryptoView.setCryptoData(data);
+	}
+
+	public BaseView getView() {
         refreshCryptoData();
 		return manageCryptoView;
-    }
-
-    private void refreshCryptoData() {
-        List<Crypto> cryptos = adminController.getAllCryptos();
-        Object[][] data = new Object[cryptos.size()][3];
-        for (int i = 0; i < cryptos.size(); i++) {
-            data[i] = new Object[]{ cryptos.get(i).getSymbol(), "", "" };
-        }
-        manageCryptoView.setCryptoData(data);
     }
 
     private void handleDeleteCrypto(int row) {

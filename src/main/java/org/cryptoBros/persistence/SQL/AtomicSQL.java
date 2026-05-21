@@ -1,7 +1,7 @@
 package org.cryptoBros.persistence.SQL;
 
 import com.google.gson.Gson;
-import org.cryptoBros.business.Bot;
+import org.cryptoBros.business.Workers.Bot;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.AtomicPersistence;
@@ -9,6 +9,7 @@ import org.cryptoBros.persistence.Exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -272,24 +273,28 @@ public class AtomicSQL implements AtomicPersistence {
     public List<Bot> loadInitialData(CryptoManager cryptoManager, boolean seedFromJson)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
 
-            try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
+        Gson gson = new Gson();
 
-                if (seedFromJson) {
-                    Gson gson = new Gson();
-                    FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
-                    Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();
+             FileReader fileReader = new FileReader(CRYPTO_FILEPATH)) {
+            Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
 
-                    if (cryptos != null) {
-                        for (Crypto crypto : cryptos) {
-                            createCryptoWithBot(crypto);
-                        }
+            if (cryptos != null) {
+                for (Crypto crypto : cryptos) {
+                    if (!cryptoExists(conn, crypto.getSymbol())) {
+                        createCryptoWithBot(crypto);
                     }
                 }
+            }
 
                 return loadExistingBots(conn, cryptoManager);
 
-            } catch (SQLException e) {
-                throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
-            }
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (IOException e) {
+            throw new DbConnectionException("Error while reading initial crypto data: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
         }
     }
+}
