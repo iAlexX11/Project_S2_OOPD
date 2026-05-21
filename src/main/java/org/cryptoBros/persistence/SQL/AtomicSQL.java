@@ -9,6 +9,7 @@ import org.cryptoBros.persistence.Exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -274,8 +275,8 @@ public class AtomicSQL implements AtomicPersistence {
 
         Gson gson = new Gson();
 
-        try (Connection conn = DbConnectionSingleton.getInstance().connect()) {
-            FileReader fileReader = new FileReader(CRYPTO_FILEPATH);
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();
+             FileReader fileReader = new FileReader(CRYPTO_FILEPATH)) {
             Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
 
             if (cryptos != null) {
@@ -288,6 +289,10 @@ public class AtomicSQL implements AtomicPersistence {
 
             return loadExistingBots(conn, cryptoManager);
 
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (IOException e) {
+            throw new DbConnectionException("Error while reading initial crypto data: " + e.getMessage());
         } catch (SQLException e) {
             throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
         }
