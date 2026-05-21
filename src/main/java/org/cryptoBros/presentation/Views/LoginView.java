@@ -26,15 +26,19 @@ public class LoginView extends BaseView {
     }
 
     private JPanel setCore() {
-        JPanel core = new JPanel(new BorderLayout());
+        JPanel core = new JPanel(new GridBagLayout());
         core.setBackground(new Color(239, 247, 255));
         core.setOpaque(true);
 
         JPanel jData = dataPanel();
         JPanel jImage = imagePanel();
 
-        core.add(jData, BorderLayout.WEST);
-        core.add(jImage, BorderLayout.EAST);
+        JPanel row = new JPanel(new BorderLayout());
+        row.setBackground(new Color(239, 247, 255));
+        row.add(jData,  BorderLayout.WEST);
+        row.add(jImage, BorderLayout.EAST);
+
+        core.add(row);
 
         return core;
     }
@@ -151,7 +155,7 @@ public class LoginView extends BaseView {
         panel.setLayout(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 28, 20, 28));
         panel.setMaximumSize(new Dimension(550, 350));
-        panel.setPreferredSize(new Dimension(550, 350));
+        panel.setPreferredSize(new Dimension(500, 420));
         panel.setBackground(new Color(239, 247, 255));
 
         JImagePanel jILogo = new JImagePanel("images/logo.png");
