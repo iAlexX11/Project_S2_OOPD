@@ -137,19 +137,6 @@ public class Bot implements Runnable {
         }
     }
 
-    private double fetchCurrentPrice() throws DbConnectionException {
-        try {
-            return cryptoPersistence.getCrypto(cryptoSymbol).getCurrentPrice();
-        } catch (CryptoNotFoundException e) {
-            LOG.log(Level.WARNING, "Bot could not find current price, using default");
-        }
-        return 0.0;
-    }
-
-    public long getBotUserId() {
-        return botUserId;
-    }
-
     public String getCryptoSymbol() {
         return cryptoSymbol;
     }
