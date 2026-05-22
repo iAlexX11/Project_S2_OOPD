@@ -2,6 +2,7 @@ package org.cryptoBros.business.Workers;
 
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
+import org.cryptoBros.business.Liseners.BotListener;
 import org.cryptoBros.business.User;
 import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
@@ -37,7 +38,7 @@ public class Bot implements Runnable {
     private final UserPortfolioPersistence  portfolio;
     private final CryptoPersistence         cryptoPersistence; // Can be change
     private final Random                    rng;
-    private final CryptoManager cryptoManager;
+    private final BotListener               botListener;
 
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?>       taskHandle;
@@ -47,14 +48,14 @@ public class Bot implements Runnable {
      * @param cryptoSymbol the {@link Crypto} this bot is responsible for
      * @param volatility   copied from {@link Crypto} at creation time
      */
-    public Bot(long botUserId, String cryptoSymbol, double volatility, CryptoManager cryptoManager) {
+    public Bot(long botUserId, String cryptoSymbol, double volatility, BotListener botListener) {
         this.botUserId          = botUserId;
         this.cryptoSymbol       = cryptoSymbol;
         this.volatility         = volatility;
         this.portfolio          = new UserPortfolioSQL();
         this.rng                = new Random();
         this.cryptoPersistence  = new CryptoSQL();
-        this.cryptoManager      = cryptoManager;
+        this.botListener      = botListener;
         this.LOG = Logger.getLogger(this.getClass().getName() + "-" + botUserId);
         this.LOG.setUseParentHandlers(false);
 
@@ -110,7 +111,7 @@ public class Bot implements Runnable {
 
     private void executeBuy() {
         try {
-            cryptoManager.botPurchase(botUserId, cryptoSymbol, UNITS_PER_TRADE);
+            botListener.onBotBuy(botUserId, cryptoSymbol, UNITS_PER_TRADE);
             LOG.info("Bot BUY  " + UNITS_PER_TRADE + " " + cryptoSymbol);
 
         } catch (PurchaseNotAddedException | DbConnectionException | CryptoNotFoundException  e) {
@@ -120,7 +121,7 @@ public class Bot implements Runnable {
 
     private void executeSell() {
         try {
-            cryptoManager.botSell(botUserId, cryptoSymbol, UNITS_PER_TRADE);
+            botListener.onBotSell(botUserId, cryptoSymbol, UNITS_PER_TRADE);
             LOG.info("Bot SELL " + UNITS_PER_TRADE + " " + cryptoSymbol);
 
         } catch (CryptoNotFoundException e) {
@@ -134,19 +135,6 @@ public class Bot implements Runnable {
         } catch (DbConnectionException e) {
             LOG.log(Level.WARNING, "Bot sell failed for " + cryptoSymbol + e);
         }
-    }
-
-    private double fetchCurrentPrice() throws DbConnectionException {
-        try {
-            return cryptoPersistence.getCrypto(cryptoSymbol).getCurrentPrice();
-        } catch (CryptoNotFoundException e) {
-            LOG.log(Level.WARNING, "Bot could not find current price, using default");
-        }
-        return 0.0;
-    }
-
-    public long getBotUserId() {
-        return botUserId;
     }
 
     public String getCryptoSymbol() {
