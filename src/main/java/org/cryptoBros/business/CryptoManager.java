@@ -1,5 +1,6 @@
 package org.cryptoBros.business;
 
+import org.cryptoBros.business.Liseners.BotListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.business.Workers.Bot;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CryptoManager {
+public class CryptoManager implements BotListener {
 
     private CryptoListener cryptoListener;
     private CryptoPersistence cryptoPersistence;
@@ -143,17 +144,6 @@ public class CryptoManager {
         notifyListener(updatedCrypto);
     }
 
-    public void botPurchase(long userId, String symbol, double units) throws
-            DbConnectionException, CryptoNotFoundException, PurchaseNotAddedException {
-
-        if (units <= 0)
-            throw new PurchaseNotAddedException("Units must be greater than zero.");
-
-        double currentPrice = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
-        portfolioPersistence.buyCrypto(userId, symbol, currentPrice, units);
-        notifyListener(cryptoPersistence.getCrypto(symbol));
-    }
-
     private void notifyListener(Crypto crypto) {
         if (cryptoListener == null) return;
         double current = crypto.getCurrentPrice();
@@ -167,13 +157,6 @@ public class CryptoManager {
                         ((current - initial) / initial) * 100  // ← correct percentage
                 )
         );
-    }
-
-    public void botSell(long userId, String symbol, double units) throws
-            DbConnectionException, CryptoNotFoundException, SaleNotAddedException {
-
-        portfolioPersistence.sellCrypto(userId, symbol, units);
-        notifyListener(cryptoPersistence.getCrypto(symbol));
     }
 
     public void addCryptoListener(CryptoListener listener) {
@@ -258,4 +241,25 @@ public class CryptoManager {
 			throw new ErrorChangingCryptoName("Something happened, please try again later.");
 		}
 	}
+
+    @Override
+    public void onBotBuy(long botUserId, String cryptoSymbol, double units) throws
+            PurchaseNotAddedException, DbConnectionException, CryptoNotFoundException
+    {
+        if (units <= 0)
+            throw new PurchaseNotAddedException("Units must be greater than zero.");
+
+        double currentPrice = cryptoPersistence.getCrypto(cryptoSymbol).getCurrentPrice();
+        portfolioPersistence.buyCrypto(botUserId, cryptoSymbol, currentPrice, units);
+        notifyListener(cryptoPersistence.getCrypto(cryptoSymbol));
+    }
+
+    @Override
+    public void onBotSell(long botUserId, String cryptoSymbol, double units) throws
+            DbConnectionException, SaleNotAddedException, CryptoNotFoundException
+    {
+        portfolioPersistence.sellCrypto(botUserId, cryptoSymbol, units);
+        notifyListener(cryptoPersistence.getCrypto(cryptoSymbol));
+    }
+
 }
