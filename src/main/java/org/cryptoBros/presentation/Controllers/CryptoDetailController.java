@@ -59,7 +59,10 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
     }
 
     private void buyCrypto() {
-        //TODO: Call function to buy crypto
+        double units = view.getUnits();
+        userController.buyCrypto(currentSymbol, units);
+        view.setOwnedCrypto(userController.getOwnedUnits(currentSymbol), currentSymbol);
+
     }
 
     @Override
@@ -77,13 +80,9 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
 
     public void displayContent(String symbol) {
         this.currentSymbol = symbol;
-        try {
-            view.setCryptoName(userController.getCryptoName(symbol));
-            view.setOwnedCrypto(userController.getOwnedUnits(symbol), symbol);
-            userController.setGraphicWorker(this, symbol);
-        } catch (DbConnectionException | CryptoNotFoundException e) {
-            view.setCryptoName("<Crypto>");
-        }
+        view.setCryptoName(userController.getCryptoName(symbol));
+        view.setOwnedCrypto(userController.getOwnedUnits(symbol), symbol);
+        userController.setGraphicWorker(this, symbol);
     }
 
     @Override

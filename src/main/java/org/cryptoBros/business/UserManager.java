@@ -35,8 +35,8 @@ public class UserManager {
 		return userPersistence.getUser(username, email);
 	}
 
-	public double getUserBalance() throws UserNotFoundException, DbConnectionException {
-		return userPersistence.getUserBalance(currentUserId);
+	public double getUserBalance(long userId) throws UserNotFoundException, DbConnectionException {
+		return userPersistence.getUserBalance(userId);
 	}
 
 	public void setCurrentUserId(int currentUserId) {
@@ -70,7 +70,7 @@ public class UserManager {
 		return newBalance;
 	}
 
-	public double deductBalance(double amount) throws UserNotFoundException, DbConnectionException, InsufficientBalanceException {
+	public void deductBalance(double amount) throws UserNotFoundException, DbConnectionException, InsufficientBalanceException {
 		if (currentUserId == -1) {
 			throw new UserNotFoundException();
 		}
@@ -80,10 +80,11 @@ public class UserManager {
 		}
 		double newBalance = userPersistence.adjustUserBalance(currentUserId, -amount);
 		notifyBalanceListeners(newBalance);
-		return newBalance;
+		//return newBalance;
 	}
 
 	private void notifyBalanceListeners(double newBalance) {
+        if (balanceListeners == null) return;
 		SwingUtilities.invokeLater(() -> {
             balanceListeners.balanceChanged(newBalance);
 		});

@@ -18,7 +18,6 @@ public class InitialController implements ActionListener {
     private final WelcomeView welcomeView;
     private final RegistrationController registrationController;
     private final CredentialManager credentialManager;
-    private final CryptoManager cryptoManager;
 
     public InitialController(FrameController frameController) {
         this.registrationController = new RegistrationController(frameController, this);
@@ -26,7 +25,6 @@ public class InitialController implements ActionListener {
         welcomeView.setActions(this);
         this.frameController = frameController;
         this.credentialManager = new CredentialManager();
-        this.cryptoManager = new CryptoManager();
     }
 
     public void startProgram() {
