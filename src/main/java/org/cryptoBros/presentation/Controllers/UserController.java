@@ -34,7 +34,7 @@ public class UserController {
 
 	public double getBalance() {
 		try {
-			return userManager.getUserBalance();
+			return userManager.getUserBalance(userManager.getCurrentUserId());
 		} catch (UserNotFoundException ex) {
 			frameController.showError(ex.getMessage());
 		} catch (DbConnectionException ex) {
@@ -169,8 +169,12 @@ public class UserController {
         }
     }
 
-    public String getCryptoName(String symbol) throws DbConnectionException, CryptoNotFoundException {
-        return cryptoManager.getCryptoName(symbol);
+    public String getCryptoName(String symbol){
+        try {
+            return cryptoManager.getCryptoName(symbol);
+        } catch (DbConnectionException | CryptoNotFoundException e) {
+            return "<Crypto>";
+        }
     }
 
     public double getOwnedUnits(String symbol) {
@@ -178,6 +182,15 @@ public class UserController {
             return cryptoManager.getOwnedUnits(symbol, userManager.getCurrentUserId());
         } catch (DbConnectionException e) {
             return 0;
+        }
+    }
+
+    public void buyCrypto(String currentSymbol, double units) {
+        try {
+           double totalCost = cryptoManager.purchase(userManager.getCurrentUserId(), currentSymbol, units);
+           userManager.deductBalance(totalCost);
+        } catch (DbConnectionException | CryptoNotFoundException | PurchaseNotAddedException | UserNotFoundException | InsufficientBalanceException e) {
+            DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
         }
     }
 }

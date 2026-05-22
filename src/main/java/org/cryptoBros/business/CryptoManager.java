@@ -28,7 +28,7 @@ public class CryptoManager {
     private final Map<String, Bot> activeBots;
     private final AtomicPersistence atomicDb;
     private final UserPortfolioPersistence portfolioPersistence;
-    private final UserPersistence userPersistence;
+    private final UserManager userManager;
     private final GraphPriceWorker graphPriceWorker;
 
     /**
@@ -39,7 +39,7 @@ public class CryptoManager {
         this.activeBots = new ConcurrentHashMap<>();
         this.atomicDb = new AtomicSQL();
         this.portfolioPersistence = new UserPortfolioSQL();
-        this.userPersistence = new UserSQL();
+        this.userManager = new UserManager();
         this.graphPriceWorker = new GraphPriceWorker(cryptoPersistence);
     }
 
@@ -107,7 +107,7 @@ public class CryptoManager {
 
 
     /**
-     * Purchases a crypto, orchestrating business logic related to it
+     * Purchases a crypto, orchestrating business logic related to it and returns the total to be removed
      * @param userId the user buying the crypto
      * @param symbol the crypto to be bought
      * @param units the amount of crypto being bought
@@ -116,12 +116,11 @@ public class CryptoManager {
      * @throws PurchaseNotAddedException if for internal reasons the purchase was not completed
      * @throws UserNotFoundException if the {@link User} could not be found
      */
-    public void purchase(long userId, String symbol, double units) throws
+    public double purchase(long userId, String symbol, double units) throws
             DbConnectionException,
             CryptoNotFoundException,
             PurchaseNotAddedException,
-            UserNotFoundException
-    {
+            UserNotFoundException, InsufficientBalanceException {
         if (units <= 0) {
             throw new PurchaseNotAddedException("Units to purchase must be greater than zero.");
         }
@@ -130,7 +129,7 @@ public class CryptoManager {
         double currentPrice = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
 
         // fetch user balance
-        double userBalance = userPersistence.getUserBalance(userId);
+        double userBalance = userManager.getUserBalance(userId);
         double totalCost = currentPrice * units;
 
         if (totalCost > userBalance) {
@@ -141,6 +140,8 @@ public class CryptoManager {
         portfolioPersistence.buyCrypto(userId, symbol, currentPrice, units);
         Crypto updatedCrypto = cryptoPersistence.getCrypto(symbol);
         notifyListener(updatedCrypto);
+
+        return totalCost;
     }
 
     public void botPurchase(long userId, String symbol, double units) throws

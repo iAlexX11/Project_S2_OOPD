@@ -171,4 +171,12 @@ public class CryptoDetailView extends Pages {
     public void loadAllHistory(List<Double> prices, List<String> dates) {
         priceChart.loadData(prices, dates);
     }
+
+    public double getUnits() {
+       try {
+           return Double.parseDouble(jTFQuantity.getText());
+       } catch (NumberFormatException e) {
+           return 0;
+       }
+    }
 }
