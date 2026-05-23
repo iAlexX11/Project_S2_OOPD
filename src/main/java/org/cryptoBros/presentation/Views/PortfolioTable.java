@@ -15,9 +15,23 @@ public class PortfolioTable extends AbstractTable {
         super(COLUMNS, WIDTHS);
     }
 
+    public void setSellCallback(ButtonRowCallback callback) {
+        setButtonColumn(4, "Sell", new Color(100, 125, 220), callback);
+    }
+
+    public String getSymbolAt(int row) {
+        return (String) model.getValueAt(row, 0);
+    }
+
+    public double getUnitsAt(int row) {
+        Object val = model.getValueAt(row, 1);
+        if (val instanceof Double) return (Double) val;
+        return Double.parseDouble(val.toString());
+    }
+
     @Override
     protected boolean isColumnEditable(int col) {
-        return false;
+        return col == 4;
     }
 
     @Override
@@ -57,8 +71,7 @@ public class PortfolioTable extends AbstractTable {
         for (int i = 0; i < COLUMNS.length - 1; i++)
             table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
 
-        // TODO: Sell button action
         setButtonColumn(4, "Sell", new Color(100, 125, 220),
-                row -> System.out.println("Sell clicked on row: " + row));
+                row -> {});
     }
 }

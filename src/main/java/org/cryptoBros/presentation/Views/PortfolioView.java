@@ -136,6 +136,18 @@ public class PortfolioView extends Pages{
         return wrapper;
     }
 
+    public void setSellCallback(AbstractTable.ButtonRowCallback callback) {
+        portfolioTable.setSellCallback(callback);
+    }
+
+    public String getSymbolAt(int row) {
+        return portfolioTable.getSymbolAt(row);
+    }
+
+    public double getUnitsAt(int row) {
+        return portfolioTable.getUnitsAt(row);
+    }
+
     public void setPortfolioData(Object[][] data) {
         portfolioTable.clearRows();
         for (Object[] row : data) portfolioTable.addRow(row);

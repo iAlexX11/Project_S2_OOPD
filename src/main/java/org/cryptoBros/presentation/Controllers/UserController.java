@@ -185,6 +185,15 @@ public class UserController {
         }
     }
 
+    public void sellCrypto(String symbol, double units) {
+        try {
+            double proceeds = cryptoManager.sell(userManager.getCurrentUserId(), symbol, units);
+            userManager.addBalance(proceeds);
+        } catch (DbConnectionException | CryptoNotFoundException | SaleNotAddedException | UserNotFoundException e) {
+            DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
+        }
+    }
+
     public void buyCrypto(String currentSymbol, double units) {
         try {
            double totalCost = cryptoManager.purchase(userManager.getCurrentUserId(), currentSymbol, units);
