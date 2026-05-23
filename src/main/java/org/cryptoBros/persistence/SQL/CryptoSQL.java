@@ -187,20 +187,20 @@ public class CryptoSQL implements CryptoPersistence {
     }
 
 	@Override
-	public void changeCryptoName(String symbol, String name) throws CryptoNotFoundException, DbConnectionException{
-		String query = "UPDATE cryptocurrency SET name = ? WHERE symbol = ?";
+	public void changeCryptoName(String oldName, String newName) throws CryptoNotFoundException, DbConnectionException{
+		String query = "UPDATE cryptocurrency SET name = ? WHERE name = ?";
 
 		try (Connection conn = db.connect();
 			 PreparedStatement ps = conn.prepareStatement(query)) {
 
-			ps.setString(1, name);
-			ps.setString(2, symbol);
+			ps.setString(1, newName);
+			ps.setString(2, oldName);
 
 			int affectedRows = ps.executeUpdate();
 
 			if (affectedRows == 0)
 			{
-				throw new CryptoNotFoundException("Crypto with name '" + symbol + "' not found.");
+				throw new CryptoNotFoundException("Crypto with name '" + oldName + "' not found.");
 			}
 
 		} catch (SQLException e) {

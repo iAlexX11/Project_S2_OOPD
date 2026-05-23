@@ -152,7 +152,7 @@ public class ManageCryptoView extends Pages {
 		dialog.setVisible(true);
 	}
 
-    public String getCryptoSymbolAtRow(int row) {
+    public String getCryptoNameAtRow(int row) {
         return (String) manageCryptoTable.model.getValueAt(row, 0);
     }
 

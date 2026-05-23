@@ -43,15 +43,19 @@ public class AtomicSQL implements AtomicPersistence {
         """;
 
     private static final String SELECT_BOT_ID = """
-    SELECT bot_id FROM Bots WHERE crypto_id = ?
+    SELECT bot_id FROM Bots b 
+    JOIN Cryptocurrency c ON c.symbol = b.crypto_id 
+   WHERE c.name = ?
     """;
 
     private static final String SELECT_CURRENT_PRICE = """
-    SELECT current_price FROM Cryptocurrency WHERE symbol = ?
+    SELECT current_price FROM Cryptocurrency WHERE name = ?
     """;
 
     private static final String SELECT_HOLDERS = """
-    SELECT user_id, units FROM Portfolio WHERE crypto_id = ?
+	SELECT p.user_id, p.units FROM Portfolio p
+    JOIN Cryptocurrency c ON c.symbol = p.crypto_id
+    WHERE c.name = ?
     """;
 
     private static final String ADJUST_BALANCE = """
@@ -59,7 +63,7 @@ public class AtomicSQL implements AtomicPersistence {
     """;
 
     private static final String DELETE_CRYPTO = """
-    DELETE FROM Cryptocurrency WHERE symbol = ?
+    DELETE FROM Cryptocurrency WHERE name = ?
     """;
 
     private static final String DELETE_USER = """
@@ -151,7 +155,7 @@ public class AtomicSQL implements AtomicPersistence {
     }
 
     @Override
-    public Map<Long, Double> deleteCryptoWithBot(String symbol)
+    public Map<Long, Double> deleteCryptoWithBot(String name)
             throws DbConnectionException, CryptoNotFoundException {
 
         Map<Long, Double> refunds = new HashMap<>();
@@ -160,12 +164,12 @@ public class AtomicSQL implements AtomicPersistence {
             conn.setAutoCommit(false);
 
             try {
-                long botUserId = fetchBotUserId(conn, symbol);
-                double currentPrice = fetchCurrentPrice(conn, symbol);
+                long botUserId = fetchBotUserId(conn, name);
+                double currentPrice = fetchCurrentPrice(conn, name);
 
                 // Fetch all holders and compute refunds (skip the bot user)
                 try (PreparedStatement ps = conn.prepareStatement(SELECT_HOLDERS)) {
-                    ps.setString(1, symbol);
+                    ps.setString(1, name);
                     ResultSet rs = ps.executeQuery();
                     while (rs.next()) {
                         long userId = rs.getLong("user_id");
@@ -187,10 +191,10 @@ public class AtomicSQL implements AtomicPersistence {
 
                 // Delete crypto (cascades Bots, Portfolio, Crypto_History)
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_CRYPTO)) {
-                    ps.setString(1, symbol);
+                    ps.setString(1, name);
                     if (ps.executeUpdate() == 0)
                         throw new CryptoNotFoundException(
-                                "Crypto '" + symbol + "' not found.");
+                                "Crypto '" + name + "' not found.");
                 }
 
                 // Delete the bot user (Bots row already gone via cascade)

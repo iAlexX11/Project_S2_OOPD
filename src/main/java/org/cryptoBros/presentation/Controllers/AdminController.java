@@ -39,9 +39,9 @@ public class AdminController {
 		cryptoManager.addCryptoListener(listener);
 	}
 
-	public void deleteCrypto(String symbol) {
+	public void deleteCrypto(String cryptoName) {
 		try {
-			cryptoManager.deleteCrypto(symbol);
+			cryptoManager.deleteCrypto(cryptoName);
 		} catch (CryptoNotFoundException e) {
 			DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
 		} catch (DbConnectionException e) {
@@ -83,9 +83,9 @@ public class AdminController {
 		}
 	}
 
-	public void changeCryptoName(String symbol, String newName) {
+	public void changeCryptoName(String cryptoName, String newName) {
 		try {
-			cryptoManager.changeCryptoName(symbol, newName);
+			cryptoManager.changeCryptoName(cryptoName, newName);
 		} catch (CryptoNameAlreadyExists | ErrorChangingCryptoName e) {
 			DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
 		}

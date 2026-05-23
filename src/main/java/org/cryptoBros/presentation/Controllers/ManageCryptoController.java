@@ -33,12 +33,12 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
     }
 
 	private void editCrypto(int row) {
-		String symbol = manageCryptoView.getCryptoSymbolAtRow(row);
+		String cryptoName = manageCryptoView.getCryptoNameAtRow(row);
 		String newName = manageCryptoView.getCryptoName();
 
 		if (newName == null || newName.isBlank()) return;
 
-		adminController.changeCryptoName(symbol, newName);
+		adminController.changeCryptoName(cryptoName, newName);
 		refreshCryptoData();
 	}
 
@@ -57,12 +57,12 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
     }
 
     private void handleDeleteCrypto(int row) {
-        String symbol = manageCryptoView.getCryptoSymbolAtRow(row);
+        String cryptoName = manageCryptoView.getCryptoNameAtRow(row);
         int confirm = JOptionPane.showConfirmDialog(null,
-                "Delete " + symbol + "? All holders will be refunded automatically.",
+                "Delete " + cryptoName + "? All holders will be refunded automatically.",
                 "Confirm Delete", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            adminController.deleteCrypto(symbol);
+            adminController.deleteCrypto(cryptoName);
             refreshCryptoData();
         }
     }

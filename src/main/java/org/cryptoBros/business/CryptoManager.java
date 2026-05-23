@@ -65,20 +65,20 @@ public class CryptoManager implements BotListener {
     /**
      * Deletes a crypto from the db, with its associated bot
      *
-     * @param symbol symbol of the crypto to be deleted
+     * @param cryptoName name of the crypto to be deleted
      * @return map of userId to refundAmount for each refunded holder
      * @throws DbConnectionException if there was a problem connecting to the {@link AtomicPersistence}
      * @throws CryptoNotFoundException if the {@link Crypto} could not be found
      */
-    public Map<Long, Double> deleteCrypto(String symbol) throws
+    public Map<Long, Double> deleteCrypto(String cryptoName) throws
             DbConnectionException,
             CryptoNotFoundException
     {
         // One transaction: crypto + bot user gone or neither is
-        Map<Long, Double> refunds = atomicDb.deleteCryptoWithBot(symbol);
+        Map<Long, Double> refunds = atomicDb.deleteCryptoWithBot(cryptoName);
 
         // DB succeeded: stop in-memory bot
-        Bot bot = activeBots.remove(symbol);
+        Bot bot = activeBots.remove(cryptoName);
         if (bot != null) bot.stop();
 
         return refunds;
@@ -222,14 +222,14 @@ public class CryptoManager implements BotListener {
         return 0;
     }
 
-	public void changeCryptoName(String symbol, String name)
+	public void changeCryptoName(String oldName, String newName)
 			throws ErrorChangingCryptoName, CryptoNameAlreadyExists {
 		try {
 			List<Crypto> cryptos = cryptoPersistence.getAllCrypto();
 
 			boolean alreadyExists = false;
 			for (Crypto crypto : cryptos) {
-				if (crypto.getSymbol().equals(name)) {
+				if (crypto.getName().equals(newName)) {
 					alreadyExists = true;
 					break;
 				}
@@ -238,8 +238,7 @@ public class CryptoManager implements BotListener {
 			if (alreadyExists) {
 				throw new CryptoNameAlreadyExists("This name already exists.");
 			}
-
-			cryptoPersistence.changeCryptoName(symbol, name);
+			cryptoPersistence.changeCryptoName(oldName, newName);
 
 		} catch (CryptoNotFoundException | DbConnectionException e) {
 			throw new ErrorChangingCryptoName("Something happened, please try again later.");
