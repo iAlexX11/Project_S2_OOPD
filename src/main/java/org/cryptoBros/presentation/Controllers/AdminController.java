@@ -5,12 +5,13 @@ import org.cryptoBros.business.AdminManager;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.CryptoListener;
-import org.cryptoBros.persistence.Exceptions.CryptoNameAlreadyExists;
-import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
-import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.Exceptions.ErrorChangingCryptoName;
+import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.DisplayMessage;
 
+import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,17 @@ public class AdminController {
 			return cryptoManager.getAllCryptoList();
 		} catch (CryptoNotFoundException | DbConnectionException e) {
 			return new ArrayList<>();
+		}
+	}
+
+	public void addCryptoFromFile(File jsonFile) {
+		try (FileReader reader = new FileReader(jsonFile)) {
+			Crypto crypto = new Gson().fromJson(reader, Crypto.class);
+			cryptoManager.createCrypto(crypto);
+		} catch (IOException e) {
+			DisplayMessage.showMessage(frameController.getMainFrame(), "Failed to read file: " + e.getMessage());
+		} catch (DbConnectionException | BotGenerationException | CryptoNotAddedException e) {
+			DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
 		}
 	}
 
