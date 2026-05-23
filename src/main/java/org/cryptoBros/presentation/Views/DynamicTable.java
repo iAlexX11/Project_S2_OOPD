@@ -110,28 +110,29 @@ public class DynamicTable extends JPanel {
         Integer row = cryptos.get(symbol);
 
         if (row != null && row < model.getRowCount()) {
-            String priceStr      = String.format("€ %.4f", price);
-            String changeStr     = String.format("%s€ %.4f", change >= 0 ? "+" : "", change);
-            String percentageStr = String.format("%s%.4f%%", percentage >= 0 ? "+" : "", percentage);
-
-            model.setValueAt(name,       row, 0);
-            model.setValueAt(priceStr,   row, 1);
-            model.setValueAt(changeStr,  row, 2);
-            model.setValueAt(percentageStr, row, 3);
+            String[] formatted = formatRow(name, price, change, percentage);
+            for (int col = 0; col < formatted.length; col++)
+                model.setValueAt(formatted[col], row, col);
         } else {
             addRow(symbol, name, price, change, percentage);
         }
     }
 
     private void addRow(String simbol, String name, double price, double change, double percentage) {
-        String priceStr      = "€ " + price;
-        String changeStr     = (change >= 0 ? "+" : "") + "€ " + change;
-        String percentageStr = (percentage >= 0 ? "+" : "") + percentage + "%";
-
-        model.addRow(new Object[]{name, priceStr, changeStr, percentageStr });
+        model.addRow(formatRow(name, price, change, percentage));
 
         cryptos.put(simbol, model.getRowCount() - 1);
     }
+
+    private String[] formatRow(String name, double price, double change, double percentage) {
+        return new String[]{
+                name,
+                String.format("€ %.2f", price),
+                String.format("%s€ %.2f", change >= 0 ? "+" : "", change),
+                String.format("%s%.4f%%", percentage >= 0 ? "+" : "", percentage)
+        };
+    }
+
 	public void clearRows() {
         model.setRowCount(0);
         cryptos.clear();
