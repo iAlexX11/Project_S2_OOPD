@@ -1,5 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
+import com.google.gson.*;
 import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.AdminManager;
 import org.cryptoBros.business.Crypto;
@@ -8,7 +9,6 @@ import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.DisplayMessage;
 
-import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -59,9 +59,24 @@ public class AdminController {
 
 	public void addCryptoFromFile(File jsonFile) {
 		try (FileReader reader = new FileReader(jsonFile)) {
-			Crypto crypto = new Gson().fromJson(reader, Crypto.class);
-			cryptoManager.createCrypto(crypto);
-		} catch (IOException e) {
+            Gson gson = new Gson();
+            JsonElement root = JsonParser.parseReader(reader);
+
+            if (root.isJsonObject()) {
+                JsonArray array = new JsonArray();
+                array.add(root);
+                root = array;
+            }
+
+            Crypto[] cryptos = gson.fromJson(root, Crypto[].class);
+
+            for (Crypto crypto : cryptos) {
+                cryptoManager.createCrypto(crypto);
+            }
+        } catch (JsonSyntaxException | NumberFormatException e) {
+            DisplayMessage.showMessage(frameController.getMainFrame(), "Invalid JSON format: ");
+		}
+        catch (IOException e) {
 			DisplayMessage.showMessage(frameController.getMainFrame(), "Failed to read file: " + e.getMessage());
 		} catch (DbConnectionException | BotGenerationException | CryptoNotAddedException e) {
 			DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
