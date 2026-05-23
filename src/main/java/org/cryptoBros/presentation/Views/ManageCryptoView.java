@@ -163,7 +163,7 @@ public class ManageCryptoView extends Pages {
         return fileChooser;
     }
 
-	public String getUsername() {
+	public String getCryptoName() {
 		return confirmedCryptoName;
 	}
 }

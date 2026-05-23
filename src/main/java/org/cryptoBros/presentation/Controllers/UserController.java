@@ -148,7 +148,7 @@ public class UserController {
 		try {
 			userManager.changeUsername(username);
 			DisplayMessage.showMessage(frameController.getMainFrame(), "The username has been changed!");
-		} catch (DbConnectionException e) {
+		} catch (DbConnectionException | UsernameAlreadyExists e) {
 			DisplayMessage.showMessage(frameController.getMainFrame() ,e.getMessage());
 		}
 	}

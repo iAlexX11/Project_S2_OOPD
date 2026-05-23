@@ -20,16 +20,16 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     private final CryptoMarketView cryptoMarketView;
     private final Navigation navigation;
 	private final UserController userController;
-	private final AdminController adminController;
+	private boolean isAdmin = false;
 
     public CryptoMarketController(UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
         this.navigation = navigation;
 		this.userController = userController;
-		this.adminController = adminController;
 		this.cryptoMarketView = new CryptoMarketView();
 		cryptoMarketView.setTypeUser(isAdmin);
         cryptoMarketView.setActions(this);
         cryptoMarketView.setOnRowClick(this);
+		this.isAdmin = isAdmin;
 		if (!isAdmin) {
 			userController.registerBalanceListener(this);
 			userController.pushCurrentBalance(this);
@@ -57,7 +57,7 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     @Override
     public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(symbol, name, currentPrice, change, percentage);
-        cryptoMarketView.updateEstimatedProfit(userController.getTotalProfit());
+		if (!isAdmin) cryptoMarketView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     public void clearTable() {

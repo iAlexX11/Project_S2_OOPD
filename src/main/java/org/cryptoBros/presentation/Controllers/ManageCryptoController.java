@@ -34,7 +34,7 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 
 	private void editCrypto(int row) {
 		String symbol = manageCryptoView.getCryptoSymbolAtRow(row);
-		String newName = manageCryptoView.getUsername();
+		String newName = manageCryptoView.getCryptoName();
 
 		if (newName == null || newName.isBlank()) return;
 
@@ -44,8 +44,6 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 
 	private void refreshCryptoData() {
 		List<Crypto> cryptos = adminController.getAllCryptos();
-		cryptos.forEach(c -> System.out.println("    - " + c.getSymbol()));
-
 		Object[][] data = new Object[cryptos.size()][3];
 		for (int i = 0; i < cryptos.size(); i++) {
 			data[i] = new Object[]{ cryptos.get(i).getName(), "", "" };
