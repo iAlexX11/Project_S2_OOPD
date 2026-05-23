@@ -68,6 +68,7 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
     @Override
     public void balanceChanged(double balance) {
         view.updateBalance(balance);
+        view.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     public BaseView getView() {
@@ -102,5 +103,6 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
         if (symbol.equals(currentSymbol)) {
             view.setCurrentPrice(currentPrice);
         }
+        view.updateEstimatedProfit(userController.getTotalProfit());
     }
 }

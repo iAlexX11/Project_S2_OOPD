@@ -96,14 +96,17 @@ public class CryptoManager implements BotListener {
         return cryptoPersistence.getAllCrypto();
     }
 
-    public void sell(long userId, String symbol, double units) throws
+    public double sell(long userId, String symbol, double units) throws
             DbConnectionException,
             SaleNotAddedException,
             CryptoNotFoundException
     {
+        double priceBeforeSell = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
+        double proceeds = priceBeforeSell * units;
         portfolioPersistence.sellCrypto(userId, symbol, units);
         Crypto updatedCrypto = cryptoPersistence.getCrypto(symbol);
         notifyListener(updatedCrypto);
+        return proceeds;
     }
 
 

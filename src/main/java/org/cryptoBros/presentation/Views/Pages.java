@@ -143,7 +143,7 @@ public abstract class Pages extends BaseView{
         String sign = profit >= 0 ? "+" : "";
         jLEstimatedProfit.setText("Estimated Profit: " + sign + String.format("%,.2f", profit) + "€");
         jLEstimatedProfit.setForeground(Color.WHITE);
-        jLEstimatedProfit.setFont(new Font("Apple Casual", Font.BOLD, 18));
+        jLEstimatedProfit.setFont(new Font("Apple Casual", Font.PLAIN, 18));
         jLEstimatedProfit.revalidate();
         jLEstimatedProfit.repaint();
     }

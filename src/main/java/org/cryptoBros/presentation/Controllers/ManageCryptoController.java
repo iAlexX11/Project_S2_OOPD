@@ -74,7 +74,8 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath()); // wire to business layer
+            adminController.addCryptoFromFile(selectedFile);
+            refreshCryptoData();
         }
     }
 

@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class ManageCryptoView extends Pages {
 
     private ManageCryptoTable manageCryptoTable;
-	private JButton changeCryptoNameButton;;
+	private JButton addButton;
 	private String confirmedCryptoName;
 	private ActionListener actionListener;
 
@@ -22,6 +22,7 @@ public class ManageCryptoView extends Pages {
 		this.actionListener = listener;
 		getContent().add(setHeader(), BorderLayout.NORTH);
 		addHeaderActions(listener);
+		addButton.addActionListener(listener);
 	}
 
     private JPanel setCore() {
@@ -70,7 +71,7 @@ public class ManageCryptoView extends Pages {
         addDescription.setFont(new Font("SansSerif", Font.PLAIN, 13));
         addDescription.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton addButton = new JButton("ADD");
+        addButton = new JButton("ADD");
         addButton.setActionCommand(ButtonEnumeration.ADD_CRYPTO.name());
         addButton.setFont(new Font("SansSerif", Font.BOLD, 15));
         addButton.setBackground(new Color(99, 125, 217));
