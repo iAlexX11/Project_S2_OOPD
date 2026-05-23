@@ -10,6 +10,8 @@ import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Views.BaseView;
 import org.cryptoBros.presentation.Views.CryptoDetailView;
+import org.cryptoBros.presentation.Views.DisplayMessage;
+import org.cryptoBros.presentation.Views.MainFrame;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -26,16 +28,15 @@ import java.util.stream.Collectors;
 public class CryptoDetailController implements ActionListener, BalanceListener, CryptoListener, GraphPriceListener {
 
     private final UserController userController;
-    private final AdminController adminController;
+    private boolean isAdmin = false;
     private final Navigation navigation;
     private final CryptoDetailView view;
     private String currentSymbol;
 
     public CryptoDetailController (UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
         this.userController = userController;
-        this.adminController = adminController;
+        this.isAdmin = isAdmin;
         this.navigation = navigation;
-
         this.view = new CryptoDetailView();
         view.setTypeUser(isAdmin);
         view.setActions(this);
@@ -54,21 +55,26 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
             case HOME -> navigation.navigate(PagesName.CRYPTO_MARKET);
             case PORTFOLIO -> navigation.navigate(PagesName.PORTFOLIO);
             case MANAGE_CRYPTO -> navigation.navigate(PagesName.MANAGE_CRYPTO);
-            case CONFIRM_PURCHASE -> buyCrypto();
-        }
+			case CONFIRM_PURCHASE -> {
+				if (!isAdmin) {
+					buyCrypto();
+				} else {
+					DisplayMessage.showMessage(new MainFrame(), "An admin can't buy a crypto!");
+				}
+			}
+		}
     }
 
     private void buyCrypto() {
         double units = view.getUnits();
         userController.buyCrypto(currentSymbol, units);
         view.setOwnedCrypto(userController.getOwnedUnits(currentSymbol), currentSymbol);
-
     }
 
     @Override
     public void balanceChanged(double balance) {
         view.updateBalance(balance);
-        view.updateEstimatedProfit(userController.getTotalProfit());
+		if (!isAdmin) view.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     public BaseView getView() {

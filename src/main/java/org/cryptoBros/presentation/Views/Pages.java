@@ -94,7 +94,7 @@ public abstract class Pages extends BaseView{
 		JPanel col2 = new JPanel(new GridLayout(2, 1, 0, 5));
 		col2.setOpaque(false);
 		col2.add(setBalance());
-        col2.add(setEstimatedProfit());
+        if (!isAdmin) col2.add(setEstimatedProfit());
 		col2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
 		return col2;
 	}
@@ -140,6 +140,7 @@ public abstract class Pages extends BaseView{
     }
 
     public void updateEstimatedProfit(double profit) {
+		if (jLEstimatedProfit == null) return;
         String sign = profit >= 0 ? "+" : "";
         jLEstimatedProfit.setText("Estimated Profit: " + sign + String.format("%,.2f", profit) + "€");
         jLEstimatedProfit.setForeground(Color.WHITE);

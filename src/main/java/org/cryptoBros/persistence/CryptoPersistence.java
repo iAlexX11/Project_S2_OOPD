@@ -65,5 +65,5 @@ public interface CryptoPersistence {
      */
     Map<Instant, Double> getPriceHistory(String symbol) throws CryptoNotFoundException, DbConnectionException;
 
-	void changeCryptoName(String symbol, String newName) throws CryptoNotFoundException, DbConnectionException;
+	void changeCryptoName(String oldName, String newName) throws CryptoNotFoundException, DbConnectionException;
 }

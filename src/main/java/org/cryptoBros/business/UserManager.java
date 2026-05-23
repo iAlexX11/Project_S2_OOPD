@@ -1,10 +1,7 @@
 package org.cryptoBros.business;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
-import org.cryptoBros.persistence.Exceptions.DbConnectionException;
-import org.cryptoBros.persistence.Exceptions.InsufficientBalanceException;
-import org.cryptoBros.persistence.Exceptions.UserNotAddException;
-import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
+import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
@@ -124,8 +121,13 @@ public class UserManager {
         balanceListeners = null;
     }
 
-	public void changeUsername(String username) throws DbConnectionException{
-		userPersistence.changeUsername(username, currentUserId);
+	public void changeUsername(String newUsername) throws DbConnectionException,  UsernameAlreadyExists {
+		try {
+			userPersistence.getUser(newUsername, newUsername);
+			throw new UsernameAlreadyExists("This username already exists");
+		} catch (UserNotFoundException e) {
+			userPersistence.changeUsername(newUsername, currentUserId);
+		}
 	}
 
 	public void changeUserPassword(String password) throws DbConnectionException{
