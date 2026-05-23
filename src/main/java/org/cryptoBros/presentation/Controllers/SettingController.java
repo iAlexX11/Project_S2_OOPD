@@ -48,6 +48,7 @@ public class SettingController implements ActionListener, BalanceListener {
     @Override
     public void balanceChanged(double balance) {
         settingsView.updateBalance(balance);
+        settingsView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     public BaseView getView() {

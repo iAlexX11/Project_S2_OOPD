@@ -51,11 +51,13 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     @Override
     public void balanceChanged(double balance) {
         cryptoMarketView.updateBalance(balance);
+        cryptoMarketView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     @Override
     public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(symbol, name, currentPrice, change, percentage);
+        cryptoMarketView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     public void clearTable() {

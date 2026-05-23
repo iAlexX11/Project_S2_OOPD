@@ -43,6 +43,7 @@ public class ProfileController implements ActionListener, BalanceListener {
 	@Override
 	public void balanceChanged(double balance) {
 		profileView.updateBalance(balance);
+		profileView.updateEstimatedProfit(userController.getTotalProfit());
 	}
 
 	public BaseView getView() {

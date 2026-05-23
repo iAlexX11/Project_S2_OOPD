@@ -58,11 +58,13 @@ public class PortfolioController implements ActionListener, BalanceListener, Cry
     @Override
     public void balanceChanged(double balance) {
         portfolioView.updateBalance(balance);
+        portfolioView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     @Override
     public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         refreshPortfolioData();
+        portfolioView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
     public BaseView getView() {
