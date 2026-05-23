@@ -75,6 +75,12 @@ public class AtomicSQL implements AtomicPersistence {
     FROM Bots
     """;
 
+    private static final String HAS_CRYPTOS = """
+    SELECT 1
+    FROM Cryptocurrency
+    LIMIT 1
+    """;
+
     @Override
     public long createCryptoWithBot(Crypto crypto)
             throws DbConnectionException, BotGenerationException, CryptoNotAddedException {
@@ -283,7 +289,7 @@ public class AtomicSQL implements AtomicPersistence {
              FileReader fileReader = new FileReader(CRYPTO_FILEPATH)) {
             Crypto[] cryptos = gson.fromJson(fileReader, Crypto[].class);
 
-            if (cryptos != null) {
+            if (!hasCryptos(conn)) {
                 for (Crypto crypto : cryptos) {
                     if (!cryptoExists(conn, crypto.getSymbol())) {
                         createCryptoWithBot(crypto);
@@ -300,5 +306,11 @@ public class AtomicSQL implements AtomicPersistence {
         } catch (SQLException e) {
             throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
         }
+    }
+
+    private boolean hasCryptos(Connection conn) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(HAS_CRYPTOS);
+        ResultSet rs = ps.executeQuery();
+        return rs.next();
     }
 }
