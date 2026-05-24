@@ -1,11 +1,13 @@
 package org.cryptoBros.business.Workers;
 
 import org.cryptoBros.business.Crypto;
-import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.BotListener;
 import org.cryptoBros.business.User;
 import org.cryptoBros.persistence.CryptoPersistence;
-import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
+import org.cryptoBros.persistence.Exceptions.DbConnectionException;
+import org.cryptoBros.persistence.Exceptions.PurchaseNotAddedException;
+import org.cryptoBros.persistence.Exceptions.SaleNotAddedException;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
 import org.cryptoBros.persistence.SQL.UserPortfolioSQL;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
@@ -74,7 +76,8 @@ public class Bot implements Runnable {
      */
     public void start() {
         if (scheduler != null && !scheduler.isShutdown()) {
-            throw new IllegalStateException("Bot for " + cryptoSymbol + " is already running.");
+            LOG.log(Level.WARNING, "Bot for " + cryptoSymbol + " is already running.");
+            return;
         }
 
         // 5 / volatility seconds converted to milliseconds for precision
