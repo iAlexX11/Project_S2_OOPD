@@ -1,11 +1,14 @@
 package org.cryptoBros.business;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
+import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
+import org.cryptoBros.persistence.SQL.AtomicSQL;
 import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
 
 import javax.swing.SwingUtilities;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class UserManager {
 	private int currentUserId; // -1;
 	private final UserPersistence userPersistence;
+    private final AtomicPersistence atomicDb;
 
     private BalanceListener balanceListeners;
     private ScheduledExecutorService scheduler;
@@ -22,6 +26,7 @@ public class UserManager {
 
     public UserManager() {
         this.userPersistence = new UserSQL();
+        this.atomicDb = new AtomicSQL();
     }
 
 	public User addUser(User user) throws UserNotAddException, DbConnectionException {
@@ -133,4 +138,8 @@ public class UserManager {
 	public void changeUserPassword(String password) throws DbConnectionException{
 		userPersistence.changePassword(password, currentUserId);
 	}
+
+    public List<String> displayCryptoNotification() throws DbConnectionException {
+        return atomicDb.popNotifications(currentUserId);
+    }
 }

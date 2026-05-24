@@ -49,6 +49,13 @@ CREATE TABLE Crypto_History (
     FOREIGN KEY (crypto_id) REFERENCES Cryptocurrency(symbol) ON DELETE CASCADE
 );
 
+CREATE TABLE Notifications (
+    notification_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    message TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
 
 CREATE OR REPLACE FUNCTION record_price_history()
     RETURNS TRIGGER AS $$
@@ -114,7 +121,6 @@ CREATE TRIGGER update_crypto_price_after_sell
     FOR EACH ROW
     WHEN (OLD.units > NEW.units) -- Only trigger on sell (units decrease)
     EXECUTE FUNCTION update_crypto_price_after_sell();
-
 
 
 

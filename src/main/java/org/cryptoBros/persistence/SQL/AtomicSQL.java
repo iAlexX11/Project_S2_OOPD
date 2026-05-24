@@ -7,6 +7,7 @@ import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.AtomicPersistence;
 import org.cryptoBros.persistence.Exceptions.*;
 
+import javax.management.Notification;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -79,6 +80,17 @@ public class AtomicSQL implements AtomicPersistence {
     SELECT 1
     FROM Cryptocurrency
     LIMIT 1
+    """;
+
+    private static final String INSERT_NOTIFICATION = """
+        INSERT INTO Notifications (user_id, message)
+        VALUES(?,?)
+    """;
+
+    private static final String POP_NOTIFICATION = """
+        DELETE FROM Notifications
+        WHERE user_id = ?
+        RETURNING message
     """;
 
     @Override
@@ -195,6 +207,15 @@ public class AtomicSQL implements AtomicPersistence {
                     }
                 }
 
+                for (long userId: refunds.keySet()) {
+                    try (PreparedStatement ps = conn.prepareStatement(INSERT_NOTIFICATION)){
+                        ps.setLong(1, userId);
+                        ps.setString(2, "The cryptocurrency '" + name + "' has been removed from the system. "
+                                + "Your balance has been refunded accordingly.");
+                        ps.executeUpdate();
+                    }
+                }
+
                 // Delete crypto (cascades Bots, Portfolio, Crypto_History)
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_CRYPTO)) {
                     ps.setString(1, name);
@@ -305,6 +326,23 @@ public class AtomicSQL implements AtomicPersistence {
             throw new DbConnectionException("Error while reading initial crypto data: " + e.getMessage());
         } catch (SQLException e) {
             throw new DbConnectionException("DB error while loading initial data: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<String> popNotifications(long userId) throws DbConnectionException {
+        List<String> messages = new ArrayList<>();
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();
+             PreparedStatement ps = conn.prepareStatement(POP_NOTIFICATION)) {
+
+            ps.setLong(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                messages.add(rs.getString("message"));
+            }
+            return messages;
+        }catch (SQLException e) {
+            throw new DbConnectionException("Error fetching notifications: " + e.getMessage());
         }
     }
 
