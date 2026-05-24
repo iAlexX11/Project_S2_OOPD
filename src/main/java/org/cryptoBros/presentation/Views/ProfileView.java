@@ -38,6 +38,12 @@ public class ProfileView extends Pages {
 		this.isAdmin = isAdmin;
 	}
 
+    /**
+     * Builds the central panel containing the profile picture and,
+     * for non-admin users, the change username and change password buttons.
+     *
+     * @return the configured core {@code JPanel}
+     */
 	private JPanel setCore() {
 		JPanel core = new JPanel();
 		core.setLayout(new BoxLayout(core, BoxLayout.Y_AXIS));
@@ -77,6 +83,13 @@ public class ProfileView extends Pages {
 		return core;
 	}
 
+    /**
+     * Creates a styled {@code JButton} with the given label and background colour.
+     *
+     * @param text       the button label
+     * @param background the background colour of the button
+     * @return the configured {@code JButton}
+     */
 	private JButton createButton(String text, Color background) {
 		JButton button = new JButton(text);
 		button.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -92,11 +105,21 @@ public class ProfileView extends Pages {
 		return button;
 	}
 
+    /**
+     * Adds the core panel to the centre of the content pane.
+     * Called by the parent class during view initialisation.
+     */
 	@Override
 	protected void configureView() {
 		getContent().add(setCore(), BorderLayout.CENTER);
 	}
 
+    /**
+     * Attaches the given {@code ActionListener} to the view, adds the header,
+     * and wires up the change-username and change-password buttons for non-admin users.
+     *
+     * @param listener the listener that handles button action commands
+     */
 	@Override
 	public void setActions(ActionListener listener) {
 		this.actionListener = listener;
@@ -113,6 +136,12 @@ public class ProfileView extends Pages {
 		}
 	}
 
+    /**
+     * Creates a modal {@code JDialog} with the specified title and no owner frame.
+     *
+     * @param title the title displayed in the dialog's title bar
+     * @return the configured base {@code JDialog}
+     */
 	private JDialog createBaseDialog(String title) {
 		JDialog dialog = new JDialog();
 		dialog.setTitle(title);
@@ -120,6 +149,16 @@ public class ProfileView extends Pages {
 		return dialog;
 	}
 
+    /**
+     * Builds a {@code GridBagConstraints} instance for placing a form field
+     * at the specified grid position with consistent insets.
+     * Fields in column 1 are given a horizontal weight of {@code 1.0} so they
+     * stretch to fill available space.
+     *
+     * @param column the target grid column (0 for labels, 1 for inputs)
+     * @param row    the target grid row
+     * @return the configured {@code GridBagConstraints}
+     */
 	private GridBagConstraints createFieldConstraints(int column, int row) {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = column;
@@ -130,6 +169,11 @@ public class ProfileView extends Pages {
 		return constraints;
 	}
 
+    /**
+     * Displays a modal dialog that lets the user enter a new username.
+     * On confirmation, stores the trimmed value in {@link #confirmedUsername} and
+     * fires a {@link ButtonEnumeration#CHANGE_USERNAME} action event.
+     */
 	private void showChangeUsername() {
 		JDialog dialog = createBaseDialog("Change Username");
 		JPanel formPanel = new JPanel(new GridBagLayout());
@@ -158,6 +202,12 @@ public class ProfileView extends Pages {
 		dialog.setVisible(true);
 	}
 
+    /**
+     * Displays a modal dialog that lets the user enter and confirm a new password.
+     * If both fields match, stores the value in {@link #confirmedPassword} and fires
+     * a {@link ButtonEnumeration#CHANGE_PASSWORD} action event.
+     * If they do not match, an inline error label is shown and the dialog is resized.
+     */
 	private void showChangePassword() {
 		JDialog dialog = createBaseDialog("Change Password");
 		JPanel formPanel = new JPanel(new GridBagLayout());

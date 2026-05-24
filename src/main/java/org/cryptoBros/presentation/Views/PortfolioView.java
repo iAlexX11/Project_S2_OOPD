@@ -27,6 +27,10 @@ public class PortfolioView extends Pages{
     /** The confirm balance button. */
     private JButton confirmButton;
 
+
+    /**
+     * Configures the view layout by setting up the header and core panels.
+     */
     @Override
     protected void configureView() {
         JPanel jpHeader = setHeader();
@@ -36,6 +40,11 @@ public class PortfolioView extends Pages{
         getContent().add(jpCore,  BorderLayout.CENTER);
     }
 
+    /**
+     * Registers action listeners for the view's interactive components.
+     *
+     * @param listener the action listener to attach to buttons
+     */
     @Override
     public void setActions(ActionListener listener) {
         addHeaderActions(listener);
@@ -52,6 +61,13 @@ public class PortfolioView extends Pages{
         return core;
     }
 
+
+    /**
+     * Builds and returns the portfolio section panel, including the title,
+     * estimated profit label, and the portfolio table.
+     *
+     * @return the portfolio section JPanel
+     */
     private JPanel buildPortfolioSection() {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setBackground(new Color(239, 247, 255));
@@ -93,6 +109,12 @@ public class PortfolioView extends Pages{
         jLProfit.setForeground(totalProfit >= 0 ? new Color(0, 150, 80) : new Color(200, 50, 50));
     }
 
+    /**
+     * Builds and returns the balance management section panel, including
+     * the balance title, add balance input field, and confirm button.
+     *
+     * @return the balance section JPanel
+     */
     private JPanel buildBalanceSection() {
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrapper.setBackground(new Color(239, 247, 255));
@@ -205,6 +227,13 @@ public class PortfolioView extends Pages{
         }
     }
 
+    /**
+     * Creates and returns a styled text field with placeholder behaviour.
+     * The placeholder text is shown in grey and disappears on focus.
+     *
+     * @param placeholder the placeholder text to display when the field is empty
+     * @return the configured JTextField
+     */
     private JTextField setTextField(String placeholder) {
         JTextField jTextField = new JTextField();
         jTextField.setPreferredSize(new Dimension(100, 25));

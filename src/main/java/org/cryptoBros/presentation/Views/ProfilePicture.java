@@ -30,6 +30,14 @@ class ProfilePicture extends JPanel {
 		setOpaque(false);
 	}
 
+    /**
+     * Paints this component by clipping the graphics context to an ellipse
+     * and drawing {@code image} scaled to fill the component bounds.
+     * A private copy of the context is used so that the clip does not
+     * affect other components in the paint chain.
+     *
+     * @param g the {@code Graphics} context provided by Swing
+     */
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;

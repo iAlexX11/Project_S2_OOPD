@@ -36,22 +36,6 @@ public class PriceChart extends JPanel {
     }
 
     /**
-     * Adds a single data point to the chart.
-     *
-     * @param price the price value
-     * @param time  the timestamp label
-     */
-    public void addPoint (double price, String time) {
-        if (prices.size() >= MAX_POINTS) {
-            prices.remove(0);
-            times.remove(0);
-        }
-        prices.add(price);
-        times.add(time);
-        repaint();
-    }
-
-    /**
      * Replaces all chart data with the given prices and times.
      *
      * @param prices the price values
@@ -73,12 +57,24 @@ public class PriceChart extends JPanel {
         repaint();
     }
 
+    /**
+     * Delegates painting to {@link #paintChart(Graphics)} after clearing the background.
+     *
+     * @param g the {@code Graphics} context provided by Swing
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         paintChart(g);
     }
 
+    /**
+     * Orchestrates all chart rendering: computes value bounds, chooses a green or red
+     * colour scheme based on price direction, then delegates to the grid, fill, line,
+     * and label painters.
+     *
+     * @param g the {@code Graphics} context to paint on
+     */
     private void paintChart(Graphics g) {
         if (prices.size() < 2) return;
 
@@ -109,6 +105,19 @@ public class PriceChart extends JPanel {
         g2d.dispose();
     }
 
+    /**
+     * Draws a gradient-filled area beneath the price line to give the chart depth.
+     * The fill path is the open price path closed along the bottom edge of the chart area.
+     *
+     * @param g2d       the 2-D graphics context
+     * @param chartW    the drawable width of the chart in pixels (excluding padding)
+     * @param chartH    the drawable height of the chart in pixels (excluding padding)
+     * @param max       the upper bound of the value axis (including margin)
+     * @param drawRange the total value span of the axis (max − min, including margins)
+     * @param fillTop   the opaque colour at the top of the gradient
+     * @param fillBot   the transparent colour at the bottom of the gradient
+     */
+
     private void drawFill(Graphics2D g2d, int chartW, int chartH, double max, double drawRange, Color fillTop, Color fillBot) {
         GeneralPath fill = buildPath(chartW, chartH, max, drawRange);
 
@@ -121,12 +130,32 @@ public class PriceChart extends JPanel {
         g2d.fill(fill);
     }
 
+    /**
+     * Strokes the price line over the chart area.
+     *
+     * @param g2d       the 2-D graphics context
+     * @param chartW    the drawable width of the chart in pixels (excluding padding)
+     * @param chartH    the drawable height of the chart in pixels (excluding padding)
+     * @param max       the upper bound of the value axis (including margin)
+     * @param drawRange the total value span of the axis (max − min, including margins)
+     * @param lineColor the colour to use for the line stroke
+     */
     private void drawLine(Graphics2D g2d, int chartW, int chartH, double max, double drawRange, Color lineColor){
         g2d.setColor(lineColor);
         g2d.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2d.draw(buildPath(chartW, chartH, max, drawRange));
     }
 
+    /**
+     * Constructs the open {@link GeneralPath} that traces the price data from left to right.
+     * Each data point is mapped linearly to pixel coordinates within the padded chart area.
+     *
+     * @param chartW    the drawable width of the chart in pixels (excluding padding)
+     * @param chartH    the drawable height of the chart in pixels (excluding padding)
+     * @param drawMax   the upper bound of the value axis (including margin)
+     * @param drawRange the total value span of the axis (max − min, including margins)
+     * @return an open path tracing all current price points
+     */
     private GeneralPath buildPath(int chartW, int chartH, double drawMax, double drawRange) {
         GeneralPath path = new GeneralPath();
         for (int i = 0; i < prices.size(); i++) {
@@ -138,6 +167,14 @@ public class PriceChart extends JPanel {
         return path;
     }
 
+    /**
+     * Draws evenly-spaced timestamp labels along the bottom of the chart.
+     * At most six labels are shown; the step size is increased automatically when
+     * there are more data points than labels to avoid overlap.
+     *
+     * @param g2d    the 2-D graphics context
+     * @param chartW the drawable width of the chart in pixels (excluding padding)
+     */
     private void drawXLabels(Graphics2D g2d, int chartW) {
         if (times.isEmpty()) return;
         int step = Math.max(1, times.size() / 6);
@@ -150,6 +187,16 @@ public class PriceChart extends JPanel {
         }
     }
 
+    /**
+     * Draws the horizontal grid lines and the corresponding price labels on the Y axis.
+     * The number of lines is controlled by {@link #GRID_LINES}.
+     *
+     * @param g2d    the 2-D graphics context
+     * @param chartW the drawable width of the chart in pixels (excluding padding)
+     * @param chartH the drawable height of the chart in pixels (excluding padding)
+     * @param max    the upper bound of the value axis (including margin)
+     * @param range  the total value span of the axis (max − min, including margins)
+     */
     private void drawGrid(Graphics2D g2d, int chartW, int chartH, double max, double range) {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, 11));
 
