@@ -10,14 +10,12 @@ import org.cryptoBros.presentation.Views.MainFrame;
 public class FrameController {
 
     private MainFrame mainFrame;
-	private DisplayMessage displayMessage;
 
     /**
      * Creates a new FrameController and initializes the main frame.
      */
     public FrameController () {
         this.mainFrame = new MainFrame();
-		this.displayMessage = new DisplayMessage();
     }
 
     /**
@@ -33,7 +31,7 @@ public class FrameController {
 	 * @param error the error message to display
 	 */
 	public void showError(String error){
-		displayMessage.showMessage(this.mainFrame ,error);
+		DisplayMessage.showMessage(this.mainFrame ,error);
 	}
 
     /**
