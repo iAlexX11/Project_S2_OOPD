@@ -29,8 +29,11 @@ public class JImagePanel extends JPanel {
         }
     }
 
-    // IMPORTANT: WE override this to scale the image in layouts that stretch it horizontally while respecting its preferred vertical size
-    // THIS WILL NOT WORK IF YOU HAVE OTHER GOALS, DON'T REUSE WITHOUT THINKING
+    /**
+     * Returns the preferred size by scaling the image height to maintain the aspect ratio for the current panel width.
+     *
+     * @return the preferred dimension with the aspect-ratio-adjusted height
+     */
     @Override
     public Dimension getPreferredSize() {
         Dimension preferred = super.getPreferredSize();
@@ -44,7 +47,11 @@ public class JImagePanel extends JPanel {
         return preferred;
     }
 
-    // Paint the image in the background, with the size the layout assigns to the panel
+    /**
+     * Paints the background image scaled to fill the entire panel area.
+     *
+     * @param g the graphics context used for painting
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

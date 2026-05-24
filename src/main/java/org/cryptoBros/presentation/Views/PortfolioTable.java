@@ -50,11 +50,20 @@ public class PortfolioTable extends AbstractTable {
         return Double.parseDouble(val.toString());
     }
 
+    /**
+     * Returns whether the specified column is editable. Only column 4 (Sell button) is editable.
+     *
+     * @param col the column index
+     * @return true if the column is 4, false otherwise
+     */
     @Override
     protected boolean isColumnEditable(int col) {
         return col == 4;
     }
 
+    /**
+     * Configures column renderers with alternating row colors, per-column formatting, and a Sell button in the last column.
+     */
     @Override
     protected void configureColumns() {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {

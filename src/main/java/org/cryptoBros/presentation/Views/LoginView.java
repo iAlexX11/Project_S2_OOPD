@@ -28,6 +28,9 @@ public class LoginView extends BaseView {
      */
     public LoginView() {}
 
+    /**
+     * Configures the login view layout with a header, input fields, and a logo image panel.
+     */
     @Override
     public void configureView () {
         JPanel header = setHeader();
@@ -190,6 +193,11 @@ public class LoginView extends BaseView {
         return header;
     }
 
+    /**
+     * Registers action listeners for the login confirm and sign-up navigation buttons.
+     *
+     * @param listener the action listener to attach
+     */
     @Override
     public void setActions(ActionListener listener) {
         jBConfirm.setActionCommand(ButtonEnumeration.CONFIRM_LOGIN.name());

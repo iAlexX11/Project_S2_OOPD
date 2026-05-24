@@ -17,9 +17,9 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * This class
+ * SQL implementation of {@link CryptoPersistence} using PostgreSQL.
+ * Provides CRUD operations and price history queries for cryptocurrency data.
  */
-
 public class CryptoSQL implements CryptoPersistence {
     private final DbConnectionSingleton db;
 
@@ -28,6 +28,14 @@ public class CryptoSQL implements CryptoPersistence {
         db = DbConnectionSingleton.getInstance();
     }
 
+    /**
+     * Retrieves a cryptocurrency by its ticker symbol from the database.
+     *
+     * @param symbol the ticker symbol to search for
+     * @return the matching Crypto object
+     * @throws CryptoNotFoundException if no crypto matches the symbol
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public Crypto getCrypto(String symbol) throws CryptoNotFoundException, DbConnectionException {
         String query = "SELECT * FROM cryptocurrency WHERE symbol = ?";
@@ -56,6 +64,13 @@ public class CryptoSQL implements CryptoPersistence {
         }
     }
 
+    /**
+     * Retrieves all cryptocurrencies from the database.
+     *
+     * @return a list of all Crypto objects
+     * @throws CryptoNotFoundException if no cryptocurrencies exist in the database
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public List<Crypto> getAllCrypto() throws CryptoNotFoundException, DbConnectionException {
         String query = "SELECT * FROM cryptocurrency";
@@ -86,6 +101,13 @@ public class CryptoSQL implements CryptoPersistence {
         return cryptos;
     }
 
+    /**
+     * Inserts a new cryptocurrency into the database using ON CONFLICT DO NOTHING.
+     *
+     * @param newCrypto the cryptocurrency to add
+     * @throws CryptoNotAddedException if the crypto already exists or the insert affected zero rows
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public void addCrypto(Crypto newCrypto) throws CryptoNotAddedException,DbConnectionException {
         String query = """
@@ -114,6 +136,13 @@ public class CryptoSQL implements CryptoPersistence {
         }
     }
 
+    /**
+     * Deletes a cryptocurrency from the database by its ticker symbol.
+     *
+     * @param symbol the ticker symbol of the cryptocurrency to remove
+     * @throws CryptoNotFoundException if no crypto matches the symbol
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public void removeCrypto(String symbol) throws CryptoNotFoundException, DbConnectionException {
         String query = "DELETE FROM cryptocurrency WHERE symbol = ?";
@@ -133,6 +162,14 @@ public class CryptoSQL implements CryptoPersistence {
         }
     }
 
+    /**
+     * Updates the current price of a cryptocurrency in the database.
+     *
+     * @param symbol   the ticker symbol of the cryptocurrency to update
+     * @param newPrice the new price to set
+     * @throws CryptoNotFoundException if no crypto matches the symbol
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public void updatePrice(String symbol, double newPrice) throws CryptoNotFoundException, DbConnectionException {
         String query = "UPDATE cryptocurrency SET current_price = ? WHERE symbol = ?";
@@ -155,6 +192,14 @@ public class CryptoSQL implements CryptoPersistence {
         }
     }
 
+    /**
+     * Retrieves the price history for a cryptocurrency from the last 10 minutes, ordered ascending by timestamp.
+     *
+     * @param symbol the ticker symbol of the cryptocurrency
+     * @return a linked map of timestamps to prices in chronological order
+     * @throws CryptoNotFoundException if no price history exists for the symbol
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public Map<Instant, Double> getPriceHistory(String symbol) throws CryptoNotFoundException, DbConnectionException {
         String query = """
@@ -187,6 +232,14 @@ public class CryptoSQL implements CryptoPersistence {
         return priceHistory;
     }
 
+	/**
+	 * Renames a cryptocurrency by updating its name column in the database.
+	 *
+	 * @param oldName the current name of the cryptocurrency
+	 * @param newName the new name to assign
+	 * @throws CryptoNotFoundException if no crypto matches the old name
+	 * @throws DbConnectionException   if the database connection fails
+	 */
 	@Override
 	public void changeCryptoName(String oldName, String newName) throws CryptoNotFoundException, DbConnectionException{
 		String query = "UPDATE cryptocurrency SET name = ? WHERE name = ?";

@@ -27,6 +27,17 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
         this.db = DbConnectionSingleton.getInstance();
     }
 
+    /**
+     * Records a crypto purchase for a user, inserting a new portfolio row or accumulating units on an existing one.
+     * Uses ON CONFLICT to upsert; the database trigger raises the crypto price by 1% on insert/update.
+     *
+     * @param userId       the ID of the user buying the crypto
+     * @param cryptoSymbol the ticker symbol of the cryptocurrency to buy
+     * @param currentPrice the current price per unit at time of purchase
+     * @param units        the number of units to buy
+     * @throws PurchaseNotAddedException if units or price are not positive, or the insert affected zero rows
+     * @throws DbConnectionException    if the database connection fails
+     */
     @Override
     public void buyCrypto(long userId, String cryptoSymbol, double currentPrice, double units)
             throws PurchaseNotAddedException, DbConnectionException {
@@ -68,6 +79,18 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
         }
     }
 
+    /**
+     * Sells crypto units for a user by decreasing the held amount or deleting the position entirely.
+     * If all units are sold, the row is updated first (triggering the 1% price drop) and then deleted.
+     * Partial sells only update the units column.
+     *
+     * @param userId       the ID of the user selling the crypto
+     * @param cryptoSymbol the ticker symbol of the cryptocurrency to sell
+     * @param units        the number of units to sell
+     * @throws CryptoNotFoundException if the user has no position for the given crypto
+     * @throws SaleNotAddedException   if the user attempts to sell more units than owned, or an unexpected error occurs
+     * @throws DbConnectionException   if the database connection fails
+     */
     @Override
     public void sellCrypto(long userId, String cryptoSymbol, double units)
             throws CryptoNotFoundException, SaleNotAddedException, DbConnectionException {
@@ -139,6 +162,13 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
         }
     }
 
+    /**
+     * Retrieves all portfolio positions for a user by joining Portfolio with Cryptocurrency for current prices.
+     *
+     * @param userId the ID of the user whose portfolio to retrieve
+     * @return a list of portfolio positions including symbol, units, buy price, and current price; empty if none
+     * @throws DbConnectionException if the database connection fails
+     */
     @Override
     public List<PortfolioPosition> getUserPortfolio(long userId) throws DbConnectionException {
         String query = """

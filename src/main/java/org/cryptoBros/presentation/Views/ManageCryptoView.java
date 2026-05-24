@@ -22,11 +22,19 @@ public class ManageCryptoView extends Pages {
 	/** The current action listener. */
 	private ActionListener actionListener;
 
+	/**
+	 * Configures the manage crypto view layout with the table section and the add-crypto section.
+	 */
 	@Override
 	protected void configureView() {
 		getContent().add(setCore(), BorderLayout.CENTER);
 	}
 
+	/**
+	 * Registers action listeners for the header navigation and the add-crypto button.
+	 *
+	 * @param listener the action listener to attach
+	 */
 	@Override
 	public void setActions(ActionListener listener) {
 		this.actionListener = listener;

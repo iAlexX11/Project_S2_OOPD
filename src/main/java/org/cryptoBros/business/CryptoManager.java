@@ -333,6 +333,16 @@ public class CryptoManager implements BotListener {
 		}
 	}
 
+    /**
+     * Handles a bot buy order by purchasing crypto at the current price and updating the UI.
+     *
+     * @param botUserId    the bot user identifier
+     * @param cryptoSymbol the cryptocurrency ticker symbol to buy
+     * @param units        the number of units to buy
+     * @throws PurchaseNotAddedException if units are not greater than zero or the purchase could not be recorded
+     * @throws DbConnectionException    if the database connection fails
+     * @throws CryptoNotFoundException  if the cryptocurrency is not found
+     */
     @Override
     public void onBotBuy(long botUserId, String cryptoSymbol, double units) throws
             PurchaseNotAddedException, DbConnectionException, CryptoNotFoundException
@@ -345,6 +355,16 @@ public class CryptoManager implements BotListener {
         notifyListener(cryptoPersistence.getCrypto(cryptoSymbol));
     }
 
+    /**
+     * Handles a bot sell order by selling crypto units and updating the UI.
+     *
+     * @param botUserId    the bot user identifier
+     * @param cryptoSymbol the cryptocurrency ticker symbol to sell
+     * @param units        the number of units to sell
+     * @throws DbConnectionException   if the database connection fails
+     * @throws SaleNotAddedException   if the sale could not be recorded
+     * @throws CryptoNotFoundException if the cryptocurrency is not found
+     */
     @Override
     public void onBotSell(long botUserId, String cryptoSymbol, double units) throws
             DbConnectionException, SaleNotAddedException, CryptoNotFoundException

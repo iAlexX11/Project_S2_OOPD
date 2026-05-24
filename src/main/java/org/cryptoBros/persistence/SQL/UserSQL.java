@@ -23,6 +23,14 @@ public class UserSQL implements UserPersistence {
         this.db = DbConnectionSingleton.getInstance();
     }
 
+    /**
+     * Inserts a new user into the database and sets the generated ID on the returned object.
+     *
+     * @param user the user to add (ID field is ignored; a new ID is generated)
+     * @return the same user object with its generated database ID set
+     * @throws UserNotAddException   if the insert affected zero rows
+     * @throws DbConnectionException if the database connection fails
+     */
     @Override
     public User addUser(User user) throws UserNotAddException, DbConnectionException {
         String query = "INSERT INTO users (username, email, password, balance) VALUES (?, ?, ?, ?)";
@@ -55,6 +63,13 @@ public class UserSQL implements UserPersistence {
         }
     }
 
+    /**
+     * Deletes a user from the database by their user ID.
+     *
+     * @param id the ID of the user to remove
+     * @throws UserNotFoundException if no user exists with the given ID
+     * @throws DbConnectionException if the database connection fails
+     */
     @Override
     public void removeUser(int id) throws UserNotFoundException, DbConnectionException {
         String query = "DELETE FROM users WHERE user_id = ?";
@@ -76,6 +91,15 @@ public class UserSQL implements UserPersistence {
         }
     }
 
+    /**
+     * Retrieves a user from the database matching the given username or email.
+     *
+     * @param username the username to search for
+     * @param email    the email to search for
+     * @return the matching User object
+     * @throws UserNotFoundException if no user matches the given username or email
+     * @throws DbConnectionException if the database connection fails
+     */
     @Override
     public User getUser(String username, String email) throws UserNotFoundException, DbConnectionException {
         String query = "SELECT * FROM users WHERE username = ? OR email = ?";
@@ -104,6 +128,14 @@ public class UserSQL implements UserPersistence {
         }
     }
 
+	/**
+	 * Retrieves the current balance for a user by their user ID.
+	 *
+	 * @param id the ID of the user whose balance to retrieve
+	 * @return the user's current balance
+	 * @throws UserNotFoundException if no user exists with the given ID
+	 * @throws DbConnectionException if the database connection fails
+	 */
 	@Override
 	public double getUserBalance(long id) throws UserNotFoundException, DbConnectionException {
 		String query = "SELECT balance FROM users WHERE user_id = ?";
@@ -125,6 +157,14 @@ public class UserSQL implements UserPersistence {
 		}
 	}
 
+	/**
+	 * Overwrites the balance for a user with the specified new value.
+	 *
+	 * @param userId     the ID of the user whose balance to update
+	 * @param newBalance the new balance to set
+	 * @throws UserNotFoundException if no user exists with the given ID
+	 * @throws DbConnectionException if the database connection fails
+	 */
 	@Override
 	public void updateUserBalance(long userId, double newBalance) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = ? WHERE user_id = ?";
@@ -144,6 +184,16 @@ public class UserSQL implements UserPersistence {
 		}
 	}
 
+	/**
+	 * Adjusts a user's balance by adding the given amount and returns the resulting balance.
+	 * Uses UPDATE ... RETURNING to atomically apply the delta and read the new value.
+	 *
+	 * @param userId the ID of the user whose balance to adjust
+	 * @param amount the amount to add (positive) or subtract (negative)
+	 * @return the new balance after the adjustment
+	 * @throws UserNotFoundException if no user exists with the given ID
+	 * @throws DbConnectionException if the database connection fails
+	 */
 	@Override
 	public double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = balance + ? WHERE user_id = ? RETURNING balance";
@@ -164,6 +214,13 @@ public class UserSQL implements UserPersistence {
 		}
 	}
 
+	/**
+	 * Updates the username for the given user in the database.
+	 *
+	 * @param username the new username to set
+	 * @param userId   the ID of the user whose username to change
+	 * @throws DbConnectionException if the database connection fails
+	 */
 	@Override
 	public void changeUsername(String username, int userId) throws DbConnectionException {
 		String query = "UPDATE users SET username = ? WHERE user_id = ?";
@@ -177,6 +234,13 @@ public class UserSQL implements UserPersistence {
 		}
 	}
 
+	/**
+	 * Updates the password for the given user in the database.
+	 *
+	 * @param password the new password to set
+	 * @param userId   the ID of the user whose password to change
+	 * @throws DbConnectionException if the database connection fails
+	 */
 	@Override
 	public void changePassword(String password, int userId) throws DbConnectionException {
 		String query = "UPDATE users SET password = ? WHERE user_id = ?";

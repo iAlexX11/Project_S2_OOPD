@@ -56,6 +56,10 @@ public class GraphPriceWorker implements Runnable {
         }
     }
 
+    /**
+     * Polls the price history for the configured cryptocurrency at a fixed interval and notifies the listener.
+     * Runs until the thread is interrupted, logging errors for failed updates.
+     */
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {

@@ -98,6 +98,16 @@ public class AtomicSQL implements AtomicPersistence {
         RETURNING message
     """;
 
+    /**
+     * Atomically creates a cryptocurrency and its associated bot user within a single transaction.
+     * Inserts a bot user row, the crypto row, and the bot mapping row; rolls back all changes if any step fails.
+     *
+     * @param crypto the cryptocurrency to create
+     * @return the generated bot user ID
+     * @throws DbConnectionException  if the database connection or transaction fails
+     * @throws BotGenerationException  if the bot user or bot mapping could not be inserted
+     * @throws CryptoNotAddedException if the crypto row could not be inserted
+     */
     @Override
     public long createCryptoWithBot(Crypto crypto)
             throws DbConnectionException, BotGenerationException, CryptoNotAddedException {
@@ -177,6 +187,16 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
+    /**
+     * Atomically deletes a cryptocurrency and its bot within a single transaction.
+     * Refunds all non-bot holders by crediting their balance with currentPrice times units held,
+     * inserts a notification for each refunded user, cascade-deletes the crypto row, and removes the bot user.
+     *
+     * @param name the name of the cryptocurrency to delete
+     * @return a map of user IDs to refund amounts for each refunded holder
+     * @throws DbConnectionException  if the database connection or transaction fails
+     * @throws CryptoNotFoundException if the cryptocurrency or its bot is not found
+     */
     @Override
     public Map<Long, Double> deleteCryptoWithBot(String name)
             throws DbConnectionException, CryptoNotFoundException {
@@ -305,6 +325,19 @@ public class AtomicSQL implements AtomicPersistence {
         return bots;
     }
 
+    /**
+     * Loads initial cryptocurrency data from the JSON seed file and creates missing cryptos with bots.
+     * If the database contains no cryptocurrencies, each entry from the seed file is inserted via
+     * {@link #createCryptoWithBot(Crypto)}. Existing bots are then loaded and returned.
+     *
+     * @param cryptoManager the crypto manager used to wire bot callbacks
+     * @param seedFromJson  whether the database is empty and needs seeding from JSON
+     * @return a list of bots loaded from the database
+     * @throws CryptoNotAddedException if a crypto entry could not be inserted
+     * @throws DbConnectionException   if the database connection fails
+     * @throws FileNotFoundException   if the crypto seed JSON file is not found
+     * @throws BotGenerationException  if a bot user could not be created
+     */
     @Override
     public List<Bot> loadInitialData(CryptoManager cryptoManager, boolean seedFromJson)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException {
@@ -334,6 +367,14 @@ public class AtomicSQL implements AtomicPersistence {
         }
     }
 
+    /**
+     * Retrieves and deletes all pending notifications for a user in a single SQL statement.
+     * Uses DELETE ... RETURNING to atomically fetch and remove the notification rows.
+     *
+     * @param userId the ID of the user whose notifications to pop
+     * @return a list of notification messages, empty if none exist
+     * @throws DbConnectionException if the database connection fails
+     */
     @Override
     public List<String> popNotifications(long userId) throws DbConnectionException {
         List<String> messages = new ArrayList<>();

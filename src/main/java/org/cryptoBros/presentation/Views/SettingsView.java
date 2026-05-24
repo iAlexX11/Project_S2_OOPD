@@ -77,11 +77,19 @@ public class SettingsView extends Pages{
         return button;
     }
 
+	/**
+	 * Configures the settings view layout with logout, account management, and delete account buttons.
+	 */
 	@Override
 	protected void configureView() {
 		getContent().add(setCore(), BorderLayout.CENTER);
 	}
 
+	/**
+	 * Registers action listeners for the header navigation, logout, account management, and delete account buttons.
+	 *
+	 * @param listener the action listener to attach
+	 */
 	@Override
 	public void setActions(ActionListener listener) {
 		getContent().add(setHeader(), BorderLayout.NORTH);

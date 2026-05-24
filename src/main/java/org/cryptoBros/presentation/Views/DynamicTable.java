@@ -74,11 +74,20 @@ public class DynamicTable extends AbstractTable {
         };
     }
 
+    /**
+     * Returns whether the specified column is editable. All columns in this table are read-only.
+     *
+     * @param col the column index
+     * @return false for all columns
+     */
     @Override
     protected boolean isColumnEditable(int col) {
         return false;
     }
 
+    /**
+     * Configures column renderers with alternating row colors and per-column formatting for name, price, change, and percentage.
+     */
     @Override
     protected void configureColumns() {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
@@ -112,6 +121,10 @@ public class DynamicTable extends AbstractTable {
             table.getColumnModel().getColumn(c).setCellRenderer(cellRenderer);
     }
 
+    /**
+     * Removes all rows from the table and clears the symbol-to-row mapping.
+     */
+    @Override
     public void clearRows() {
         super.clearRows();
         cryptos.clear();

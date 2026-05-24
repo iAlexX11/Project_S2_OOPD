@@ -31,11 +31,19 @@ public class CryptoDetailView extends Pages {
     /** Creates a new CryptoDetailView. */
     public CryptoDetailView() {}
 
+    /**
+     * Configures the crypto detail view layout with the top panel, price chart, and buy panel.
+     */
     @Override
     protected void configureView() {
         getContent().add(setCore(), BorderLayout.CENTER);
     }
 
+    /**
+     * Registers action listeners for the header navigation and confirm purchase button.
+     *
+     * @param listener the action listener to attach
+     */
     @Override
     public void setActions(ActionListener listener) {
         getContent().add(setHeader(), BorderLayout.NORTH);

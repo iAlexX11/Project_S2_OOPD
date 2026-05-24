@@ -21,11 +21,19 @@ public class CryptoMarketView extends Pages {
 	/** Creates a new CryptoMarketView. */
 	public CryptoMarketView() {}
 
+	/**
+	 * Configures the market view layout with the cryptocurrency data table.
+	 */
 	@Override
 	protected void configureView() {
 		getContent().add(setCore(), BorderLayout.CENTER);
 	}
 
+	/**
+	 * Registers action listeners for the header navigation buttons.
+	 *
+	 * @param listener the action listener to attach
+	 */
 	@Override
 	public void setActions(ActionListener listener) {
 		getContent().add(setHeader(), BorderLayout.NORTH);

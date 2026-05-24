@@ -63,6 +63,12 @@ public class InitialController implements ActionListener {
         }
     }
 
+    /**
+     * Handles user actions from the welcome view, routing to the login
+     * or sign-up screens.
+     *
+     * @param e the action event triggered by the user
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());

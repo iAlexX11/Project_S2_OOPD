@@ -41,6 +41,12 @@ public class SettingController implements ActionListener, BalanceListener {
 		}
     }
 
+    /**
+     * Handles user actions from the settings view, including navigation,
+     * logout, profile access, account deletion, and crypto management.
+     *
+     * @param e the action event triggered by the user
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
@@ -56,6 +62,12 @@ public class SettingController implements ActionListener, BalanceListener {
         }
     }
 
+    /**
+     * Updates the displayed balance and estimated profit on the settings view
+     * when the user balance changes.
+     *
+     * @param balance the new balance value
+     */
     @Override
     public void balanceChanged(double balance) {
         settingsView.updateBalance(balance);

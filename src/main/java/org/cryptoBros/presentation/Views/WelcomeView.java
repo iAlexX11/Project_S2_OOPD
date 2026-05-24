@@ -20,6 +20,9 @@ public class WelcomeView extends BaseView {
     /** The login button. */
     private JButton jBLogin;
 
+    /**
+     * Configures the welcome view layout with the logo image, sign-up button, and login button centered on screen.
+     */
     @Override
     protected void configureView() {
         JPanel boxLayout = new JPanel();
@@ -45,6 +48,11 @@ public class WelcomeView extends BaseView {
         getContent().add(centered, BorderLayout.CENTER);
     }
 
+    /**
+     * Registers action listeners for the sign-up and login buttons.
+     *
+     * @param listener the action listener to attach
+     */
     @Override
     public void setActions(ActionListener listener) {
         jBSignUp.setActionCommand(ButtonEnumeration.SIGNUP.name());

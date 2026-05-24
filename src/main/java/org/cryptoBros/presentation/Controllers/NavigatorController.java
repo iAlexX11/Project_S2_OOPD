@@ -53,6 +53,13 @@ public class NavigatorController implements Navigation {
         userController.displayCryptoNotification();
     }
 
+    /**
+     * Navigates to the specified page by removing existing crypto listeners,
+     * stopping the graph worker, and displaying the target view with the
+     * appropriate listener registrations.
+     *
+     * @param name the target page identifier
+     */
     @Override
     public void navigate(PagesName name) {
         userController.removeCryptoListener();
@@ -100,6 +107,12 @@ public class NavigatorController implements Navigation {
         }
     }
 
+    /**
+     * Navigates to the crypto detail view for a specific cryptocurrency,
+     * registering crypto and balance listeners and loading the detail content.
+     *
+     * @param type the ticker symbol of the cryptocurrency to display
+     */
     public void navigateToCryptoDetail(String type) {
         userController.removeCryptoListener();
         cryptoDetailController.stop();

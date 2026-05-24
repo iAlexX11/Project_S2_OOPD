@@ -49,6 +49,12 @@ public class PortfolioController implements ActionListener, BalanceListener, Cry
         portfolioView.updateProfit(totalProfit);
     }
 
+    /**
+     * Handles user actions from the portfolio view, including navigation
+     * and balance deposit confirmation.
+     *
+     * @param e the action event triggered by the user
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
@@ -64,12 +70,28 @@ public class PortfolioController implements ActionListener, BalanceListener, Cry
         userController.addBalance(portfolioView.getAddBalanceAmount());
     }
 
+    /**
+     * Updates the displayed balance and estimated profit on the portfolio view
+     * when the user balance changes.
+     *
+     * @param balance the new balance value
+     */
     @Override
     public void balanceChanged(double balance) {
         portfolioView.updateBalance(balance);
         portfolioView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
+    /**
+     * Refreshes the portfolio table and estimated profit when cryptocurrency
+     * price data is updated.
+     *
+     * @param symbol       the ticker symbol of the updated cryptocurrency
+     * @param name         the display name of the cryptocurrency
+     * @param currentPrice the latest price of the cryptocurrency
+     * @param change       the absolute price change
+     * @param percentage   the percentage price change
+     */
     @Override
     public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         refreshPortfolioData();

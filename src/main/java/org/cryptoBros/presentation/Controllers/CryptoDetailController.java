@@ -58,6 +58,12 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
 
     }
 
+    /**
+     * Handles user actions from the crypto detail view, including navigation
+     * and purchase confirmation.
+     *
+     * @param e the action event triggered by the user
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
@@ -82,6 +88,12 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
         view.setOwnedCrypto(userController.getOwnedUnits(currentSymbol), currentSymbol);
     }
 
+    /**
+     * Updates the displayed balance and estimated profit on the detail view
+     * when the user balance changes.
+     *
+     * @param balance the new balance value
+     */
     @Override
     public void balanceChanged(double balance) {
         view.updateBalance(balance);
@@ -113,6 +125,12 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
         userController.setGraphicWorker(this, symbol);
     }
 
+    /**
+     * Refreshes the price history graph on the detail view by extracting
+     * prices and formatted timestamps from the provided history map.
+     *
+     * @param cryptoHistory a map of instants to prices representing the price history
+     */
     @Override
     public void updateGraph(Map<Instant, Double> cryptoHistory) {
         SwingUtilities.invokeLater(() -> {
@@ -125,6 +143,16 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
         });
     }
 
+    /**
+     * Updates the current price on the detail view when it matches the displayed
+     * cryptocurrency, and refreshes the estimated profit.
+     *
+     * @param symbol       the ticker symbol of the updated cryptocurrency
+     * @param name         the display name of the cryptocurrency
+     * @param currentPrice the latest price of the cryptocurrency
+     * @param change       the absolute price change
+     * @param percentage   the percentage price change
+     */
     @Override
     public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         if (symbol.equals(currentSymbol)) {

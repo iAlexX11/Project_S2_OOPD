@@ -32,11 +32,24 @@ public class ConfigJson implements ConfigPersistence {
         }
     }
 
+    /**
+     * Reads the admin password from the JSON configuration file.
+     *
+     * @return the admin password string
+     * @throws ConfigFileNotFoundException if the config file cannot be found or read
+     */
     @Override
     public String readAdminPassword() throws ConfigFileNotFoundException {
         return readConfig().adminPassword();
     }
 
+    /**
+     * Reads database connection credentials from the JSON configuration file and validates required fields.
+     *
+     * @return the database credentials containing port, IP, database name, username, and password
+     * @throws ConfigFileNotFoundException  if the config file cannot be found or read
+     * @throws ConfigFileCorruptedException if the config file is missing required fields
+     */
     @Override
     public DbCredentials readCredentials() throws ConfigFileNotFoundException, ConfigFileCorruptedException {
         Config c = readConfig();

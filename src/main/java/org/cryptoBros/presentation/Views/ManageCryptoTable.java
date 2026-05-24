@@ -16,11 +16,20 @@ public class ManageCryptoTable extends AbstractTable {
         super(COLUMNS, WIDTHS);
     }
 
+    /**
+     * Returns whether the specified column is editable. Columns 1 (Edit) and 2 (Delete) are editable to support button clicks.
+     *
+     * @param col the column index
+     * @return true if the column is 1 or 2, false otherwise
+     */
     @Override
     protected boolean isColumnEditable(int col) {
         return col == 1 || col == 2;
     }
 
+    /**
+     * Configures column renderers with a styled name column and interactive Edit and Delete button columns.
+     */
     @Override
     protected void configureColumns() {
         table.getColumnModel().getColumn(0).setCellRenderer(

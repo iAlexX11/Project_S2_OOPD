@@ -41,6 +41,11 @@ public class MainFrame extends JFrame {
     public void start() { setVisible(true); }
 
 
+    /**
+     * Returns the preferred size of the main frame as 800 by 600 pixels.
+     *
+     * @return the preferred dimension for this frame
+     */
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(800, 600);

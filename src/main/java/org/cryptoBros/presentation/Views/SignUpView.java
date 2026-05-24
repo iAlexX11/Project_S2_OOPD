@@ -30,6 +30,9 @@ public class SignUpView extends BaseView {
 	/** The sign-up confirm button. */
 	private JButton jBConfirm;
 
+	/**
+	 * Configures the sign-up view layout with a header, input fields for credentials, and a logo image panel.
+	 */
 	@Override
 	public void configureView () {
 		JPanel header = setHeader();
@@ -205,6 +208,11 @@ public class SignUpView extends BaseView {
 		return header;
 	}
 
+	/**
+	 * Registers action listeners for the sign-up confirm and login navigation buttons.
+	 *
+	 * @param listener the action listener to attach
+	 */
 	@Override
 	public void setActions(ActionListener listener) {
 		jBConfirm.setActionCommand(ButtonEnumeration.CONFIRM_SIGNUP.name());

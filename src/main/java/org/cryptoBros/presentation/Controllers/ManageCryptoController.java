@@ -93,6 +93,12 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
         }
     }
 
+	/**
+	 * Handles user actions from the manage crypto view, including adding a new
+	 * cryptocurrency, navigating to other pages, and logging out as admin.
+	 *
+	 * @param e the action event triggered by the user
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
@@ -109,6 +115,11 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 		}
 	}
 
+    /**
+     * Updates the displayed balance on the manage crypto view when it changes.
+     *
+     * @param balance the new balance value
+     */
     @Override
     public void balanceChanged(double balance) {
         manageCryptoView.updateBalance(balance);

@@ -39,6 +39,12 @@ public class ProfileController implements ActionListener, BalanceListener {
 		}
 	}
 
+	/**
+	 * Handles user actions from the profile view, including navigation,
+	 * password changes, and username changes.
+	 *
+	 * @param e the action event triggered by the user
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
@@ -51,6 +57,12 @@ public class ProfileController implements ActionListener, BalanceListener {
 		}
 	}
 
+	/**
+	 * Updates the displayed balance and estimated profit on the profile view
+	 * when the user balance changes.
+	 *
+	 * @param balance the new balance value
+	 */
 	@Override
 	public void balanceChanged(double balance) {
 		profileView.updateBalance(balance);

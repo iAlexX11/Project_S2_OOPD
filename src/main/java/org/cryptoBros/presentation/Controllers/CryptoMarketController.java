@@ -48,6 +48,12 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 
     }
 
+    /**
+     * Handles user actions from the crypto market view, routing navigation
+     * to settings, home, portfolio, or manage crypto pages.
+     *
+     * @param e the action event triggered by the user
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
@@ -59,12 +65,28 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 		}
     }
 
+    /**
+     * Updates the displayed balance and estimated profit on the market view
+     * when the user balance changes.
+     *
+     * @param balance the new balance value
+     */
     @Override
     public void balanceChanged(double balance) {
         cryptoMarketView.updateBalance(balance);
         cryptoMarketView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
+    /**
+     * Updates the crypto table with the latest price data for a cryptocurrency
+     * and refreshes the estimated profit for non-admin users.
+     *
+     * @param symbol       the ticker symbol of the cryptocurrency
+     * @param name         the display name of the cryptocurrency
+     * @param currentPrice the latest price of the cryptocurrency
+     * @param change       the absolute price change
+     * @param percentage   the percentage price change
+     */
     @Override
     public void updateData(String symbol, String name, double currentPrice, double change, double percentage) {
         cryptoMarketView.updateCryptoTable(symbol, name, currentPrice, change, percentage);
@@ -84,6 +106,12 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
         return cryptoMarketView;
     }
 
+    /**
+     * Navigates to the crypto detail view when a cryptocurrency row is selected
+     * in the market table.
+     *
+     * @param type the ticker symbol of the selected cryptocurrency
+     */
     @Override
     public void cryptoSelected(String type) {
         navigation.navigateToCryptoDetail(type);

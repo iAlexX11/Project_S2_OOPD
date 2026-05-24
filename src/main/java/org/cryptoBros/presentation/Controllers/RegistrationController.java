@@ -100,6 +100,12 @@ public class RegistrationController implements ActionListener {
        }
     }
 
+	/**
+	 * Handles user actions from the login and sign-up views, dispatching
+	 * to the appropriate registration or authentication flow.
+	 *
+	 * @param e the action event triggered by the user
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ButtonEnumeration buttonEnumeration = ButtonEnumeration.valueOf(e.getActionCommand());
