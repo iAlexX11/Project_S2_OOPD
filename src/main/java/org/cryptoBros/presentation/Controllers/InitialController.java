@@ -11,6 +11,7 @@ import org.cryptoBros.presentation.Views.WelcomeView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class InitialController implements ActionListener {
 
@@ -36,6 +37,14 @@ public class InitialController implements ActionListener {
             DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
             System.exit(1);
         }
+        try {
+            DbConnectionSingleton.getInstance().connect().close();
+        } catch (SQLException e) {
+            DisplayMessage.showMessage(frameController.getMainFrame(),
+                    "Could not connect to the database. Please check your credentials.\n" + e.getMessage());
+            System.exit(1);
+        }
+
         try {
             credentialManager.readAdminPassword();
         } catch (ConfigFileNotFoundException e) {
