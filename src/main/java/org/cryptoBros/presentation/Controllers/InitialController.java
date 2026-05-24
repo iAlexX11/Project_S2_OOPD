@@ -44,6 +44,7 @@ public class InitialController implements ActionListener {
                     "Could not connect to the database. Please check your credentials.\n" + e.getMessage());
             System.exit(1);
         }
+
         try {
             credentialManager.readAdminPassword();
         } catch (ConfigFileNotFoundException e) {
