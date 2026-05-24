@@ -202,4 +202,15 @@ public class UserController {
             DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
         }
     }
+
+    public void displayCryptoNotification() {
+        try {
+            List<String> messages = userManager.displayCryptoNotification();
+            for (String message : messages) {
+                DisplayMessage.showMessage(frameController.getMainFrame(), message);
+            }
+        } catch (DbConnectionException e) {
+            DisplayMessage.showMessage(frameController.getMainFrame(), e.getMessage());
+        }
+    }
 }

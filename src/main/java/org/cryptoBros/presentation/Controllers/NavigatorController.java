@@ -38,6 +38,8 @@ public class NavigatorController implements Navigation {
         }
 
         frameController.displayContent(cryptoMarketController.getView());
+
+        userController.displayCryptoNotification();
     }
 
     @Override

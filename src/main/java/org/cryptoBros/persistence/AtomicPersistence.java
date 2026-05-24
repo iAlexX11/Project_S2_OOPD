@@ -31,4 +31,7 @@ public interface AtomicPersistence {
     List<Bot> loadInitialData(CryptoManager cryptoManager, boolean seedFromJson)
             throws CryptoNotAddedException, DbConnectionException, FileNotFoundException, BotGenerationException;
 
+    List<String> popNotifications(long userId)
+        throws DbConnectionException;
+
 }
