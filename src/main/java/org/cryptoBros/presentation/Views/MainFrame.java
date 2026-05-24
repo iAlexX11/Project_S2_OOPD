@@ -3,8 +3,14 @@ package org.cryptoBros.presentation.Views;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The main application window.
+ */
 public class MainFrame extends JFrame {
 
+    /**
+     * Creates and configures the main application window.
+     */
     public MainFrame() {
         configureWindow();
     }
@@ -17,6 +23,11 @@ public class MainFrame extends JFrame {
         setResizable(true);
     }
 
+    /**
+     * Replaces the current content with the given view.
+     *
+     * @param view the view to display
+     */
     public void displayContent(BaseView view) {
         getContentPane().removeAll();
         getContentPane().add(view, BorderLayout.CENTER);
@@ -24,6 +35,9 @@ public class MainFrame extends JFrame {
         repaint();
     }
 
+    /**
+     * Makes the frame visible.
+     */
     public void start() { setVisible(true); }
 
 

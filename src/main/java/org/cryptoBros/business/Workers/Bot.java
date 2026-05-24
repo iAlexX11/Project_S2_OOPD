@@ -44,9 +44,12 @@ public class Bot implements Runnable {
     private ScheduledFuture<?>       taskHandle;
 
     /**
+     * Creates a new Bot for the given cryptocurrency.
+     *
      * @param botUserId    the {@link User} id that was created for this bot
      * @param cryptoSymbol the {@link Crypto} this bot is responsible for
      * @param volatility   copied from {@link Crypto} at creation time
+     * @param botListener  the callback listener for bot trading actions
      */
     public Bot(long botUserId, String cryptoSymbol, double volatility, BotListener botListener) {
         this.botUserId          = botUserId;
@@ -66,7 +69,9 @@ public class Bot implements Runnable {
         this.LOG.setLevel(Level.ALL);
     }
 
-    //Starts the periodic scheduler. Safe to call once per bot instance.
+    /**
+     * Starts the periodic scheduler. Safe to call once per bot instance.
+     */
     public void start() {
         if (scheduler != null && !scheduler.isShutdown()) {
             throw new IllegalStateException("Bot for " + cryptoSymbol + " is already running.");
@@ -89,7 +94,9 @@ public class Bot implements Runnable {
                 cryptoSymbol, periodMs / 1_000.0, volatility));
     }
 
-    // Stops the bot and its scheduler. Safe to call multiple times.
+    /**
+     * Stops the bot and its scheduler. Safe to call multiple times.
+     */
     public void stop() {
         if (taskHandle != null) taskHandle.cancel(false);
         if (scheduler  != null) scheduler.shutdown();
@@ -137,6 +144,11 @@ public class Bot implements Runnable {
         }
     }
 
+    /**
+     * Returns the crypto symbol this bot manages.
+     *
+     * @return the cryptocurrency ticker symbol
+     */
     public String getCryptoSymbol() {
         return cryptoSymbol;
     }

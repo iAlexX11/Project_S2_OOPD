@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Controls the manage crypto view for admin operations.
+ */
 public class ManageCryptoController implements ActionListener, BalanceListener {
 
     private final FrameController frameController;
@@ -21,6 +24,14 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 	private final Navigation navigation;
 	private final AdminController adminController;
 
+    /**
+     * Creates a new ManageCryptoController.
+     *
+     * @param frameController  the frame controller for display operations
+     * @param navigation       the navigation handler for page transitions
+     * @param adminController  the admin controller for crypto management
+     * @param isAdmin          whether the current user is an admin
+     */
     public ManageCryptoController(FrameController frameController, Navigation navigation, AdminController adminController, boolean isAdmin) {
         this.frameController = frameController;
         this.manageCryptoView = new ManageCryptoView();
@@ -51,6 +62,11 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
 		manageCryptoView.setCryptoData(data);
 	}
 
+	/**
+	 * Refreshes the crypto data and returns the manage crypto view.
+	 *
+	 * @return the manage crypto view
+	 */
 	public BaseView getView() {
         refreshCryptoData();
 		return manageCryptoView;

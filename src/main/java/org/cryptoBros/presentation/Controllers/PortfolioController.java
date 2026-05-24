@@ -11,12 +11,21 @@ import org.cryptoBros.presentation.Views.PortfolioView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controls the portfolio view, handling balance deposits and sell operations.
+ */
 public class PortfolioController implements ActionListener, BalanceListener, CryptoListener {
 
     private final Navigation navigation;
     private final PortfolioView portfolioView;
     private final UserController userController;
 
+    /**
+     * Creates a new PortfolioController.
+     *
+     * @param userController the user controller for business operations
+     * @param navigation     the navigation handler for page transitions
+     */
     public PortfolioController(UserController userController,  Navigation navigation) {
         this.portfolioView = new PortfolioView();
         this.navigation = navigation;
@@ -67,6 +76,11 @@ public class PortfolioController implements ActionListener, BalanceListener, Cry
         portfolioView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
+    /**
+     * Refreshes portfolio data and returns the portfolio view.
+     *
+     * @return the portfolio view
+     */
     public BaseView getView() {
         refreshPortfolioData();
         return portfolioView;

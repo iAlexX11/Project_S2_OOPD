@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.util.Map;
 
+/**
+ * Controls the crypto market view, displaying live cryptocurrency data.
+ */
 public class CryptoMarketController implements ActionListener, BalanceListener, CryptoListener, CryptoSelectedListener {
 
     private final CryptoMarketView cryptoMarketView;
@@ -22,6 +25,14 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 	private final UserController userController;
 	private boolean isAdmin = false;
 
+    /**
+     * Creates a new CryptoMarketController.
+     *
+     * @param userController  the user controller for business operations
+     * @param adminController the admin controller for admin operations
+     * @param navigation      the navigation handler for page transitions
+     * @param isAdmin         whether the current user is an admin
+     */
     public CryptoMarketController(UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
         this.navigation = navigation;
 		this.userController = userController;
@@ -60,10 +71,15 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
 		if (!isAdmin) cryptoMarketView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
+    /** Clears all rows from the crypto table. */
     public void clearTable() {
         cryptoMarketView.clearCryptoTable();
     }
 
+    /**
+     * Returns the crypto market view.
+     * @return the crypto market view
+     */
     public BaseView getView() {
         return cryptoMarketView;
     }

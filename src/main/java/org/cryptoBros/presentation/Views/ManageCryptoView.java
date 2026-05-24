@@ -5,11 +5,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Displays the admin crypto management interface.
+ */
 public class ManageCryptoView extends Pages {
 
+    /** Creates a new ManageCryptoView. */
+    public ManageCryptoView() {}
+
+    /** The crypto management table. */
     private ManageCryptoTable manageCryptoTable;
+	/** The add crypto button. */
 	private JButton addButton;
+	/** The confirmed new crypto name. */
 	private String confirmedCryptoName;
+	/** The current action listener. */
 	private ActionListener actionListener;
 
 	@Override
@@ -91,15 +101,30 @@ public class ManageCryptoView extends Pages {
         return addSection;
     }
 
+    /**
+     * Populates the table with cryptocurrency data.
+     *
+     * @param data the cryptocurrency data rows
+     */
     public void setCryptoData (Object[][] data) {
         manageCryptoTable.clearRows();
         for (Object[] row : data) manageCryptoTable.addRow(row);
     }
 
+    /**
+     * Sets the callback for delete button clicks.
+     *
+     * @param callback the callback to invoke when delete is clicked
+     */
     public void setDeleteCallback(AbstractTable.ButtonRowCallback callback) {
         manageCryptoTable.setDeleteCallback(callback);
     }
 
+	/**
+	 * Sets the callback for edit button clicks.
+	 *
+	 * @param callback the callback to invoke when edit is clicked
+	 */
 	public void setEditCallback(AbstractTable.ButtonRowCallback callback) {
 		manageCryptoTable.setEditCallback(row -> {
 			askNewCryptoName();
@@ -152,10 +177,21 @@ public class ManageCryptoView extends Pages {
 		dialog.setVisible(true);
 	}
 
+    /**
+     * Returns the cryptocurrency name at the given table row.
+     *
+     * @param row the table row index
+     * @return the cryptocurrency name
+     */
     public String getCryptoNameAtRow(int row) {
         return (String) manageCryptoTable.model.getValueAt(row, 0);
     }
 
+    /**
+     * Creates a file chooser filtered for JSON files.
+     *
+     * @return the configured file chooser
+     */
     public JFileChooser createFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Cryptocurrency JSON file");
@@ -163,6 +199,11 @@ public class ManageCryptoView extends Pages {
         return fileChooser;
     }
 
+	/**
+	 * Returns the confirmed new cryptocurrency name.
+	 *
+	 * @return the new cryptocurrency name
+	 */
 	public String getCryptoName() {
 		return confirmedCryptoName;
 	}

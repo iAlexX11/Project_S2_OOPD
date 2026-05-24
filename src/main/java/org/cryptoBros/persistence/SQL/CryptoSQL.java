@@ -23,6 +23,7 @@ import java.util.*;
 public class CryptoSQL implements CryptoPersistence {
     private final DbConnectionSingleton db;
 
+    /** Creates a new CryptoSQL instance. */
     public CryptoSQL() {
         db = DbConnectionSingleton.getInstance();
     }

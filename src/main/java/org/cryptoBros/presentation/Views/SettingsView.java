@@ -6,14 +6,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Displays the settings page with logout, account management, and delete options.
+ */
 public class SettingsView extends Pages{
 
+    /** The back navigation button. */
     private JButton backButton;
+    /** The logout button. */
     private JButton logoutButton;
+    /** The account management button. */
     private JButton accountManagementButton;
+    /** The delete account button. */
     private JButton deleteAccountButton;
+	/** Whether the current user is an admin. */
 	private boolean isAdmin = false;
 
+	/**
+	 * Creates a new SettingsView.
+	 *
+	 * @param isAdmin true if the current user is an admin
+	 */
 	public SettingsView(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}

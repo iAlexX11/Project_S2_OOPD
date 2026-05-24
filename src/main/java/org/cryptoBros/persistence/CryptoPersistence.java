@@ -10,6 +10,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Defines persistence operations for cryptocurrency data.
+ */
 public interface CryptoPersistence {
     /**
      * Returns the crypto with the given name.
@@ -33,6 +36,7 @@ public interface CryptoPersistence {
      * Adds a new crypto to the database.
      *
      * @param newCrypto the crypto to be added
+     * @throws CryptoNotAddedException if the crypto could not be added
      * @throws DbConnectionException if there is a problem with the database connection
      */
     void addCrypto(Crypto newCrypto) throws CryptoNotAddedException,DbConnectionException;
@@ -65,5 +69,13 @@ public interface CryptoPersistence {
      */
     Map<Instant, Double> getPriceHistory(String symbol) throws CryptoNotFoundException, DbConnectionException;
 
+	/**
+	 * Changes the name of a cryptocurrency.
+	 *
+	 * @param oldName the current name of the cryptocurrency
+	 * @param newName the new name to assign
+	 * @throws CryptoNotFoundException if the crypto is not found
+	 * @throws DbConnectionException if there is a problem with the database connection
+	 */
 	void changeCryptoName(String oldName, String newName) throws CryptoNotFoundException, DbConnectionException;
 }

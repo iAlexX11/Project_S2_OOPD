@@ -4,7 +4,15 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+/**
+ * Custom log formatter that color-codes bot trade messages.
+ */
 public class BotLogFormatter extends Formatter {
+
+    /**
+     * Creates a new BotLogFormatter instance.
+     */
+    public BotLogFormatter() {}
 
     private static final String GREEN  = "\u001B[32m";
     private static final String RED    = "\u001B[31m";

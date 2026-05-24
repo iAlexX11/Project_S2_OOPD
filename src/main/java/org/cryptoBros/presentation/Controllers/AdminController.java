@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Handles admin operations such as crypto management and logout. */
 public class AdminController {
 
 	private final InitialController initialController;
@@ -23,6 +24,13 @@ public class AdminController {
 	private final AccountManager accountManager;
 	private final AdminManager adminManager;
 
+	/**
+	 * Creates a new AdminController with the given dependencies.
+	 *
+	 * @param initialController the controller for the initial screen
+	 * @param frameController   the controller managing the main frame
+	 * @param cryptoManager     the manager for cryptocurrency operations
+	 */
 	public AdminController(InitialController initialController, FrameController frameController, CryptoManager cryptoManager) {
 		this.frameController = frameController;
 		this.initialController = initialController;
@@ -31,14 +39,25 @@ public class AdminController {
 		this.accountManager = new AccountManager();
 	}
 
+	/** Logs out the admin and returns to the initial screen. */
 	public void adminLogout() {
 		initialController.startProgram();
 	}
 
+	/**
+	 * Registers a listener for cryptocurrency updates.
+	 *
+	 * @param listener the listener to register
+	 */
 	public void registerCryptoListener(CryptoListener listener) {
 		cryptoManager.addCryptoListener(listener);
 	}
 
+	/**
+	 * Deletes a cryptocurrency by name.
+	 *
+	 * @param cryptoName the name of the cryptocurrency to delete
+	 */
 	public void deleteCrypto(String cryptoName) {
 		try {
 			cryptoManager.deleteCrypto(cryptoName);
@@ -49,6 +68,11 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Retrieves all available cryptocurrencies.
+	 *
+	 * @return a list of all cryptocurrencies, or an empty list if none are found
+	 */
 	public List<Crypto> getAllCryptos() {
 		try {
 			return cryptoManager.getAllCryptoList();
@@ -57,6 +81,11 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Imports cryptocurrencies from a JSON file.
+	 *
+	 * @param jsonFile the JSON file containing cryptocurrency data
+	 */
 	public void addCryptoFromFile(File jsonFile) {
 		try (FileReader reader = new FileReader(jsonFile)) {
             Gson gson = new Gson();
@@ -83,6 +112,12 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Renames a cryptocurrency.
+	 *
+	 * @param cryptoName the current name of the cryptocurrency
+	 * @param newName    the new name for the cryptocurrency
+	 */
 	public void changeCryptoName(String cryptoName, String newName) {
 		try {
 			cryptoManager.changeCryptoName(cryptoName, newName);

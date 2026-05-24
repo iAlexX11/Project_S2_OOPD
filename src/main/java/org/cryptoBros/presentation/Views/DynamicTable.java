@@ -8,14 +8,22 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Live-updating table component for displaying cryptocurrency market data.
+ */
 public class DynamicTable extends AbstractTable {
 
     private static final String[] COLUMNS = {"Cryptocurrency", "Price (€)", "Change (€)", "% Change"};
     private static final int[] WIDTHS = {160, 170, 150, 130};
 
+    /** Maps crypto symbols to their table row indices. */
     private Map<String, Integer> cryptos;
+    /** The listener for row selection events. */
     private CryptoSelectedListener onRowClick;
 
+	/**
+	 * Creates a new DynamicTable with click support.
+	 */
 	public DynamicTable() {
         super(COLUMNS, WIDTHS);
         cryptos = new HashMap<>();
@@ -35,6 +43,15 @@ public class DynamicTable extends AbstractTable {
         });
 	}
 
+    /**
+     * Updates or adds a cryptocurrency row.
+     *
+     * @param symbol     the crypto symbol identifier
+     * @param name       the display name
+     * @param price      the current price in euros
+     * @param change     the price change in euros
+     * @param percentage the percentage change
+     */
     public void update(String symbol, String name, double price, double change, double percentage) {
         Integer row = cryptos.get(symbol);
 
@@ -100,6 +117,11 @@ public class DynamicTable extends AbstractTable {
         cryptos.clear();
     }
 
+    /**
+     * Registers a listener for row selection events.
+     *
+     * @param listener the listener to notify on row click
+     */
     public void setOnRowClick(CryptoSelectedListener listener) {
         onRowClick = listener;
     }

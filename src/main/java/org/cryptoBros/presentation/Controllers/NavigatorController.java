@@ -4,6 +4,9 @@ import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Views.Pages;
 
+/**
+ * Coordinates navigation between all application views.
+ */
 public class NavigatorController implements Navigation {
 
     private final CryptoMarketController cryptoMarketController;
@@ -17,6 +20,14 @@ public class NavigatorController implements Navigation {
     private final CryptoDetailController cryptoDetailController;
 	private boolean isAdmin = false;
 
+    /**
+     * Creates a new NavigatorController and initializes all page controllers.
+     *
+     * @param frameController  the frame controller for display operations
+     * @param userController   the user controller for user actions
+     * @param adminController  the admin controller for admin actions
+     * @param isAdmin          whether the current user is an admin
+     */
     public NavigatorController(FrameController frameController, UserController userController, AdminController adminController, boolean isAdmin) {
         this.frameController = frameController;
         this.userController = userController;

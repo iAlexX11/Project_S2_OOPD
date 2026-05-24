@@ -10,9 +10,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * SQL implementation of UserPersistence using PostgreSQL.
+ */
 public class UserSQL implements UserPersistence {
     private final DbConnectionSingleton db;
 
+    /**
+     * Creates a new UserSQL instance.
+     */
     public UserSQL() {
         this.db = DbConnectionSingleton.getInstance();
     }

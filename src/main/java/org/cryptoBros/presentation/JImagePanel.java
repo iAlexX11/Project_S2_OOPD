@@ -7,12 +7,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A JPanel that renders a scaled image as its background.
+ */
 public class JImagePanel extends JPanel {
 
-    // The image to render
+    /** The image to render. */
     private BufferedImage image;
 
-    // Constructor with parameters
+    /**
+     * Creates a new JImagePanel from the given image path.
+     *
+     * @param path the file path of the image to display
+     */
     public JImagePanel(String path) {
         try {
             image = ImageIO.read(new File(path));

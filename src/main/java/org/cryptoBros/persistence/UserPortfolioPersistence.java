@@ -4,6 +4,7 @@ import org.cryptoBros.persistence.Exceptions.*;
 
 import java.util.List;
 
+/** Defines persistence operations for user portfolio data. */
 public interface UserPortfolioPersistence {
     /**
      * Buys crypto for a user.

@@ -9,12 +9,23 @@ import org.cryptoBros.presentation.Views.BaseView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controls the profile view for username and password changes.
+ */
 public class ProfileController implements ActionListener, BalanceListener {
 
 	private final UserController userController;
 	private final Navigation navigation;
 	private final ProfileView profileView;
 
+	/**
+	 * Creates a new ProfileController.
+	 *
+	 * @param userController  the controller for user operations
+	 * @param navigation      the navigation handler
+	 * @param adminController the controller for admin operations
+	 * @param isAdmin         true if the current user is an admin
+	 */
 	public ProfileController(UserController userController, Navigation navigation, AdminController adminController, boolean	isAdmin) {
 		this.userController = userController;
 		this.navigation = navigation;
@@ -46,6 +57,11 @@ public class ProfileController implements ActionListener, BalanceListener {
 		profileView.updateEstimatedProfit(userController.getTotalProfit());
 	}
 
+	/**
+	 * Returns the profile view.
+	 *
+	 * @return the profile view
+	 */
 	public BaseView getView() {
 		return profileView;
 	}

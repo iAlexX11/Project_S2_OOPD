@@ -14,6 +14,9 @@ import org.cryptoBros.presentation.Views.DisplayMessage;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+/**
+ * Mediates between views and business logic for user operations.
+ */
 public class UserController {
 
     private final InitialController initialController;
@@ -23,6 +26,13 @@ public class UserController {
 	private final UserManager userManager;
 	private final CredentialManager credentialManager;
 
+	/**
+	 * Creates a new UserController.
+	 *
+	 * @param frameController   the frame controller for displaying content
+	 * @param initialController the initial controller for startup logic
+	 * @param cryptoManager     the manager for cryptocurrency operations
+	 */
 	public UserController(FrameController frameController, InitialController initialController, CryptoManager cryptoManager) {
 		this.frameController = frameController;
         this.initialController = initialController;
@@ -32,6 +42,11 @@ public class UserController {
         this.accountManager = new AccountManager();
 	}
 
+	/**
+	 * Returns the current user's balance.
+	 *
+	 * @return the balance, or 0 if an error occurs
+	 */
 	public double getBalance() {
 		try {
 			return userManager.getUserBalance(userManager.getCurrentUserId());
@@ -43,6 +58,9 @@ public class UserController {
         return 0;
 	}
 
+    /**
+     * Logs out the current user and returns to the welcome screen.
+     */
     public void logout() {
         userManager.clearCurrentUser();
         userManager.stopBalanceScheduler();
@@ -50,6 +68,9 @@ public class UserController {
         initialController.startProgram();
     }
 
+    /**
+     * Deletes the current user account.
+     */
     public void deleteUser() {
         try {
             AccountManager accountManager = new AccountManager();
@@ -61,42 +82,94 @@ public class UserController {
         }
     }
 
+    /**
+     * Registers a new user with the given credentials.
+     *
+     * @param email             the user's email address
+     * @param password          the user's password
+     * @param confirmedPassword the password confirmation
+     * @param username          the desired username
+     * @throws DbConnectionException         if a database error occurs
+     * @throws UserNotAddException            if the user could not be added
+     * @throws UserAlreadyExistsException     if the user already exists
+     * @throws CredentialsErrorFormatException if the credentials are invalid
+     */
     public void signUpLogic(String email, char[] password, char[] confirmedPassword, String username) throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException {
         int id = accountManager.signUpLogic(email, password, confirmedPassword, username);
         userManager.setCurrentUserId(id);
     }
 
+    /**
+     * Authenticates a user by username or email.
+     *
+     * @param usernameOrEmail the username or email
+     * @param password        the user's password
+     * @throws UserNotFoundException if the user is not found
+     * @throws DbConnectionException if a database error occurs
+     */
     public void logIn(String usernameOrEmail, char[] password) throws UserNotFoundException, DbConnectionException {
         int id = accountManager.logInNormalUser(usernameOrEmail, password);
         userManager.setCurrentUserId(id);
     }
 
+    /**
+     * Registers a listener for balance updates.
+     *
+     * @param listener the balance listener to register
+     */
     public void registerBalanceListener(BalanceListener listener) {
         userManager.changeBalanceListener(listener);
     }
 
+    /**
+     * Registers a listener for crypto data updates.
+     *
+     * @param listener the crypto listener to register
+     */
     public void registerCryptoListener(CryptoListener listener) {
         cryptoManager.addCryptoListener(listener);
     }
 
+    /**
+     * Removes the current crypto data listener.
+     */
     public void removeCryptoListener() {
         cryptoManager.addCryptoListener((symbol,name, price, change, pct) -> {});
     }
 
+    /**
+     * Pushes the current balance to the given listener.
+     *
+     * @param listener the balance listener to notify
+     */
     public void pushCurrentBalance(BalanceListener listener) {
         double balance = getBalance();
 
         listener.balanceChanged(balance);
     }
 
+    /**
+     * Starts the graph worker for a cryptocurrency.
+     *
+     * @param listener the graph price listener to receive updates
+     * @param symbol   the cryptocurrency symbol
+     */
     public void setGraphicWorker (GraphPriceListener listener, String symbol){
         cryptoManager.setGraphWorker(listener, symbol);
     }
 
+    /**
+     * Stops the graph price worker.
+     */
     public void stopGraphWorker() {
         cryptoManager.stopGraphWorker();
     }
 
+    /**
+     * Adds funds to the current user's balance.
+     *
+     * @param addBalanceAmount the amount to add
+     */
     public void addBalance(double addBalanceAmount) {
         try {
             userManager.addBalance(addBalanceAmount);
@@ -105,6 +178,11 @@ public class UserController {
         }
     }
 
+    /**
+     * Returns the current user's portfolio as table data.
+     *
+     * @return a two-dimensional array of portfolio rows
+     */
     public Object[][] getPortfolioData() {
         try {
             List<PortfolioPosition> positions = cryptoManager.getUserPortfolio(userManager.getCurrentUserId());
@@ -126,6 +204,11 @@ public class UserController {
         }
     }
 
+    /**
+     * Calculates the total profit across all portfolio positions.
+     *
+     * @return the total profit, or 0.0 if an error occurs
+     */
     public double getTotalProfit() {
         try {
             List<PortfolioPosition> positions = cryptoManager.getUserPortfolio(userManager.getCurrentUserId());
@@ -135,6 +218,11 @@ public class UserController {
         }
     }
 
+	/**
+	 * Changes the current user's password.
+	 *
+	 * @param password the new password
+	 */
 	public void changeUserPassword(char[] password) {
 		try {
 			userManager.changeUserPassword(credentialManager.hashPassword(password));
@@ -144,6 +232,11 @@ public class UserController {
 		}
 	}
 
+	/**
+	 * Changes the current user's username.
+	 *
+	 * @param username the new username
+	 */
 	public void changeUsername(String username) {
 		try {
 			userManager.changeUsername(username);
@@ -153,6 +246,9 @@ public class UserController {
 		}
 	}
 
+    /**
+     * Fetches all cryptocurrencies and notifies listeners.
+     */
     public void getAllCrypto() {
         try {
             cryptoManager.getAllCrypto();
@@ -161,6 +257,9 @@ public class UserController {
         }
     }
 
+    /**
+     * Loads initial cryptocurrency data and starts bots.
+     */
     public void initCrypto() {
         try {
             cryptoManager.loadInitialCrypto();
@@ -169,6 +268,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Returns the display name of a cryptocurrency.
+     *
+     * @param symbol the cryptocurrency symbol
+     * @return the display name, or a placeholder if not found
+     */
     public String getCryptoName(String symbol){
         try {
             return cryptoManager.getCryptoName(symbol);
@@ -177,6 +282,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Returns the units owned by the current user for a cryptocurrency.
+     *
+     * @param symbol the cryptocurrency symbol
+     * @return the number of units owned, or 0 if an error occurs
+     */
     public double getOwnedUnits(String symbol) {
         try {
             return cryptoManager.getOwnedUnits(symbol, userManager.getCurrentUserId());
@@ -185,6 +296,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Sells cryptocurrency units and credits the proceeds.
+     *
+     * @param symbol the cryptocurrency symbol
+     * @param units  the number of units to sell
+     */
     public void sellCrypto(String symbol, double units) {
         try {
             double proceeds = cryptoManager.sell(userManager.getCurrentUserId(), symbol, units);
@@ -194,6 +311,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Purchases cryptocurrency units and deducts the cost.
+     *
+     * @param currentSymbol the cryptocurrency symbol
+     * @param units         the number of units to buy
+     */
     public void buyCrypto(String currentSymbol, double units) {
         try {
            double totalCost = cryptoManager.purchase(userManager.getCurrentUserId(), currentSymbol, units);
@@ -203,6 +326,9 @@ public class UserController {
         }
     }
 
+    /**
+     * Displays pending crypto-related notifications.
+     */
     public void displayCryptoNotification() {
         try {
             List<String> messages = userManager.displayCryptoNotification();

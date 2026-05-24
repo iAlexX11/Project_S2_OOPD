@@ -13,6 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+/**
+ * Handles application startup, database initialization, and initial navigation.
+ */
 public class InitialController implements ActionListener {
 
     private final FrameController frameController;
@@ -20,6 +23,11 @@ public class InitialController implements ActionListener {
     private final RegistrationController registrationController;
     private final CredentialManager credentialManager;
 
+    /**
+     * Creates a new InitialController.
+     *
+     * @param frameController the frame controller used for view management
+     */
     public InitialController(FrameController frameController) {
         this.registrationController = new RegistrationController(frameController, this);
         this.welcomeView = new WelcomeView();
@@ -28,6 +36,9 @@ public class InitialController implements ActionListener {
         this.credentialManager = new CredentialManager();
     }
 
+    /**
+     * Starts the application by loading configuration and verifying database connectivity.
+     */
     public void startProgram() {
         frameController.displayContent(welcomeView);
 

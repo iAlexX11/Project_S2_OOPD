@@ -7,10 +7,24 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 
+/**
+ * Reusable Swing table panel with configurable columns, button columns, and row operations.
+ *
+ * Subclasses define which columns are editable and how they are rendered
+ * by implementing {@link #isColumnEditable(int)} and {@link #configureColumns()}.
+ */
 public abstract class AbstractTable extends JPanel {
+    /** Backing table model that stores column definitions and row data. */
     protected DefaultTableModel model;
+    /** Visual table component displayed inside this panel. */
     protected JTable table;
 
+    /**
+     * Creates the table panel with the given column names and preferred widths.
+     *
+     * @param columns      header labels for each column
+     * @param columnWidths preferred pixel width for each column
+     */
     public AbstractTable(String[] columns, int[] columnWidths) {
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
@@ -29,7 +43,17 @@ public abstract class AbstractTable extends JPanel {
         setScrollPane();
     }
 
+    /**
+     * Returns whether the column at the given index should be editable.
+     *
+     * @param col zero-based column index
+     * @return {@code true} if cells in this column may be edited
+     */
     protected abstract boolean isColumnEditable(int col);
+
+    /**
+     * Configures column renderers and editors after the table has been created.
+     */
     protected abstract void configureColumns();
 
     private void configureTable(int[] columnWidths) {
@@ -67,6 +91,13 @@ public abstract class AbstractTable extends JPanel {
         add(sp, BorderLayout.CENTER);
     }
 
+    /**
+     * Creates a styled button for use inside table cells.
+     *
+     * @param label      text displayed on the button
+     * @param background button background colour
+     * @return a pre-styled {@link JButton}
+     */
     protected JButton makeButton(String label, Color background) {
         JButton button = new JButton(label);
         button.setBackground(background);
@@ -78,6 +109,17 @@ public abstract class AbstractTable extends JPanel {
         return button;
     }
 
+    /**
+     * Turns a column into a clickable button column.
+     *
+     * Each cell in the column renders a styled button. When the user clicks
+     * it, the provided callback receives the row index of the click.
+     *
+     * @param colIndex zero-based column index to convert
+     * @param label    text displayed on every button in the column
+     * @param color    button background colour
+     * @param callback invoked with the clicked row index
+     */
     protected void setButtonColumn(int colIndex, String label, Color color, ButtonRowCallback callback) {
         JButton renderer = makeButton(label, color);
         JButton editor   = makeButton(label, color);
@@ -101,12 +143,32 @@ public abstract class AbstractTable extends JPanel {
         });
     }
 
+    /** Callback notified when a button inside a table row is clicked. */
     @FunctionalInterface
     public interface ButtonRowCallback {
+        /**
+         * Called when the user clicks the button in the given row.
+         *
+         * @param row zero-based row index of the clicked button
+         */
         void onButtonClicked(int row);
     }
 
+    /** Appends a new row of data to the table.
+     *
+     * @param row cell values matching the column order
+     */
     public void addRow(Object[] row)   { model.addRow(row); }
+
+    /** Removes all rows from the table. */
     public void clearRows()            { model.setRowCount(0); }
+
+    /**
+     * Updates a single cell value in the table model.
+     *
+     * @param value new value to set
+     * @param row   zero-based row index
+     * @param col   zero-based column index
+     */
     public void setValueAt(Object value, int row, int col) { model.setValueAt(value, row, col); }
 }

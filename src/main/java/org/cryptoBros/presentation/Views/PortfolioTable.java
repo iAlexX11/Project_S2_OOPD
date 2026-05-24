@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * Table component for displaying portfolio positions with a sell button.
+ */
 public class PortfolioTable extends AbstractTable {
 
     private static final String[] COLUMNS = {"Cryptocurrency", "Units", "Buy Price", "Balance", ""};
@@ -11,18 +14,36 @@ public class PortfolioTable extends AbstractTable {
 
 
 
+    /** Creates a new PortfolioTable. */
     public PortfolioTable() {
         super(COLUMNS, WIDTHS);
     }
 
+    /**
+     * Sets the callback for sell button clicks.
+     *
+     * @param callback the callback to invoke when a sell button is clicked
+     */
     public void setSellCallback(ButtonRowCallback callback) {
         setButtonColumn(4, "Sell", new Color(100, 125, 220), callback);
     }
 
+    /**
+     * Returns the crypto symbol at the given row.
+     *
+     * @param row the row index
+     * @return the crypto symbol
+     */
     public String getSymbolAt(int row) {
         return (String) model.getValueAt(row, 0);
     }
 
+    /**
+     * Returns the number of units at the given row.
+     *
+     * @param row the row index
+     * @return the number of units
+     */
     public double getUnitsAt(int row) {
         Object val = model.getValueAt(row, 1);
         if (val instanceof Double) return (Double) val;

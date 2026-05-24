@@ -10,14 +10,26 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.List;
 
+/**
+ * Displays detailed information and a price chart for a single cryptocurrency.
+ */
 public class CryptoDetailView extends Pages {
 
+    /** The confirm purchase button. */
     private JButton jBConfirm;
+    /** The crypto name label. */
     private JLabel jLCryptoName;
+    /** The current price label. */
     private JLabel jLCurrentPrice;
+    /** The owned crypto label. */
     private JLabel jLOwnedCrypto;
+    /** The quantity input field. */
     private JTextField jTFQuantity;
+    /** The price history chart. */
     private PriceChart priceChart;
+
+    /** Creates a new CryptoDetailView. */
+    public CryptoDetailView() {}
 
     @Override
     protected void configureView() {
@@ -156,22 +168,44 @@ public class CryptoDetailView extends Pages {
         return jPBlock;
     }
 
+    /**
+     * Sets the displayed cryptocurrency name.
+     * @param name the cryptocurrency name to display
+     */
     public void setCryptoName(String name) {
         jLCryptoName.setText(name);
     }
 
+    /**
+     * Updates the displayed current price.
+     * @param price the current price to display
+     */
     public void setCurrentPrice(double price) {
         jLCurrentPrice.setText("Current price : " + String.format("%,.2f", price) + " €");
     }
 
+    /**
+     * Updates the displayed owned units.
+     * @param units  the number of units owned
+     * @param symbol the cryptocurrency symbol
+     */
     public void setOwnedCrypto(double units, String symbol) {
         jLOwnedCrypto.setText("Current owned crypto : " + String.format("%.0f", units) + " " + symbol);
     }
 
+    /**
+     * Loads the full price history into the chart.
+     * @param prices the price values
+     * @param dates  the date labels
+     */
     public void loadAllHistory(List<Double> prices, List<String> dates) {
         priceChart.loadData(prices, dates);
     }
 
+    /**
+     * Returns the quantity entered by the user.
+     * @return the quantity entered by the user
+     */
     public double getUnits() {
        try {
            return Double.parseDouble(jTFQuantity.getText());

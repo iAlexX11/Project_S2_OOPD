@@ -11,18 +11,36 @@ import java.util.List;
 
 import static org.passay.EnglishCharacterData.*;
 
+/**
+ * Handles user registration and login operations
+ */
 public class AccountManager {
 
 	private final UserManager userManager;
     private final UserPersistence userPersistence;
 	private final CredentialManager credentialManager;
 
+	/**
+	 * Creates an AccountManager, initializing its dependencies
+	 */
 	public AccountManager() {
 		this.userManager = new  UserManager();
         userPersistence = new UserSQL();
 		this.credentialManager = new CredentialManager();
 	}
 
+	/**
+	 * Validates credentials, hashes the password and creates a new user
+	 * @param email the email of the new user
+	 * @param password the password of the new user
+	 * @param confirmPassword the password confirmation to verify it matches
+	 * @param username the username of the new user
+	 * @return the id of the newly created user
+	 * @throws DbConnectionException if the db connection fails at any point during this process
+	 * @throws UserNotAddException if the user could not be added to the db
+	 * @throws UserAlreadyExistsException if a user with the same username or email already exists
+	 * @throws CredentialsErrorFormatException if the credentials do not meet the required format
+	 */
 	public int signUpLogic(String email, char[] password, char[] confirmPassword, String username)
 			throws DbConnectionException, UserNotAddException, UserAlreadyExistsException, CredentialsErrorFormatException  {
 
@@ -46,6 +64,15 @@ public class AccountManager {
 		}
 	}
 
+	/**
+	 * Authenticates a user by username or email and password
+	 * @param usernameOrEmail the username or email of the user
+	 * @param password the password of the user
+	 * @return the id of the authenticated user
+	 * @throws UserNotFoundException if no user with the given username or email exists
+	 * @throws CredentialsErrorFormatException if the username/email or password is incorrect
+	 * @throws DbConnectionException if the db connection fails at any point during this process
+	 */
 	public int logInNormalUser(String usernameOrEmail, char[] password) throws UserNotFoundException, CredentialsErrorFormatException, DbConnectionException {
 		try {
 			User user = userManager.getUser(usernameOrEmail, usernameOrEmail);
@@ -59,6 +86,12 @@ public class AccountManager {
 		}
 	}
 
+    /**
+     * Removes a user from the system
+     * @param id the id of the user to be removed
+     * @throws UserNotFoundException if no user with the given id exists
+     * @throws DbConnectionException if the db connection fails at any point during this process
+     */
     public void deleteUser(int id) throws UserNotFoundException, DbConnectionException {
         userPersistence.removeUser(id);
     }

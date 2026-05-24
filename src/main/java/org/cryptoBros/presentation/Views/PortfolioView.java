@@ -8,12 +8,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+/**
+ * Displays the user's portfolio and balance management interface.
+ */
 public class PortfolioView extends Pages{
 
+    /** Creates a new PortfolioView. */
+    public PortfolioView() {}
+
+    /** The portfolio data table. */
     private PortfolioTable portfolioTable;
+    /** The add balance input field. */
     private JTextField jTFAddBalance;
+    /** The balance display label. */
     private JLabel jLBalance;
+    /** The profit display label. */
     private JLabel jLProfit;
+    /** The confirm balance button. */
     private JButton confirmButton;
 
     @Override
@@ -71,6 +82,11 @@ public class PortfolioView extends Pages{
         return panel;
     }
 
+    /**
+     * Updates the displayed total profit.
+     *
+     * @param totalProfit the total profit value
+     */
     public void updateProfit(double totalProfit) {
         String sign = totalProfit >= 0 ? "+" : "";
         jLProfit.setText(String.format("Estimated Profit: %s%.2f €", sign, totalProfit));
@@ -136,23 +152,50 @@ public class PortfolioView extends Pages{
         return wrapper;
     }
 
+    /**
+     * Sets the callback for sell button clicks.
+     *
+     * @param callback the callback to invoke when a sell button is clicked
+     */
     public void setSellCallback(AbstractTable.ButtonRowCallback callback) {
         portfolioTable.setSellCallback(callback);
     }
 
+    /**
+     * Returns the crypto symbol at the given row.
+     *
+     * @param row the row index
+     * @return the crypto symbol
+     */
     public String getSymbolAt(int row) {
         return portfolioTable.getSymbolAt(row);
     }
 
+    /**
+     * Returns the number of units at the given row.
+     *
+     * @param row the row index
+     * @return the number of units
+     */
     public double getUnitsAt(int row) {
         return portfolioTable.getUnitsAt(row);
     }
 
+    /**
+     * Populates the portfolio table with position data.
+     *
+     * @param data the portfolio position rows
+     */
     public void setPortfolioData(Object[][] data) {
         portfolioTable.clearRows();
         for (Object[] row : data) portfolioTable.addRow(row);
     }
 
+    /**
+     * Returns the amount entered for balance deposit.
+     *
+     * @return the deposit amount, or 0.0 if the input is invalid
+     */
     public double getAddBalanceAmount() {
         try {
             String text = jTFAddBalance.getText().replace("€", "").replace(",", ".").trim();

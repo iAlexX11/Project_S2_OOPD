@@ -9,13 +9,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+/**
+ * Displays the sign-up form with username, email, and password fields.
+ */
 public class SignUpView extends BaseView {
 
+	/** Creates a new SignUpView. */
+	public SignUpView() {}
+
+	/** The username input field. */
 	private JTextField jTFUsername;
+	/** The email input field. */
 	private JTextField jTFEmail;
+	/** The password input field. */
 	private JPasswordField jTFPassword;
+	/** The confirm password input field. */
 	private JPasswordField jTFConfirmPassword;
+	/** The login navigation button. */
 	private JButton jBLogin;
+	/** The sign-up confirm button. */
 	private JButton jBConfirm;
 
 	@Override
@@ -201,18 +213,38 @@ public class SignUpView extends BaseView {
 		jBLogin.addActionListener(listener);
 	}
 
+	/**
+	 * Returns the entered password.
+	 *
+	 * @return the password as a char array
+	 */
 	public char[] getPassword() {
 		return jTFPassword.getPassword();
 	}
 
+	/**
+	 * Returns the entered confirmation password.
+	 *
+	 * @return the confirmation password as a char array
+	 */
 	public char[] getConfirmPassword() {
 		return jTFConfirmPassword.getPassword();
 	}
 
+	/**
+	 * Returns the entered email address.
+	 *
+	 * @return the email address
+	 */
 	public String getEmail() {
 		return jTFEmail.getText();
 	}
 
+	/**
+	 * Returns the entered username.
+	 *
+	 * @return the username
+	 */
 	public String getUsername() {
 		return jTFUsername.getText();
 	}

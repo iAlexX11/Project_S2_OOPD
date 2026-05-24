@@ -9,10 +9,16 @@ import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * JSON-based implementation of ConfigPersistence.
+ */
 public class ConfigJson implements ConfigPersistence {
     private final Gson gson;
     private static final String CONFIG_FILEPATH = "src/main/java/org/cryptoBros/config.json";
 
+    /**
+     * Initializes Gson with a custom Config deserializer.
+     */
     public ConfigJson() {
         gson = new GsonBuilder().registerTypeAdapter(Config.class, new ConfigDeserializer()).create();
     }

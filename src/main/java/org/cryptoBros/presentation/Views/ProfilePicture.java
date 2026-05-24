@@ -9,9 +9,18 @@ import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A JPanel that renders a circular profile picture.
+ */
 class ProfilePicture extends JPanel {
 	private Image image;
 
+	/**
+	 * Creates a new ProfilePicture from the given image path.
+	 *
+	 * @param path the file path to the profile image
+	 * @throws ErrorChangingProfilePictureException if the image cannot be read
+	 */
 	public ProfilePicture(String path) throws ErrorChangingProfilePictureException {
 		try {
 			image = ImageIO.read(new File(path));

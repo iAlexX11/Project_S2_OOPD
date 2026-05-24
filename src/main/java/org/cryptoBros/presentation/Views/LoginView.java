@@ -9,12 +9,24 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+/**
+ * Displays the login form with username and password fields.
+ */
 public class LoginView extends BaseView {
 
+    /** The username input field. */
     private JTextField jTFUsername;
+    /** The password input field. */
     private JPasswordField jTFPassword;
+    /** The sign-up navigation button. */
     private JButton jBSignUp;
+    /** The login confirm button. */
     private JButton jBConfirm;
+
+    /**
+     * Creates a new LoginView.
+     */
+    public LoginView() {}
 
     @Override
     public void configureView () {
@@ -186,10 +198,20 @@ public class LoginView extends BaseView {
         jBSignUp.addActionListener(listener);
     }
 
+	/**
+	 * Returns the entered password.
+	 *
+	 * @return the password as a character array
+	 */
 	public char[] getPassword() {
 		return jTFPassword.getPassword();
 	}
 
+	/**
+	 * Returns the entered username or email.
+	 *
+	 * @return the username or email text
+	 */
 	public String getUsername() {
 		return jTFUsername.getText();
 	}

@@ -14,9 +14,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SQL implementation of UserPortfolioPersistence using PostgreSQL.
+ */
 public class UserPortfolioSQL implements UserPortfolioPersistence {
     private final DbConnectionSingleton db;
 
+    /**
+     * Creates a new UserPortfolioSQL instance.
+     */
     public UserPortfolioSQL() {
         this.db = DbConnectionSingleton.getInstance();
     }

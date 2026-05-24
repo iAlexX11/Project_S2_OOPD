@@ -7,9 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Displays the welcome screen with sign-up and login options.
+ */
 public class WelcomeView extends BaseView {
 
+    /** Creates a new WelcomeView. */
+    public WelcomeView() {}
+
+    /** The sign-up button. */
     private JButton jBSignUp;
+    /** The login button. */
     private JButton jBLogin;
 
     @Override
