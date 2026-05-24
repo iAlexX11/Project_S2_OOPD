@@ -1,8 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
 import com.google.gson.*;
-import org.cryptoBros.business.AccountManager;
-import org.cryptoBros.business.AdminManager;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.business.Liseners.CryptoListener;
@@ -21,8 +19,6 @@ public class AdminController {
 	private final InitialController initialController;
 	private final FrameController frameController;
 	private final CryptoManager cryptoManager;
-	private final AccountManager accountManager;
-	private final AdminManager adminManager;
 
 	/**
 	 * Creates a new AdminController with the given dependencies.
@@ -34,9 +30,7 @@ public class AdminController {
 	public AdminController(InitialController initialController, FrameController frameController, CryptoManager cryptoManager) {
 		this.frameController = frameController;
 		this.initialController = initialController;
-		this.adminManager = new AdminManager();
 		this.cryptoManager = cryptoManager;
-		this.accountManager = new AccountManager();
 	}
 
 	/** Logs out the admin and returns to the initial screen. */
