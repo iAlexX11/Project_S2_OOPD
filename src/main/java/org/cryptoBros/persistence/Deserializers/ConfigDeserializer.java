@@ -5,7 +5,14 @@ import org.cryptoBros.persistence.Config;
 
 import java.lang.reflect.Type;
 
+/**
+ * Custom Gson deserializer for Config records.
+ */
 public class ConfigDeserializer implements JsonDeserializer<Config> {
+
+    /** Creates a new ConfigDeserializer instance. */
+    public ConfigDeserializer() {}
+
     @Override
     public Config deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();

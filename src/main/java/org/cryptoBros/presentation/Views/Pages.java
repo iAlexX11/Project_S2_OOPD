@@ -6,24 +6,52 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Abstract base for views with a navigation header and balance display.
+ */
 public abstract class Pages extends BaseView{
 
+	/** Creates a new Pages instance. */
+	protected Pages() {}
+
+	/** The balance display label. */
 	private JLabel jLBalance;
+    /** The estimated profit label. */
     private JLabel jLEstimatedProfit;
+	/** The home navigation button. */
 	private JButton jBHome;
+	/** The settings navigation button. */
 	private JButton jBSettings;
+	/** The portfolio navigation button. */
 	private JButton jBPortfolio;
+	/** The manage crypto navigation button. */
 	private JButton jBManageCrypto;
+	/** Whether the current user is an admin. */
 	private boolean isAdmin = false;
 
+	/**
+	 * Sets whether the current user is an admin.
+	 *
+	 * @param isAdmin true if the user is an admin
+	 */
 	public void setTypeUser(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
 
+	/**
+	 * Builds and returns the navigation header panel.
+	 *
+	 * @return the header panel
+	 */
 	public JPanel setHeader() {
 		return buildHeader(isAdmin ? buildAdminButtons() : buildButtons());
 	}
 
+	/**
+	 * Binds action listeners to header navigation buttons.
+	 *
+	 * @param listener the action listener to bind
+	 */
 	public void addHeaderActions(ActionListener listener) {
 		bindButton(jBHome, ButtonEnumeration.HOME, listener);
 		bindButton(jBSettings, ButtonEnumeration.SETTINGS, listener);
@@ -31,6 +59,7 @@ public abstract class Pages extends BaseView{
 		if (isAdmin) bindButton(jBManageCrypto, ButtonEnumeration.MANAGE_CRYPTO, listener);
 	}
 
+	/** Re-initializes the view configuration. */
 	public void init() {
 		configureView();
 	}
@@ -117,6 +146,11 @@ public abstract class Pages extends BaseView{
 		button.addActionListener(listener);
 	}
 
+	/**
+	 * Creates and returns the balance label.
+	 *
+	 * @return the balance label
+	 */
 	public JLabel setBalance() {
 		jLBalance = new JLabel();
 		jLBalance.setForeground(Color.WHITE);
@@ -124,6 +158,11 @@ public abstract class Pages extends BaseView{
 		return jLBalance;
 	}
 
+	/**
+	 * Updates the displayed balance value.
+	 *
+	 * @param balance the new balance amount
+	 */
 	public void updateBalance(double balance){
 		jLBalance.setText("The balance is: " + String.format("%.2f", balance) + "€");
 		jLBalance.setForeground(Color.WHITE);
@@ -132,6 +171,11 @@ public abstract class Pages extends BaseView{
 		jLBalance.repaint();
 	}
 
+    /**
+     * Creates and returns the estimated profit label.
+     *
+     * @return the estimated profit label
+     */
     public JLabel setEstimatedProfit() {
         jLEstimatedProfit = new JLabel();
         jLEstimatedProfit.setForeground(Color.WHITE);
@@ -139,6 +183,11 @@ public abstract class Pages extends BaseView{
         return jLEstimatedProfit;
     }
 
+    /**
+     * Updates the displayed estimated profit value.
+     *
+     * @param profit the new estimated profit amount
+     */
     public void updateEstimatedProfit(double profit) {
 		if (jLEstimatedProfit == null) return;
         String sign = profit >= 0 ? "+" : "";

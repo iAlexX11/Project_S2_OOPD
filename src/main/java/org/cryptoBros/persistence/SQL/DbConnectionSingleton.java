@@ -61,6 +61,12 @@ public class DbConnectionSingleton {
         return DriverManager.getConnection(jdbcUrl, username, password);
     }
 
+    /**
+     * Closes the given database connection if it is open.
+     *
+     * @param conn the connection to close
+     * @throws SQLException if a database access error occurs
+     */
     public void disconnect(Connection conn) throws SQLException {
         if (conn != null && !conn.isClosed()) {
             conn.close();
@@ -71,6 +77,7 @@ public class DbConnectionSingleton {
      * This method needs to be called when initializing the singleton
      * for the first time
      * @throws ConfigFileNotFoundException if the configuration file is not found
+     * @throws ConfigFileCorruptedException if the configuration file is malformed
      */
 
     public void loadConfig() throws ConfigFileNotFoundException, ConfigFileCorruptedException {

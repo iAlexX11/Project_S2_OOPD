@@ -5,9 +5,21 @@ import org.cryptoBros.presentation.Controllers.InitialController;
 
 import javax.swing.*;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+/**
+ * Application entry point for the CryptoBros trading platform.
+ */
 public class Main {
+
+    /**
+     * Creates a new Main instance.
+     */
+    public Main() {}
+
+    /**
+     * Launches the application on the Swing event dispatch thread.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             FrameController frameController = new FrameController();

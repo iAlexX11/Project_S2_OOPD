@@ -9,16 +9,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+/**
+ * Displays the user profile with options to change username, password, and profile picture.
+ */
 public class ProfileView extends Pages {
 
+	/** The change username button. */
 	private JButton changeUsernameButton;
+	/** The change password button. */
 	private JButton changePasswordButton;
+	/** The profile picture component. */
 	private ProfilePicture profilePicture;
+	/** The confirmed new username. */
 	private String confirmedUsername;
+	/** The confirmed new password. */
 	private char[] confirmedPassword;
+	/** The current action listener. */
 	private ActionListener actionListener;
+	/** Whether the current user is an admin. */
 	private boolean isAdmin = false;
 
+	/**
+	 * Creates a new ProfileView.
+	 *
+	 * @param isAdmin true if the current user is an admin
+	 */
 	public ProfileView(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
@@ -189,10 +204,20 @@ public class ProfileView extends Pages {
 		dialog.setVisible(true);
 	}
 
+	/**
+	 * Returns the confirmed new username.
+	 *
+	 * @return the confirmed username
+	 */
 	public String getUsername() {
 		return confirmedUsername;
 	}
 
+	/**
+	 * Returns the confirmed new password.
+	 *
+	 * @return the confirmed password
+	 */
 	public char[] getPassword() {
 		return confirmedPassword;
 	}

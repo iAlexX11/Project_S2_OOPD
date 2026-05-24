@@ -8,6 +8,9 @@ import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Periodically fetches and broadcasts price history for a cryptocurrency.
+ */
 public class GraphPriceWorker implements Runnable {
     private static final long UPDATE_INTERVAL_MS = 5000;
 
@@ -17,10 +20,21 @@ public class GraphPriceWorker implements Runnable {
     private Thread workerThread;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
+    /**
+     * Creates a new GraphPriceWorker.
+     *
+     * @param persistence the persistence layer used to fetch price history
+     */
     public GraphPriceWorker(CryptoPersistence persistence) {
         this.cryptoPersistence = persistence;
     }
 
+    /**
+     * Starts polling price history for the given cryptocurrency.
+     *
+     * @param listener the listener to notify with updated price data
+     * @param symbol the cryptocurrency symbol to poll
+     */
     public void start(GraphPriceListener listener, String symbol) {
         stop();
 
@@ -32,6 +46,9 @@ public class GraphPriceWorker implements Runnable {
         workerThread.start();
     }
 
+    /**
+     * Stops the price history polling thread.
+     */
     public void stop() {
         if (workerThread != null && workerThread.isAlive()) {
             workerThread.interrupt();

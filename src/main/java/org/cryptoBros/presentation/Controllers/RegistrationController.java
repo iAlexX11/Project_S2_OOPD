@@ -12,6 +12,9 @@ import org.cryptoBros.presentation.Views.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Handles user login and registration flows.
+ */
 public class RegistrationController implements ActionListener {
 
 	private final FrameController frameController;
@@ -22,6 +25,12 @@ public class RegistrationController implements ActionListener {
 	private final AdminController adminController;
 	private final CredentialManager credentialManager;
 
+	/**
+	 * Creates a new RegistrationController.
+	 *
+	 * @param frameController   the frame controller for displaying content
+	 * @param initialController the initial controller for startup logic
+	 */
 	public RegistrationController (FrameController frameController, InitialController initialController) {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
@@ -35,10 +44,16 @@ public class RegistrationController implements ActionListener {
 		signUpView.setActions(this);
 	}
 
+	/**
+	 * Shows the login view.
+	 */
 	public void displayLogin() {
 		frameController.displayContent(loginView);
 	}
 
+	/**
+	 * Shows the sign-up view.
+	 */
 	public void displaySignUp() {
 		frameController.displayContent(signUpView);
 	}

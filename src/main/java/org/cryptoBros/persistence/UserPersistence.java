@@ -5,6 +5,7 @@ import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.UserNotAddException;
 import org.cryptoBros.persistence.Exceptions.UserNotFoundException;
 
+/** Defines persistence operations for user data. */
 public interface UserPersistence {
     /**
      * Adds a user to the db.
@@ -61,7 +62,21 @@ public interface UserPersistence {
 	 */
 	double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException;
 
+	/**
+	 * Changes the username for the given user.
+	 *
+	 * @param newUsername    the new username
+	 * @param currentUserId the id of the user
+	 * @throws DbConnectionException if there was an error connecting to the db
+	 */
 	void changeUsername(String newUsername, int currentUserId) throws DbConnectionException;
 
+	/**
+	 * Changes the password for the given user.
+	 *
+	 * @param password      the new password
+	 * @param currentUserId the id of the user
+	 * @throws DbConnectionException if there was an error connecting to the db
+	 */
 	void changePassword(String password, int currentUserId) throws DbConnectionException;
 }

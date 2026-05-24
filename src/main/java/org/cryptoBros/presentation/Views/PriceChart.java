@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Custom JPanel that renders a live-updating cryptocurrency price chart.
+ */
 public class PriceChart extends JPanel {
 
 
@@ -18,9 +21,12 @@ public class PriceChart extends JPanel {
     private static final int PAD_BOTTOM = 40;
     private static final int GRID_LINES = 5;
 
+    /** The price data points. */
     private final List<Double> prices;
+    /** The time labels for each data point. */
     private final List<String> times;
 
+    /** Creates a new PriceChart with dark background. */
     public PriceChart () {
         prices = new ArrayList<>();
         times = new ArrayList<>();
@@ -29,6 +35,12 @@ public class PriceChart extends JPanel {
         setPreferredSize(new Dimension(400, 450));
     }
 
+    /**
+     * Adds a single data point to the chart.
+     *
+     * @param price the price value
+     * @param time  the timestamp label
+     */
     public void addPoint (double price, String time) {
         if (prices.size() >= MAX_POINTS) {
             prices.remove(0);
@@ -39,6 +51,12 @@ public class PriceChart extends JPanel {
         repaint();
     }
 
+    /**
+     * Replaces all chart data with the given prices and times.
+     *
+     * @param prices the price values
+     * @param times  the timestamp labels
+     */
     public void loadData (List<Double> prices, List<String> times) {
         this.prices.clear();
         this.times.clear();
@@ -48,6 +66,7 @@ public class PriceChart extends JPanel {
 
     }
 
+    /** Removes all data points from the chart. */
     public void clear () {
         prices.clear();
         times.clear();

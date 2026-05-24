@@ -2,10 +2,16 @@ package org.cryptoBros.presentation.Views;
 
 import java.awt.*;
 
+/**
+ * Table component for managing cryptocurrencies with edit and delete buttons.
+ */
 public class ManageCryptoTable extends AbstractTable {
     private static final String[] COLUMNS = {"Cryptocurrency", "", ""};
     private static final int[] WIDTHS = {250, 100, 100};
 
+    /**
+     * Creates a new ManageCryptoTable.
+     */
     public ManageCryptoTable () {
         super(COLUMNS, WIDTHS);
     }
@@ -41,10 +47,20 @@ public class ManageCryptoTable extends AbstractTable {
                 row -> {});
     }
 
+	/**
+	 * Sets the callback for edit button clicks.
+	 *
+	 * @param callback the callback to invoke when edit is clicked
+	 */
 	public void setEditCallback(ButtonRowCallback callback) {
 		setButtonColumn(1, "Edit", new Color(125, 200, 50), callback);
 	}
 
+    /**
+     * Sets the callback for delete button clicks.
+     *
+     * @param callback the callback to invoke when delete is clicked
+     */
     public void setDeleteCallback(ButtonRowCallback callback) {
         setButtonColumn(2, "Delete", new Color(200, 50, 50), callback);
     }

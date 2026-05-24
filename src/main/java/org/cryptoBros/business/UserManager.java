@@ -13,6 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Manages user state, balance operations, and periodic balance increases.
+ */
 public class UserManager {
 	private int currentUserId; // -1;
 	private final UserPersistence userPersistence;
@@ -24,45 +27,86 @@ public class UserManager {
     private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
 	private static final long INTERVAL_SECONDS = 10;
 
+    /**
+     * Creates a new UserManager.
+     */
     public UserManager() {
         this.userPersistence = new UserSQL();
         this.atomicDb = new AtomicSQL();
     }
 
+	/** Adds a user to the database.
+	 *  @param user the user to add
+	 *  @return the persisted user with generated id
+	 *  @throws UserNotAddException if the user could not be added
+	 *  @throws DbConnectionException if the db connection fails */
 	public User addUser(User user) throws UserNotAddException, DbConnectionException {
 		return userPersistence.addUser(user);
 	}
 
+	/** Retrieves a user by username or email.
+	 *  @param username the username to search
+	 *  @param email the email to search
+	 *  @return the matching user
+	 *  @throws UserNotFoundException if no user is found
+	 *  @throws DbConnectionException if the db connection fails */
 	public User getUser(String username, String email) throws UserNotFoundException, DbConnectionException {
 		return userPersistence.getUser(username, email);
 	}
 
+	/** Returns the balance for a user.
+	 *  @param userId the user id
+	 *  @return the user's balance
+	 *  @throws UserNotFoundException if the user is not found
+	 *  @throws DbConnectionException if the db connection fails */
 	public double getUserBalance(long userId) throws UserNotFoundException, DbConnectionException {
 		return userPersistence.getUserBalance(userId);
 	}
 
+	/**
+	 * Sets the current logged-in user.
+	 * @param currentUserId the id of the logged-in user
+	 */
 	public void setCurrentUserId(int currentUserId) {
 		this.currentUserId = currentUserId;
 	}
 
+	/**
+	 * Returns the current user id.
+	 * @return the id of the logged-in user
+	 */
 	public int getCurrentUserId() {
 		return currentUserId;
 	}
 
+    /** Clears the current user session. */
     public void clearCurrentUser() {
         this.currentUserId = -1;
     }
 
+	/**
+	 * Registers a balance listener.
+	 * @param balanceListener the listener to register
+	 */
 	public void updateBalanceListener(BalanceListener balanceListener) {
 		this.balanceListeners = balanceListener;
 	}
 
+	/**
+	 * Replaces the balance listener.
+	 * @param listener the listener to set, ignored if null
+	 */
 	public void changeBalanceListener(BalanceListener listener) {
 		if (listener != null) {
             this.balanceListeners = listener;
 		}
 	}
 
+	/** Adds funds to the current user's balance.
+	 *  @param amount the amount to add
+	 *  @return the new balance
+	 *  @throws UserNotFoundException if no user is logged in
+	 *  @throws DbConnectionException if the db connection fails */
 	public double addBalance(double amount) throws UserNotFoundException, DbConnectionException {
 		if (currentUserId == -1) {
 			throw new UserNotFoundException();
@@ -72,6 +116,11 @@ public class UserManager {
 		return newBalance;
 	}
 
+	/** Deducts funds from the current user's balance.
+	 *  @param amount the amount to deduct
+	 *  @throws UserNotFoundException if no user is logged in
+	 *  @throws DbConnectionException if the db connection fails
+	 *  @throws InsufficientBalanceException if the balance is too low */
 	public void deductBalance(double amount) throws UserNotFoundException, DbConnectionException, InsufficientBalanceException {
 		if (currentUserId == -1) {
 			throw new UserNotFoundException();
@@ -92,6 +141,7 @@ public class UserManager {
 		});
 	}
 
+	/** Starts the periodic balance increase scheduler. */
 	public void startBalanceScheduler() {
 		if (scheduler != null && !scheduler.isShutdown()) {
 			return;
@@ -104,6 +154,7 @@ public class UserManager {
 		scheduler.scheduleAtFixedRate(this::periodicBalanceIncrease, INTERVAL_SECONDS, INTERVAL_SECONDS, TimeUnit.SECONDS);
 	}
 
+	/** Stops the periodic balance increase scheduler. */
 	public void stopBalanceScheduler() {
 		if (scheduler != null && !scheduler.isShutdown()) {
 			scheduler.shutdownNow();
@@ -122,10 +173,15 @@ public class UserManager {
 		}
 	}
 
+    /** Removes the current balance listener. */
     public void clearBalanceListener() {
         balanceListeners = null;
     }
 
+	/** Changes the current user's username.
+	 *  @param newUsername the new username
+	 *  @throws DbConnectionException if the db connection fails
+	 *  @throws UsernameAlreadyExists if the username is taken */
 	public void changeUsername(String newUsername) throws DbConnectionException,  UsernameAlreadyExists {
 		try {
 			userPersistence.getUser(newUsername, newUsername);
@@ -135,10 +191,16 @@ public class UserManager {
 		}
 	}
 
+	/** Changes the current user's password.
+	 *  @param password the new hashed password
+	 *  @throws DbConnectionException if the db connection fails */
 	public void changeUserPassword(String password) throws DbConnectionException{
 		userPersistence.changePassword(password, currentUserId);
 	}
 
+    /** Retrieves and deletes pending notifications.
+     *  @return the list of pending notification messages
+     *  @throws DbConnectionException if the db connection fails */
     public List<String> displayCryptoNotification() throws DbConnectionException {
         return atomicDb.popNotifications(currentUserId);
     }

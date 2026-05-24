@@ -17,7 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * SQL implementation of AtomicPersistence using PostgreSQL transactions.
+ */
 public class AtomicSQL implements AtomicPersistence {
+
+    /** Creates a new AtomicSQL instance. */
+    public AtomicSQL() {}
 
     private static final String CRYPTO_FILEPATH = "src/main/java/org/cryptoBros/crypto.json";
 

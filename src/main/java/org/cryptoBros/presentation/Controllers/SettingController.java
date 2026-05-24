@@ -11,12 +11,23 @@ import org.cryptoBros.presentation.Views.SettingsView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controls the settings view with logout, profile, and account deletion options.
+ */
 public class SettingController implements ActionListener, BalanceListener {
 
     private final UserController userController;
     private final Navigation navigation;
     private final SettingsView settingsView;
 
+    /**
+     * Creates a new SettingController.
+     *
+     * @param userController  the controller for user operations
+     * @param navigation      the navigation handler
+     * @param adminController the controller for admin operations
+     * @param isAdmin         true if the current user is an admin
+     */
     public SettingController(UserController userController, Navigation navigation, AdminController adminController, boolean	isAdmin) {
         this.userController = userController;
         this.navigation = navigation;
@@ -51,6 +62,11 @@ public class SettingController implements ActionListener, BalanceListener {
         settingsView.updateEstimatedProfit(userController.getTotalProfit());
     }
 
+    /**
+     * Returns the settings view.
+     *
+     * @return the settings view
+     */
     public BaseView getView() {
         return settingsView;
     }

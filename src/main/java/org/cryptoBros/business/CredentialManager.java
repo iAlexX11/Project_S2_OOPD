@@ -15,25 +15,58 @@ import java.util.List;
 import static org.passay.EnglishCharacterData.*;
 import static org.passay.EnglishCharacterData.Special;
 
+/**
+ * Manages credential validation, password hashing, and configuration loading.
+ */
 public class CredentialManager {
     private final ConfigPersistence configPersistence;
 
+    /**
+     * Creates a new CredentialManager with the default configuration persistence.
+     */
     public CredentialManager() {
         configPersistence = new ConfigJson();
     }
 
+    /**
+     * Loads the database configuration from the config file.
+     *
+     * @throws ConfigFileNotFoundException  if the config file is not found
+     * @throws ConfigFileCorruptedException if the config file is corrupted
+     */
     public void loadConfigFile() throws ConfigFileNotFoundException, ConfigFileCorruptedException {
         DbConnectionSingleton.getInstance().loadConfig();
     }
 
+    /**
+     * Reads the admin password from configuration.
+     *
+     * @return the admin password
+     * @throws ConfigFileNotFoundException if the config file is not found
+     */
     public String readAdminPassword() throws ConfigFileNotFoundException {
         return configPersistence.readAdminPassword();
     }
 
+	/**
+	 * Verifies a plaintext password against a BCrypt hash.
+	 *
+	 * @param password       the plaintext password to verify
+	 * @param hashedPassword the BCrypt hash to compare against
+	 * @return {@code true} if the password matches the hash
+	 */
 	public boolean checkHashedPassword(char[] password,  String hashedPassword) {
 		return BCrypt.checkpw(new String(password), hashedPassword);
 	}
 
+	/**
+	 * Validates email format and password requirements.
+	 *
+	 * @param email           the email address to validate
+	 * @param password        the password to validate
+	 * @param confirmPassword the confirmation password to match against
+	 * @return "ok" if credentials are valid, or a newline-separated list of errors
+	 */
 	public String checkCredentials(String email, char[] password, char[] confirmPassword) {
 		List<String> errors = new ArrayList<>();
 
@@ -77,6 +110,12 @@ public class CredentialManager {
 		return passwordFormat;
 	}
 
+	/**
+	 * Hashes a password using BCrypt.
+	 *
+	 * @param password the plaintext password to hash
+	 * @return the BCrypt hashed password
+	 */
 	public String hashPassword(char[] password) {
 		return BCrypt.hashpw(new String(password), BCrypt.gensalt(12));
 	}
