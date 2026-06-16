@@ -19,7 +19,6 @@ import java.util.List;
  */
 public class ManageCryptoController implements ActionListener, BalanceListener {
 
-    private final FrameController frameController;
     private final ManageCryptoView manageCryptoView;
 	private final Navigation navigation;
 	private final AdminController adminController;
@@ -27,13 +26,11 @@ public class ManageCryptoController implements ActionListener, BalanceListener {
     /**
      * Creates a new ManageCryptoController.
      *
-     * @param frameController  the frame controller for display operations
      * @param navigation       the navigation handler for page transitions
      * @param adminController  the admin controller for crypto management
      * @param isAdmin          whether the current user is an admin
      */
-    public ManageCryptoController(FrameController frameController, Navigation navigation, AdminController adminController, boolean isAdmin) {
-        this.frameController = frameController;
+    public ManageCryptoController(Navigation navigation, AdminController adminController, boolean isAdmin) {
         this.manageCryptoView = new ManageCryptoView();
 		this.navigation = navigation;
 		this.adminController = adminController;

@@ -11,8 +11,6 @@ import java.awt.event.ActionListener;
  */
 public class SettingsView extends Pages{
 
-    /** The back navigation button. */
-    private JButton backButton;
     /** The logout button. */
     private JButton logoutButton;
     /** The account management button. */
@@ -20,7 +18,7 @@ public class SettingsView extends Pages{
     /** The delete account button. */
     private JButton deleteAccountButton;
 	/** Whether the current user is an admin. */
-	private boolean isAdmin = false;
+	private final boolean isAdmin;
 
 	/**
 	 * Creates a new SettingsView.
@@ -63,19 +61,8 @@ public class SettingsView extends Pages{
     }
 
     private JButton createButton(String text, Color background) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.PLAIN, 16));
-        button.setBackground(background);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setOpaque(true);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setPreferredSize(new Dimension(300, 50));
-        button.setMaximumSize(new Dimension(300, 50));
-        return button;
-    }
+		return getButton(text, background);
+	}
 
 	/**
 	 * Configures the settings view layout with logout, account management, and delete account buttons.

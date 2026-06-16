@@ -1,6 +1,5 @@
 package org.cryptoBros.persistence.SQL;
 
-import org.cryptoBros.persistence.Config;
 import org.cryptoBros.persistence.ConfigJson;
 import org.cryptoBros.persistence.ConfigPersistence;
 import org.cryptoBros.persistence.DbCredentials;
@@ -11,10 +10,8 @@ import java.sql.*;
 
 /**
  * The SQLConnector class will abstract the specifics of the connection to a MySQL database.
- *
  * This class follows the Singleton design pattern to facilitate outside access while maintaining
  * a single instance, as having multiple connectors to a database is generally discouraged.
- *
  * Be aware that this class presents a simplified approach. Configuration parameters SHOULD NOT be
  * hardcoded and the use of Statements COULD be replaced by PreparedStatements to avoid SQL Injection.
  */
@@ -59,18 +56,6 @@ public class DbConnectionSingleton {
         if (jdbcUrl == null)
             throw new SQLException("Connection not initialised — call loadConfig() first.");
         return DriverManager.getConnection(jdbcUrl, username, password);
-    }
-
-    /**
-     * Closes the given database connection if it is open.
-     *
-     * @param conn the connection to close
-     * @throws SQLException if a database access error occurs
-     */
-    public void disconnect(Connection conn) throws SQLException {
-        if (conn != null && !conn.isClosed()) {
-            conn.close();
-        }
     }
 
     /**

@@ -1,12 +1,9 @@
 package org.cryptoBros.presentation.Controllers;
 
-import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.CryptoManager;
-import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
-import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
@@ -20,7 +17,6 @@ public class RegistrationController implements ActionListener {
 	private final FrameController frameController;
 	private final LoginView loginView;
 	private final SignUpView signUpView;
-	private final UserManager userManager;
     private final UserController userController;
 	private final AdminController adminController;
 	private final CredentialManager credentialManager;
@@ -35,7 +31,6 @@ public class RegistrationController implements ActionListener {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
-		this.userManager = new UserManager();
 		CryptoManager cryptoManager = new CryptoManager();
 		this.adminController = new AdminController(initialController, frameController, cryptoManager);
         this.userController = new UserController(frameController, initialController, cryptoManager);
@@ -62,6 +57,7 @@ public class RegistrationController implements ActionListener {
         try {
             userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
             NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
+            navigatorController.stratNavigation();
         } catch (UserNotAddException |UserAlreadyExistsException | CredentialsErrorFormatException e) {
             frameController.showError(e.getMessage());
         } catch (DbConnectionException ex) {
@@ -76,6 +72,7 @@ public class RegistrationController implements ActionListener {
 			try {
 				userController.logIn(loginView.getUsername(), loginView.getPassword());
 				NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
+                navigatorController.stratNavigation();
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
@@ -90,7 +87,8 @@ public class RegistrationController implements ActionListener {
            char[] password = loginView.getPassword();
            if (credentialManager.checkHashedPassword(password, adminPassword)) {
 			   NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, true);
-			   System.out.println("Admin logIn successfully");
+               navigatorController.stratNavigation();
+               System.out.println("Admin logIn successfully");
            }
            else {
 			   frameController.showError("This username or password are wrong!");

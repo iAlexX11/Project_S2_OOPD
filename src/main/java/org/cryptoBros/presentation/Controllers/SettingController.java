@@ -5,7 +5,6 @@ import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Views.BaseView;
-import org.cryptoBros.presentation.Views.Pages;
 import org.cryptoBros.presentation.Views.SettingsView;
 
 import java.awt.event.ActionEvent;
@@ -25,10 +24,9 @@ public class SettingController implements ActionListener, BalanceListener {
      *
      * @param userController  the controller for user operations
      * @param navigation      the navigation handler
-     * @param adminController the controller for admin operations
      * @param isAdmin         true if the current user is an admin
      */
-    public SettingController(UserController userController, Navigation navigation, AdminController adminController, boolean	isAdmin) {
+    public SettingController(UserController userController, Navigation navigation, boolean	isAdmin) {
         this.userController = userController;
         this.navigation = navigation;
         this.settingsView = new SettingsView(isAdmin);

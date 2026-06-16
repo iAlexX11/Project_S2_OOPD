@@ -12,8 +12,6 @@ import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.persistence.SQL.AtomicSQL;
 import org.cryptoBros.persistence.SQL.CryptoSQL;
 import org.cryptoBros.persistence.SQL.UserPortfolioSQL;
-import org.cryptoBros.persistence.SQL.UserSQL;
-import org.cryptoBros.persistence.UserPersistence;
 import org.cryptoBros.persistence.UserPortfolioPersistence;
 
 import javax.swing.*;
@@ -66,23 +64,22 @@ public class CryptoManager implements BotListener {
     }
 
     /**
-     * Deletes a crypto from the db, with its associated bot
-     *
-     * @param cryptoName name of the crypto to be deleted
-     * @return map of userId to refundAmount for each refunded holder
-     * @throws DbConnectionException if there was a problem connecting to the {@link AtomicPersistence}
-     * @throws CryptoNotFoundException if the {@link Crypto} could not be found
-     */
-    public Map<Long, Double> deleteCrypto(String cryptoName) throws
+	 * Deletes a crypto from the db, with its associated bot
+	 *
+	 * @param cryptoName name of the crypto to be deleted
+	 * @throws DbConnectionException   if there was a problem connecting to the {@link AtomicPersistence}
+	 * @throws CryptoNotFoundException if the {@link Crypto} could not be found
+	 */
+    public void deleteCrypto(String cryptoName) throws
             DbConnectionException,
             CryptoNotFoundException
     {
+
         // DB succeeded: stop in-memory bot
         Bot bot = activeBots.remove(cryptoName);
         if (bot != null) bot.stop();
-
-        return atomicDb.deleteCryptoWithBot(cryptoName);
-    }
+		atomicDb.deleteCryptoWithBot(cryptoName);
+	}
 
     /**
      * Fetches all cryptocurrencies and notifies the listener for each.
