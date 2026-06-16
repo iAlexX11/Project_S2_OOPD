@@ -74,15 +74,12 @@ public class CryptoManager implements BotListener {
             DbConnectionException,
             CryptoNotFoundException
     {
-		atomicDb.deleteCryptoWithBot(cryptoName);
+
         // DB succeeded: stop in-memory bot
         Bot bot = activeBots.remove(cryptoName);
         if (bot != null) bot.stop();
-
+		atomicDb.deleteCryptoWithBot(cryptoName);
 	}
-
-
-
 
     /**
      * Fetches all cryptocurrencies and notifies the listener for each.
