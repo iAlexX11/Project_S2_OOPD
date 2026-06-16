@@ -1,6 +1,5 @@
 package org.cryptoBros.persistence.SQL;
 
-import org.cryptoBros.persistence.Config;
 import org.cryptoBros.persistence.ConfigJson;
 import org.cryptoBros.persistence.ConfigPersistence;
 import org.cryptoBros.persistence.DbCredentials;
@@ -11,10 +10,8 @@ import java.sql.*;
 
 /**
  * The SQLConnector class will abstract the specifics of the connection to a MySQL database.
- *
  * This class follows the Singleton design pattern to facilitate outside access while maintaining
  * a single instance, as having multiple connectors to a database is generally discouraged.
- *
  * Be aware that this class presents a simplified approach. Configuration parameters SHOULD NOT be
  * hardcoded and the use of Statements COULD be replaced by PreparedStatements to avoid SQL Injection.
  */

@@ -2,14 +2,6 @@ package org.cryptoBros.business;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.SQL.UserSQL;
 import org.cryptoBros.persistence.UserPersistence;
-import org.passay.*;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.passay.EnglishCharacterData.*;
 
 /**
  * Handles user registration and login operations

@@ -2,7 +2,6 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
-import org.cryptoBros.presentation.Views.Pages;
 
 /**
  * Coordinates navigation between all application views.
@@ -45,9 +44,11 @@ public class NavigatorController implements Navigation {
             userController.registerBalanceListener(cryptoMarketController);
             userController.pushCurrentBalance(cryptoMarketController);
         }
+    }
 
+
+    public void stratNavigation () {
         frameController.displayContent(cryptoMarketController.getView());
-
         userController.displayCryptoNotification();
     }
 

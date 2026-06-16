@@ -53,17 +53,17 @@ public class PortfolioTable extends AbstractTable {
 	}
 
 	@Override
-	protected Color getCellForeground(int row, int col, String value) {
+	protected Color getCellForeground(int col, String value) {
 		return col == 3 ? (value.startsWith("+") ? GREEN : RED) : Color.BLACK;
 	}
 
 	@Override
-	protected Font getCellFont(int row, int col) {
+	protected Font getCellFont(int col) {
 		return new Font("SansSerif", col == 1 || col == 2 ? Font.PLAIN : Font.BOLD, 14);
 	}
 
 	@Override
-	protected int getCellAlignment(int row, int col) {
+	protected int getCellAlignment(int col) {
 		return col == 0 ? SwingConstants.LEFT : SwingConstants.RIGHT;
 	}
 

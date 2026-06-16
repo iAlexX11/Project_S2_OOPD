@@ -18,7 +18,7 @@ public class SettingsView extends Pages{
     /** The delete account button. */
     private JButton deleteAccountButton;
 	/** Whether the current user is an admin. */
-	private boolean isAdmin = false;
+	private final boolean isAdmin;
 
 	/**
 	 * Creates a new SettingsView.

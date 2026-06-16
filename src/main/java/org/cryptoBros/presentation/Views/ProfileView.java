@@ -27,7 +27,7 @@ public class ProfileView extends Pages {
 	/** The current action listener. */
 	private ActionListener actionListener;
 	/** Whether the current user is an admin. */
-	private boolean isAdmin = false;
+	private final boolean isAdmin;
 
 	/**
 	 * Creates a new ProfileView.

@@ -5,8 +5,6 @@ import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 /**
  * Displays the user's portfolio and balance management interface.

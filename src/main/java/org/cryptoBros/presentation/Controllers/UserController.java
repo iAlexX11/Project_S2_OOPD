@@ -7,7 +7,6 @@ import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.business.UserManager;
-import org.cryptoBros.business.Workers.GraphPriceWorker;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.persistence.PortfolioPosition;
 import org.cryptoBros.presentation.Views.DisplayMessage;

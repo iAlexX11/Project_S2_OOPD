@@ -1,7 +1,6 @@
 package org.cryptoBros.presentation.Views;
 
 import org.cryptoBros.presentation.JImagePanel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;

@@ -22,8 +22,6 @@ public class UserManager {
     private BalanceListener balanceListeners;
     private ScheduledExecutorService scheduler;
 
-    private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
-
     /**
      * Creates a new UserManager.
      */

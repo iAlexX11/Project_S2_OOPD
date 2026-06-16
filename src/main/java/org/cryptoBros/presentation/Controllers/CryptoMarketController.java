@@ -2,7 +2,6 @@ package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
-import org.cryptoBros.business.Liseners.GraphPriceListener;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.CryptoSelectedListener;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
@@ -12,8 +11,6 @@ import org.cryptoBros.presentation.Views.CryptoMarketView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.Instant;
-import java.util.Map;
 
 /**
  * Controls the crypto market view, displaying live cryptocurrency data.

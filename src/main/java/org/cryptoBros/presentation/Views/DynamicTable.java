@@ -76,21 +76,21 @@ public class DynamicTable extends AbstractTable {
 	}
 
 	@Override
-	protected Color getCellForeground(int row, int col, String value) {
+	protected Color getCellForeground(int col, String value) {
 		if (col == 0) return MUTED;
 		if (col == 3) return value.startsWith("+") ? GREEN : RED;
 		return Color.BLACK;
 	}
 
 	@Override
-	protected Font getCellFont(int row, int col) {
+	protected Font getCellFont(int col) {
 		boolean bold = col == 1 || col == 3;
 		int size = col == 0 ? 13 : 14;
 		return new Font("SansSerif", bold ? Font.BOLD : Font.PLAIN, size);
 	}
 
 	@Override
-	protected int getCellAlignment(int row, int col) {
+	protected int getCellAlignment(int col) {
 		return switch (col) {
 			case 0  -> SwingConstants.CENTER;
 			case 1  -> SwingConstants.LEFT;

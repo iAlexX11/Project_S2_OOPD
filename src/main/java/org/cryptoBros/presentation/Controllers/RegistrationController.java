@@ -1,12 +1,9 @@
 package org.cryptoBros.presentation.Controllers;
 
-import org.cryptoBros.business.AccountManager;
 import org.cryptoBros.business.CredentialManager;
 import org.cryptoBros.business.CryptoManager;
-import org.cryptoBros.business.UserManager;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
-import org.cryptoBros.presentation.ListenersPersistence.Navigation;
 import org.cryptoBros.presentation.Views.*;
 
 import java.awt.event.ActionEvent;
@@ -60,6 +57,7 @@ public class RegistrationController implements ActionListener {
         try {
             userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
             NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
+            navigatorController.stratNavigation();
         } catch (UserNotAddException |UserAlreadyExistsException | CredentialsErrorFormatException e) {
             frameController.showError(e.getMessage());
         } catch (DbConnectionException ex) {
@@ -74,6 +72,7 @@ public class RegistrationController implements ActionListener {
 			try {
 				userController.logIn(loginView.getUsername(), loginView.getPassword());
 				NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, false);
+                navigatorController.stratNavigation();
 			} catch (UserNotFoundException | CredentialsErrorFormatException e) {
 				frameController.showError(e.getMessage());
 			} catch (DbConnectionException ex) {
@@ -88,7 +87,8 @@ public class RegistrationController implements ActionListener {
            char[] password = loginView.getPassword();
            if (credentialManager.checkHashedPassword(password, adminPassword)) {
 			   NavigatorController navigatorController = new NavigatorController(frameController, userController, adminController, true);
-			   System.out.println("Admin logIn successfully");
+               navigatorController.stratNavigation();
+               System.out.println("Admin logIn successfully");
            }
            else {
 			   frameController.showError("This username or password are wrong!");

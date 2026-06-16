@@ -9,7 +9,6 @@ import java.awt.*;
 
 /**
  * Reusable Swing table panel with configurable columns, button columns, and row operations.
- *
  * Subclasses define which columns are editable and how they are rendered
  * by implementing {@link #isColumnEditable(int)} and {@link #configureColumns()}.
  */
@@ -111,7 +110,6 @@ public abstract class AbstractTable extends JPanel {
 
     /**
      * Turns a column into a clickable button column.
-     *
      * Each cell in the column renders a styled button. When the user clicks
      * it, the provided callback receives the row index of the click.
      *
@@ -166,34 +164,31 @@ public abstract class AbstractTable extends JPanel {
 	/**
 	 * Returns the foreground color for a cell. Override to customize per column.
 	 *
-	 * @param row   row index
 	 * @param col   column index
 	 * @param value string representation of the cell value
 	 * @return the foreground color
 	 */
-	protected Color getCellForeground(int row, int col, String value) {
+	protected Color getCellForeground(int col, String value) {
 		return Color.BLACK;
 	}
 
 	/**
 	 * Returns the font for a cell. Override to customize per column.
 	 *
-	 * @param row row index
 	 * @param col column index
 	 * @return the cell font
 	 */
-	protected Font getCellFont(int row, int col) {
+	protected Font getCellFont(int col) {
 		return new Font("SansSerif", Font.PLAIN, 14);
 	}
 
 	/**
 	 * Returns the horizontal alignment for a cell. Override to customize per column.
 	 *
-	 * @param row row index
 	 * @param col column index
 	 * @return a {la bSwingConstants} alignment constant
 	 */
-	protected int getCellAlignment(int row, int col) {
+	protected int getCellAlignment(int col) {
 		return SwingConstants.LEFT;
 	}
 
@@ -216,9 +211,9 @@ public abstract class AbstractTable extends JPanel {
 					setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
 
 				String s = val == null ? "" : val.toString();
-				setForeground(getCellForeground(row, col, s));
-				setFont(getCellFont(row, col));
-				setHorizontalAlignment(getCellAlignment(row, col));
+				setForeground(getCellForeground(col, s));
+				setFont(getCellFont(col));
+				setHorizontalAlignment(getCellAlignment(col));
 				return this;
 			}
 		};
