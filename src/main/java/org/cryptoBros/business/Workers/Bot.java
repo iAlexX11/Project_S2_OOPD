@@ -55,9 +55,7 @@ public class Bot implements Runnable {
         this.botUserId          = botUserId;
         this.cryptoSymbol       = cryptoSymbol;
         this.volatility         = volatility;
-        this.portfolio          = new UserPortfolioSQL();
         this.rng                = new Random();
-        this.cryptoPersistence  = new CryptoSQL();
         this.botListener      = botListener;
         this.LOG = Logger.getLogger(this.getClass().getName() + "-" + botUserId);
         this.LOG.setUseParentHandlers(false);
