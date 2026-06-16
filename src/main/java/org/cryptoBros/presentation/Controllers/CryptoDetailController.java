@@ -40,11 +40,10 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
      * Creates a new CryptoDetailController.
      *
      * @param userController  the user controller for business operations
-     * @param adminController the admin controller for admin operations
      * @param navigation      the navigation handler for page transitions
      * @param isAdmin         whether the current user is an admin
      */
-    public CryptoDetailController (UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
+    public CryptoDetailController (UserController userController, Navigation navigation, boolean isAdmin) {
         this.userController = userController;
         this.isAdmin = isAdmin;
         this.navigation = navigation;

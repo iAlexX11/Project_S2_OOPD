@@ -9,99 +9,75 @@ import java.awt.*;
  */
 public class PortfolioTable extends AbstractTable {
 
-    private static final String[] COLUMNS = {"Cryptocurrency", "Units", "Buy Price", "Balance", ""};
-    private static final int[] WIDTHS = {160, 60, 130, 150, 80};
+	private static final String[] COLUMNS = {"Cryptocurrency", "Units", "Buy Price", "Balance", ""};
+	private static final int[] WIDTHS = {160, 60, 130, 150, 80};
 
+	private static final Color SELL_BUTTON_COLOR = new Color(100, 125, 220);
+	private static final Color GREEN = new Color(0, 150, 80);
+	private static final Color RED   = new Color(200, 50, 50);
 
+	/** Creates a new PortfolioTable. */
+	public PortfolioTable() {
+		super(COLUMNS, WIDTHS);
+	}
 
-    /** Creates a new PortfolioTable. */
-    public PortfolioTable() {
-        super(COLUMNS, WIDTHS);
-    }
+	/**
+	 * Sets the callback for sale button clicks.
+	 *
+	 * @param callback the callback to invoke when a sell button is clicked
+	 */
+	public void setSellCallback(ButtonRowCallback callback) {
+		setButtonColumn(4, "Sell", SELL_BUTTON_COLOR, callback);
+	}
 
-    /**
-     * Sets the callback for sell button clicks.
-     *
-     * @param callback the callback to invoke when a sell button is clicked
-     */
-    public void setSellCallback(ButtonRowCallback callback) {
-        setButtonColumn(4, "Sell", new Color(100, 125, 220), callback);
-    }
+	/**
+	 * Returns the crypto symbol at the given row.
+	 *
+	 * @param row the row index
+	 * @return the crypto symbol
+	 */
+	public String getSymbolAt(int row) {
+		return (String) model.getValueAt(row, 0);
+	}
 
-    /**
-     * Returns the crypto symbol at the given row.
-     *
-     * @param row the row index
-     * @return the crypto symbol
-     */
-    public String getSymbolAt(int row) {
-        return (String) model.getValueAt(row, 0);
-    }
+	/**
+	 * Returns the number of units at the given row.
+	 *
+	 * @param row the row index
+	 * @return the number of units
+	 */
+	public double getUnitsAt(int row) {
+		Object val = model.getValueAt(row, 1);
+		if (val instanceof Double) return (Double) val;
+		return Double.parseDouble(val.toString());
+	}
 
-    /**
-     * Returns the number of units at the given row.
-     *
-     * @param row the row index
-     * @return the number of units
-     */
-    public double getUnitsAt(int row) {
-        Object val = model.getValueAt(row, 1);
-        if (val instanceof Double) return (Double) val;
-        return Double.parseDouble(val.toString());
-    }
+	@Override
+	protected Color getCellForeground(int row, int col, String value) {
+		return col == 3 ? (value.startsWith("+") ? GREEN : RED) : Color.BLACK;
+	}
 
-    /**
-     * Returns whether the specified column is editable. Only column 4 (Sell button) is editable.
-     *
-     * @param col the column index
-     * @return true if the column is 4, false otherwise
-     */
-    @Override
-    protected boolean isColumnEditable(int col) {
-        return col == 4;
-    }
+	@Override
+	protected Font getCellFont(int row, int col) {
+		return new Font("SansSerif", col == 1 || col == 2 ? Font.PLAIN : Font.BOLD, 14);
+	}
 
-    /**
-     * Configures column renderers with alternating row colors, per-column formatting, and a Sell button in the last column.
-     */
-    @Override
-    protected void configureColumns() {
-        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(
-                    JTable t, Object val, boolean sel, boolean foc, int row, int col) {
-                super.getTableCellRendererComponent(t, val, sel, foc, row, col);
-                setOpaque(true);
-                setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
+	@Override
+	protected int getCellAlignment(int row, int col) {
+		return col == 0 ? SwingConstants.LEFT : SwingConstants.RIGHT;
+	}
 
-                if (!sel)
-                    setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+	/** Only the Sell button column (4) is editable. */
+	@Override
+	protected boolean isColumnEditable(int col) {
+		return col == 4;
+	}
 
-                String s = val == null ? "" : val.toString();
-
-                switch (col) {
-                    case 0 -> {
-                        setForeground(Color.BLACK);
-                        setFont(new Font("SansSerif", Font.BOLD, 14));
-                        setHorizontalAlignment(LEFT);  }
-                    case 1, 2 -> {
-                        setForeground(Color.BLACK);
-                        setFont(new Font("SansSerif", Font.PLAIN, 14));
-                        setHorizontalAlignment(RIGHT); }
-                    case 3 -> {
-                        setForeground(s.startsWith("+") ? new Color(0, 150, 80) : new Color(200, 50, 50));
-                        setFont(new Font("SansSerif", Font.BOLD, 14));
-                        setHorizontalAlignment(RIGHT);
-                    }
-                }
-                return this;
-            }
-        };
-
-        for (int i = 0; i < COLUMNS.length - 1; i++)
-            table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
-
-        setButtonColumn(4, "Sell", new Color(100, 125, 220),
-                row -> {});
-    }
+	/** Applies the shared renderer to data columns; Sell button registered via {@link #setSellCallback}. */
+	@Override
+	protected void configureColumns() {
+		DefaultTableCellRenderer r = buildBaseRenderer();
+		for (int i = 0; i < COLUMNS.length - 1; i++)
+			table.getColumnModel().getColumn(i).setCellRenderer(r);
+	}
 }

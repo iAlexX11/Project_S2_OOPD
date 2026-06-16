@@ -20,8 +20,6 @@ public class PortfolioView extends Pages{
     private PortfolioTable portfolioTable;
     /** The add balance input field. */
     private JTextField jTFAddBalance;
-    /** The balance display label. */
-    private JLabel jLBalance;
     /** The profit display label. */
     private JLabel jLProfit;
     /** The confirm balance button. */
@@ -53,6 +51,12 @@ public class PortfolioView extends Pages{
         confirmButton.addActionListener(listener);
     }
 
+	/**
+	 * Builds the main content area of the portfolio view.
+	 * Combines the portfolio section and the balance management section.
+	 *
+	 * @return the configured core panel
+	 */
     private JPanel setCore() {
         JPanel core = new JPanel(new BorderLayout());
         core.setBackground(new Color(239, 247, 255));
@@ -116,66 +120,48 @@ public class PortfolioView extends Pages{
      * @return the balance section JPanel
      */
     private JPanel buildBalanceSection() {
-        JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        wrapper.setBackground(new Color(239, 247, 255));
-        wrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+		JPanel wrapper = buildCardWrapper(new Color(209, 220, 255));
+		JPanel card = getCard(wrapper);
 
-        JPanel card = new JPanel();
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBackground(new Color(209, 220, 255));
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(150, 170, 230), 1, true),
-                BorderFactory.createEmptyBorder(16, 30, 16, 30)
-        ));
+		JLabel balanceTitle = new JLabel("Balance", SwingConstants.CENTER);
+		balanceTitle.setFont(new Font("SansSerif", Font.BOLD, 26));
+		balanceTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel balanceTitle = new JLabel("Balance", SwingConstants.CENTER);
-        balanceTitle.setFont(new Font("SansSerif", Font.BOLD, 26));
-        balanceTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JPanel addBalanceCard = new JPanel();
+		addBalanceCard.setLayout(new BoxLayout(addBalanceCard, BoxLayout.Y_AXIS));
+		addBalanceCard.setBackground(new Color(185, 200, 245));
+		addBalanceCard.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
 
-        JPanel addBalanceCard = new JPanel();
-        addBalanceCard.setLayout(new BoxLayout(addBalanceCard, BoxLayout.Y_AXIS));
-        addBalanceCard.setBackground(new Color(185, 200, 245));
-        addBalanceCard.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
+		JLabel addBalanceLabel = new JLabel("Add balance", SwingConstants.CENTER);
+		addBalanceLabel.setFont(new Font("SansSerif", Font.BOLD, 15));
+		addBalanceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel addBalanceLabel = new JLabel("Add balance", SwingConstants.CENTER);
-        addBalanceLabel.setFont(new Font("SansSerif", Font.BOLD, 15));
-        addBalanceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JPanel inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
+		inputRow.setOpaque(false);
+		JLabel quantityLabel = new JLabel("Quantity:");
+		quantityLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+		jTFAddBalance = setTextField("00.00 $");
+		jTFAddBalance.setFont(new Font("SansSerif", Font.PLAIN, 13));
+		inputRow.add(quantityLabel);
+		inputRow.add(jTFAddBalance);
 
-        JPanel inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
-        inputRow.setOpaque(false);
-        JLabel quantityLabel = new JLabel("Quantity:");
-        quantityLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
-        jTFAddBalance = setTextField("00.00 $");
-        jTFAddBalance.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        inputRow.add(quantityLabel);
-        inputRow.add(jTFAddBalance);
+		confirmButton = createPrimaryButton("Confirm", ButtonEnumeration.CONFIRM_BALANCE.name());
 
-        confirmButton = new JButton("Confirm");
-        confirmButton.setActionCommand(ButtonEnumeration.CONFIRM_BALANCE.name());
-        confirmButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        confirmButton.setBackground(new Color(99, 125, 217));
-        confirmButton.setForeground(Color.WHITE);
-        confirmButton.setFocusPainted(false);
-        confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        confirmButton.setBorder(BorderFactory.createEmptyBorder(8, 30, 8, 30));
-        confirmButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		addBalanceCard.add(addBalanceLabel);
+		addBalanceCard.add(inputRow);
+		addBalanceCard.add(Box.createVerticalStrut(6));
+		addBalanceCard.add(confirmButton);
 
-        addBalanceCard.add(addBalanceLabel);
-        addBalanceCard.add(inputRow);
-        addBalanceCard.add(Box.createVerticalStrut(6));
-        addBalanceCard.add(confirmButton);
+		card.add(balanceTitle);
+		card.add(Box.createVerticalStrut(4));
+		card.add(Box.createVerticalStrut(10));
+		card.add(addBalanceCard);
 
-        card.add(balanceTitle);
-        card.add(Box.createVerticalStrut(4));
-        card.add(Box.createVerticalStrut(10));
-        card.add(addBalanceCard);
-
-        wrapper.add(card);
-        return wrapper;
+		return wrapper;
     }
 
     /**
-     * Sets the callback for sell button clicks.
+     * Sets the callback for sale button clicks.
      *
      * @param callback the callback to invoke when a sell button is clicked
      */
@@ -239,27 +225,6 @@ public class PortfolioView extends Pages{
         jTextField.setPreferredSize(new Dimension(100, 25));
         jTextField.setMaximumSize(new Dimension(100, 25));
         jTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 210, 220)));
-        jTextField.setText(placeholder);
-        jTextField.setForeground(Color.GRAY);
-        jTextField.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (jTextField.getText().equals(placeholder)) {
-                    jTextField.setText("");
-                    jTextField.setForeground(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (jTextField.getText().isEmpty()) {
-                    jTextField.setForeground(Color.GRAY);
-                    jTextField.setText(placeholder);
-                }
-            }
-        });
-
-        return jTextField;
-    }
+		return createPlaceholderTextField(placeholder, jTextField);
+	}
 }

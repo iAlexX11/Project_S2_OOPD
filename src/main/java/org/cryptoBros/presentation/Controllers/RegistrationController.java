@@ -20,7 +20,6 @@ public class RegistrationController implements ActionListener {
 	private final FrameController frameController;
 	private final LoginView loginView;
 	private final SignUpView signUpView;
-	private final UserManager userManager;
     private final UserController userController;
 	private final AdminController adminController;
 	private final CredentialManager credentialManager;
@@ -35,7 +34,6 @@ public class RegistrationController implements ActionListener {
 		this.loginView = new LoginView();
 		this.signUpView = new SignUpView();
 		this.frameController = frameController;
-		this.userManager = new UserManager();
 		CryptoManager cryptoManager = new CryptoManager();
 		this.adminController = new AdminController(initialController, frameController, cryptoManager);
         this.userController = new UserController(frameController, initialController, cryptoManager);

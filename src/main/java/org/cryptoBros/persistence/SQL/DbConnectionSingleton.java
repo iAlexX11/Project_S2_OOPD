@@ -62,18 +62,6 @@ public class DbConnectionSingleton {
     }
 
     /**
-     * Closes the given database connection if it is open.
-     *
-     * @param conn the connection to close
-     * @throws SQLException if a database access error occurs
-     */
-    public void disconnect(Connection conn) throws SQLException {
-        if (conn != null && !conn.isClosed()) {
-            conn.close();
-        }
-    }
-
-    /**
      * This method needs to be called when initializing the singleton
      * for the first time
      * @throws ConfigFileNotFoundException if the configuration file is not found

@@ -28,12 +28,11 @@ public class CryptoMarketController implements ActionListener, BalanceListener, 
     /**
      * Creates a new CryptoMarketController.
      *
-     * @param userController  the user controller for business operations
-     * @param adminController the admin controller for admin operations
-     * @param navigation      the navigation handler for page transitions
-     * @param isAdmin         whether the current user is an admin
+     * @param userController the user controller for business operations
+     * @param navigation the navigation handler for page transitions
+     * @param isAdmin whether the current user is an admin
      */
-    public CryptoMarketController(UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
+    public CryptoMarketController(UserController userController , Navigation navigation, boolean isAdmin) {
         this.navigation = navigation;
 		this.userController = userController;
 		this.cryptoMarketView = new CryptoMarketView();

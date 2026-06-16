@@ -9,9 +9,7 @@ import org.cryptoBros.persistence.UserPersistence;
 
 import javax.swing.SwingUtilities;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Manages user state, balance operations, and periodic balance increases.
@@ -25,7 +23,6 @@ public class UserManager {
     private ScheduledExecutorService scheduler;
 
     private static final double PERIODIC_INCREASE_AMOUNT = 10.0;
-	private static final long INTERVAL_SECONDS = 10;
 
     /**
      * Creates a new UserManager.
@@ -85,14 +82,6 @@ public class UserManager {
     }
 
 	/**
-	 * Registers a balance listener.
-	 * @param balanceListener the listener to register
-	 */
-	public void updateBalanceListener(BalanceListener balanceListener) {
-		this.balanceListeners = balanceListener;
-	}
-
-	/**
 	 * Replaces the balance listener.
 	 * @param listener the listener to set, ignored if null
 	 */
@@ -102,18 +91,19 @@ public class UserManager {
 		}
 	}
 
-	/** Adds funds to the current user's balance.
-	 *  @param amount the amount to add
-	 *  @return the new balance
-	 *  @throws UserNotFoundException if no user is logged in
-	 *  @throws DbConnectionException if the db connection fails */
-	public double addBalance(double amount) throws UserNotFoundException, DbConnectionException {
+	/**
+	 * Adds funds to the current user's balance.
+	 *
+	 * @param amount the amount to add
+	 * @throws UserNotFoundException if no user is logged in
+	 * @throws DbConnectionException if the db connection fails
+	 */
+	public void addBalance(double amount) throws UserNotFoundException, DbConnectionException {
 		if (currentUserId == -1) {
 			throw new UserNotFoundException();
 		}
 		double newBalance = userPersistence.adjustUserBalance(currentUserId, amount);
 		notifyBalanceListeners(newBalance);
-		return newBalance;
 	}
 
 	/** Deducts funds from the current user's balance.
@@ -141,35 +131,11 @@ public class UserManager {
 		});
 	}
 
-	/** Starts the periodic balance increase scheduler. */
-	public void startBalanceScheduler() {
-		if (scheduler != null && !scheduler.isShutdown()) {
-			return;
-		}
-		scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-			Thread t = new Thread(r, "BalanceScheduler-Thread");
-			t.setDaemon(true);
-			return t;
-		});
-		scheduler.scheduleAtFixedRate(this::periodicBalanceIncrease, INTERVAL_SECONDS, INTERVAL_SECONDS, TimeUnit.SECONDS);
-	}
-
 	/** Stops the periodic balance increase scheduler. */
 	public void stopBalanceScheduler() {
 		if (scheduler != null && !scheduler.isShutdown()) {
 			scheduler.shutdownNow();
 			scheduler = null;
-		}
-	}
-
-	private void periodicBalanceIncrease() {
-		if (currentUserId == -1) {
-			return;
-		}
-		try {
-			addBalance(PERIODIC_INCREASE_AMOUNT);
-		} catch (UserNotFoundException | DbConnectionException e) {
-			// Silent fail - scheduler continues
 		}
 	}
 

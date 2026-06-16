@@ -37,8 +37,6 @@ public class Bot implements Runnable {
     private final long                      botUserId;
     private final String                    cryptoSymbol;
     private final double                    volatility;
-    private final UserPortfolioPersistence  portfolio;
-    private final CryptoPersistence         cryptoPersistence; // Can be change
     private final Random                    rng;
     private final BotListener               botListener;
 

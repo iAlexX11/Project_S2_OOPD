@@ -15,10 +15,9 @@ public class NavigatorController implements Navigation {
     private final PortfolioController portfolioController;
 	private final ManageCryptoController manageCryptoController;
     private final UserController userController;
-	private final AdminController adminController;
 	private final ProfileController profileController;
     private final CryptoDetailController cryptoDetailController;
-	private boolean isAdmin = false;
+	private final boolean isAdmin;
 
     /**
      * Creates a new NavigatorController and initializes all page controllers.
@@ -31,13 +30,12 @@ public class NavigatorController implements Navigation {
     public NavigatorController(FrameController frameController, UserController userController, AdminController adminController, boolean isAdmin) {
         this.frameController = frameController;
         this.userController = userController;
-        this.adminController = adminController;
         this.manageCryptoController = new ManageCryptoController(frameController, this, adminController, isAdmin);
-        this.cryptoMarketController = new CryptoMarketController(userController,  adminController,this, isAdmin);
-		this.profileController = new ProfileController(userController, this, adminController, isAdmin);
-        this.settingController = new SettingController(userController, this, adminController, isAdmin);
+        this.cryptoMarketController = new CryptoMarketController(userController,this, isAdmin);
+		this.profileController = new ProfileController(userController, this, isAdmin);
+        this.settingController = new SettingController(userController, this, isAdmin);
         this.portfolioController = new PortfolioController(userController, this);
-        this.cryptoDetailController = new CryptoDetailController(userController, adminController, this, isAdmin);
+        this.cryptoDetailController = new CryptoDetailController(userController, this, isAdmin);
 		this.isAdmin = isAdmin;
 
         userController.initCrypto();

@@ -19,7 +19,6 @@ import java.util.List;
  */
 public class ManageCryptoController implements ActionListener, BalanceListener {
 
-    private final FrameController frameController;
     private final ManageCryptoView manageCryptoView;
 	private final Navigation navigation;
 	private final AdminController adminController;

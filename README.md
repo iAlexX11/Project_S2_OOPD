@@ -101,7 +101,7 @@ Or run directly through Maven:
 mvn compile exec:java -Dexec.mainClass="org.cryptoBros.Main"
 ```
 
-The application launches a Swing window. On startup it loads `config.json`, verifies the database connection, and then shows the Welcome screen.
+The application launches a Swing window. On startup, it loads `config.json`, verifies the database connection, and then shows the Welcome screen.
 
 ---
 

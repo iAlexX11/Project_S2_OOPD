@@ -29,16 +29,6 @@ public class CredentialManager {
     }
 
     /**
-     * Loads the database configuration from the config file.
-     *
-     * @throws ConfigFileNotFoundException  if the config file is not found
-     * @throws ConfigFileCorruptedException if the config file is corrupted
-     */
-    public void loadConfigFile() throws ConfigFileNotFoundException, ConfigFileCorruptedException {
-        DbConnectionSingleton.getInstance().loadConfig();
-    }
-
-    /**
      * Reads the admin password from configuration.
      *
      * @return the admin password

@@ -39,15 +39,6 @@ public class AdminController {
 	}
 
 	/**
-	 * Registers a listener for cryptocurrency updates.
-	 *
-	 * @param listener the listener to register
-	 */
-	public void registerCryptoListener(CryptoListener listener) {
-		cryptoManager.addCryptoListener(listener);
-	}
-
-	/**
 	 * Deletes a cryptocurrency by name.
 	 *
 	 * @param cryptoName the name of the cryptocurrency to delete
