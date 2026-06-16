@@ -10,7 +10,6 @@ import org.cryptoBros.presentation.Views.BaseView;
 import org.cryptoBros.presentation.Views.CryptoDetailView;
 import org.cryptoBros.presentation.Views.DisplayMessage;
 import org.cryptoBros.presentation.Views.MainFrame;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

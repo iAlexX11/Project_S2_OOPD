@@ -95,71 +95,60 @@ public class UserPortfolioSQL implements UserPortfolioPersistence {
     public void sellCrypto(long userId, String cryptoSymbol, double units)
             throws CryptoNotFoundException, SaleNotAddedException, DbConnectionException {
 
-        // Fetch current units first so we can decide whether to UPDATE or DELETE.
-        String selectQuery = "SELECT units FROM Portfolio WHERE user_id = ? AND crypto_id = ?";
+        String updateQuery = "UPDATE Portfolio SET units = units - ? WHERE user_id = ? AND crypto_id = ? AND  units >= ?";
 
-        String updateQuery = "UPDATE Portfolio SET units = units - ? WHERE user_id = ? AND crypto_id = ?";
+        String deleteQuery = "DELETE FROM Portfolio WHERE user_id = ? AND crypto_id = ? AND  units = 0";
 
-        String deleteQuery = "DELETE FROM Portfolio WHERE user_id = ? AND crypto_id = ?";
+        String existsQuery = "SELECT 1 FROM Portfolio WHERE user_id = ? AND crypto_id = ?";
 
 
-        try (Connection conn = DbConnectionSingleton.getInstance().connect()){
+        try (Connection conn = DbConnectionSingleton.getInstance().connect();){
+            conn.setAutoCommit(false);
 
-            // Read how many units the user currently holds.
-            double currentUnits;
-            try (PreparedStatement ps = conn.prepareStatement(selectQuery)) {
-                ps.setLong(1, userId);
-                ps.setString(2, cryptoSymbol);
+            try {
+                // Read how many units the user currently holds.
+                try (PreparedStatement ps = conn.prepareStatement(existsQuery)) {
+                    ps.setLong(1, userId);
+                    ps.setString(2, cryptoSymbol);
 
-                ResultSet rs = ps.executeQuery();
-
-                if (!rs.next()) {
-                    throw new CryptoNotFoundException(
-                            "No position found for crypto: " + cryptoSymbol);
+                    if (!ps.executeQuery().next()) {
+                        throw new CryptoNotFoundException(
+                                "No position found for crypto: " + cryptoSymbol);
+                    }
                 }
 
-                currentUnits = rs.getDouble("units");
-            }
-
-            if (units > currentUnits) {
-                throw new SaleNotAddedException(
-                        "Cannot sell more units than owned. Owned: " + currentUnits
-                                + ", attempted: " + units);
-            }
-
-            if (Double.compare(units, currentUnits) == 0) {
-                // Selling the entire position → delete the row.
-                // the sell trigger fires on UPDATE only, so we UPDATE first
-                // (triggering the 1% price drop) and then DELETE the zeroed row.
+                int affected;
                 try (PreparedStatement ps = conn.prepareStatement(updateQuery)) {
                     ps.setDouble(1, units);
                     ps.setLong(2, userId);
                     ps.setString(3, cryptoSymbol);
-                    ps.executeUpdate(); // trigger fires here
+                    ps.setDouble(4, units);
+                    affected = ps.executeUpdate();
                 }
+
+                if (affected == 0) {
+                    throw new SaleNotAddedException(
+                            "Cannot sell more units than owned for: " + cryptoSymbol);
+                }
+
                 try (PreparedStatement ps = conn.prepareStatement(deleteQuery)) {
                     ps.setLong(1, userId);
                     ps.setString(2, cryptoSymbol);
                     ps.executeUpdate();
                 }
-            } else {
-                // Partial sell → just update units (trigger fires automatically).
-                try (PreparedStatement ps = conn.prepareStatement(updateQuery)) {
-                    ps.setDouble(1, units);
-                    ps.setLong(2, userId);
-                    ps.setString(3, cryptoSymbol);
 
-                    int affectedRows = ps.executeUpdate();
-
-                    if (affectedRows == 0) {
-                        throw new SaleNotAddedException("Unexpected error processing the sale");
-                    }
-                }
-            }
-
+                conn.commit();
+            } catch (CryptoNotFoundException | SaleNotAddedException e) {
+                conn.rollback();
+                throw e;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new DbConnectionException("Error processing sale: " + e.getMessage());
+        }
         } catch (SQLException e) {
             throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
         }
+
     }
 
     /**

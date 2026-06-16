@@ -122,7 +122,7 @@ public class CryptoManager implements BotListener {
             SaleNotAddedException,
             CryptoNotFoundException
     {
-        double priceBeforeSell = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
+        double priceBeforeSell = cryptoPersistence.getCurrentPrice(symbol);
         double proceeds = priceBeforeSell * units;
         portfolioPersistence.sellCrypto(userId, symbol, units);
         Crypto updatedCrypto = cryptoPersistence.getCrypto(symbol);
@@ -153,7 +153,7 @@ public class CryptoManager implements BotListener {
         }
 
         // fetch crypto's current price
-        double currentPrice = cryptoPersistence.getCrypto(symbol).getCurrentPrice();
+        double currentPrice = cryptoPersistence.getCurrentPrice(symbol);
 
         // fetch user balance
         double userBalance = userManager.getUserBalance(userId);
@@ -344,7 +344,7 @@ public class CryptoManager implements BotListener {
         if (units <= 0)
             throw new PurchaseNotAddedException("Units must be greater than zero.");
 
-        double currentPrice = cryptoPersistence.getCrypto(cryptoSymbol).getCurrentPrice();
+        double currentPrice = cryptoPersistence.getCurrentPrice(cryptoSymbol);
         portfolioPersistence.buyCrypto(botUserId, cryptoSymbol, currentPrice, units);
         notifyListener(cryptoPersistence.getCrypto(cryptoSymbol));
     }

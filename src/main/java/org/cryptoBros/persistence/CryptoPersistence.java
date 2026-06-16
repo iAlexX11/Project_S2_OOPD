@@ -48,4 +48,14 @@ public interface CryptoPersistence {
 	 * @throws DbConnectionException if there is a problem with the database connection
 	 */
 	void changeCryptoName(String oldName, String newName) throws CryptoNotFoundException, DbConnectionException;
+
+    /**
+     * Get the price of the crypto with this symbol
+     * @param symbol the symbol of the crypto
+     * @return the amount of money that the crypto currently cost
+     * @throws CryptoNotFoundException if the crypto is not found
+     * @throws DbConnectionException if there is a problem with the database connection
+     *
+     */
+    double getCurrentPrice(String symbol) throws CryptoNotFoundException, DbConnectionException;
 }

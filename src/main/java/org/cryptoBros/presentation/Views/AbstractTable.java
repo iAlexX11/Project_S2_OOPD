@@ -141,6 +141,15 @@ public abstract class AbstractTable extends JPanel {
         });
     }
 
+    /**
+     * @param row cell value that we want to see
+     * @param colum collum value that we want to see
+     * @return the object stored in that position
+     */
+    public Object getValueAt(int row, int colum) {
+        return model.getValueAt(row, colum);
+    }
+
     /** Callback notified when a button inside a table row is clicked. */
     @FunctionalInterface
     public interface ButtonRowCallback {
