@@ -192,7 +192,7 @@ public class ManageCryptoView extends Pages {
      * @return the cryptocurrency name
      */
     public String getCryptoNameAtRow(int row) {
-        return (String) manageCryptoTable.model.getValueAt(row, 0);
+        return (String) manageCryptoTable.getValueAt(row, 0);
     }
 
     /**

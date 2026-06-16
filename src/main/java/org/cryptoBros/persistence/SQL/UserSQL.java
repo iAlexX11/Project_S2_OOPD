@@ -35,9 +35,9 @@ public class UserSQL implements UserPersistence {
     public User addUser(User user) throws UserNotAddException, DbConnectionException {
         String query = "INSERT INTO users (username, email, password, balance) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(
-                query,
-                PreparedStatement.RETURN_GENERATED_KEYS))
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(
+                     query, PreparedStatement.RETURN_GENERATED_KEYS))
         {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
@@ -198,7 +198,8 @@ public class UserSQL implements UserPersistence {
 	public double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = balance + ? WHERE user_id = ? RETURNING balance";
 
-		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+		try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setDouble(1, amount);
 			ps.setLong(2, userId);
 

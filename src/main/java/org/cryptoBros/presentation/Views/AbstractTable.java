@@ -9,7 +9,6 @@ import java.awt.*;
 
 /**
  * Reusable Swing table panel with configurable columns, button columns, and row operations.
- *
  * Subclasses define which columns are editable and how they are rendered
  * by implementing {@link #isColumnEditable(int)} and {@link #configureColumns()}.
  */
@@ -111,7 +110,6 @@ public abstract class AbstractTable extends JPanel {
 
     /**
      * Turns a column into a clickable button column.
-     *
      * Each cell in the column renders a styled button. When the user clicks
      * it, the provided callback receives the row index of the click.
      *
@@ -141,6 +139,15 @@ public abstract class AbstractTable extends JPanel {
             column.getCellEditor().stopCellEditing();
             callback.onButtonClicked(clickedRow[0]);
         });
+    }
+
+    /**
+     * @param row cell value that we want to see
+     * @param colum collum value that we want to see
+     * @return the object stored in that position
+     */
+    public Object getValueAt(int row, int colum) {
+        return model.getValueAt(row, colum);
     }
 
     /** Callback notified when a button inside a table row is clicked. */
