@@ -81,6 +81,7 @@ public class RegistrationController implements ActionListener {
 		}
     }
 
+
     private void logInAdmin() {
        try {
            String adminPassword = credentialManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
