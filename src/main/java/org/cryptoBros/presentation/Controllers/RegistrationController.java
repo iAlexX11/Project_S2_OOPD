@@ -53,6 +53,10 @@ public class RegistrationController implements ActionListener {
 		frameController.displayContent(signUpView);
 	}
 
+    /**
+     * Function that handles the sign-up process by validating and registering a new user
+     * On success, navigates to the main application view
+     */
     private void signup (){
         try {
             userController.signUpLogic(signUpView.getEmail(), signUpView.getPassword(), signUpView.getConfirmPassword(), signUpView.getUsername());
@@ -65,6 +69,10 @@ public class RegistrationController implements ActionListener {
         }
     }
 
+    /**
+     * Handles the login process for both regular users and the admin account.
+     * On success, navigates to the main application view
+     */
     private void login () {
 		if (loginView.getUsername().equals("admin")) {
 			logInAdmin();
@@ -81,7 +89,9 @@ public class RegistrationController implements ActionListener {
 		}
     }
 
-
+    /**
+     * Authenticates the admin user by comparing the entered password with the one stored in the configuration file
+     */
     private void logInAdmin() {
        try {
            String adminPassword = credentialManager.hashPassword(credentialManager.readAdminPassword().toCharArray());
