@@ -123,13 +123,12 @@ public class AtomicSQL implements AtomicPersistence {
                 conn.commit();
                 return botUserId;
 
-            } catch (Exception e) {
-                conn.rollback();   // nothing persisted if any step fails
-                if (e instanceof BotGenerationException botGenerationException) throw botGenerationException;
-                if (e instanceof CryptoNotAddedException cryptoNotAddedException) throw cryptoNotAddedException;
-                if (e instanceof SQLException sqlException)
-                    throw new DbConnectionException("DB transaction error: " + sqlException.getMessage());
-                throw new DbConnectionException("Unexpected transaction error: " + e.getMessage());
+            } catch (BotGenerationException | CryptoNotAddedException e) {
+                conn.rollback();
+                throw e;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new DbConnectionException("DB transaction error: " + e.getMessage());
             }
 
         } catch (SQLException e) {
@@ -258,12 +257,12 @@ public class AtomicSQL implements AtomicPersistence {
                 conn.commit();
                 return refunds;
 
-            } catch (Exception e) {
+            } catch (CryptoNotFoundException e) {
                 conn.rollback();
-                if (e instanceof CryptoNotFoundException cryptoNotFoundException) throw cryptoNotFoundException;
-                if (e instanceof SQLException sqlException)
-                    throw new DbConnectionException("DB transaction error: " + sqlException.getMessage());
-                throw new DbConnectionException("Unexpected transaction error: " + e.getMessage());
+                throw e;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new DbConnectionException("DB transaction error: " + e.getMessage());
             }
 
         } catch (SQLException e) {
