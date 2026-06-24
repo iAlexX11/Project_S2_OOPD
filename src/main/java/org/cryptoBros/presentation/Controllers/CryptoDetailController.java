@@ -3,8 +3,6 @@ package org.cryptoBros.presentation.Controllers;
 import org.cryptoBros.business.Liseners.BalanceListener;
 import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.business.Liseners.GraphPriceListener;
-import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
-import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.presentation.Enum.PagesName;
 import org.cryptoBros.presentation.ListenersPersistence.Navigation;
@@ -12,7 +10,6 @@ import org.cryptoBros.presentation.Views.BaseView;
 import org.cryptoBros.presentation.Views.CryptoDetailView;
 import org.cryptoBros.presentation.Views.DisplayMessage;
 import org.cryptoBros.presentation.Views.MainFrame;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Controls the crypto detail view, handling purchases and price updates.
@@ -31,7 +27,7 @@ import java.util.stream.Collectors;
 public class CryptoDetailController implements ActionListener, BalanceListener, CryptoListener, GraphPriceListener {
 
     private final UserController userController;
-    private boolean isAdmin = false;
+    private final boolean isAdmin;
     private final Navigation navigation;
     private final CryptoDetailView view;
     private String currentSymbol;
@@ -40,11 +36,10 @@ public class CryptoDetailController implements ActionListener, BalanceListener, 
      * Creates a new CryptoDetailController.
      *
      * @param userController  the user controller for business operations
-     * @param adminController the admin controller for admin operations
      * @param navigation      the navigation handler for page transitions
      * @param isAdmin         whether the current user is an admin
      */
-    public CryptoDetailController (UserController userController, AdminController adminController, Navigation navigation, boolean isAdmin) {
+    public CryptoDetailController (UserController userController, Navigation navigation, boolean isAdmin) {
         this.userController = userController;
         this.isAdmin = isAdmin;
         this.navigation = navigation;

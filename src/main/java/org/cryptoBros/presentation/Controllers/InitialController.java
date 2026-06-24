@@ -1,7 +1,6 @@
 package org.cryptoBros.presentation.Controllers;
 
 import org.cryptoBros.business.CredentialManager;
-import org.cryptoBros.business.CryptoManager;
 import org.cryptoBros.persistence.SQL.DbConnectionSingleton;
 import org.cryptoBros.presentation.Enum.ButtonEnumeration;
 import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;

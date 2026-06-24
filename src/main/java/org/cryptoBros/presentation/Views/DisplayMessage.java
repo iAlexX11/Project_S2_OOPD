@@ -7,11 +7,6 @@ import javax.swing.*;
  */
 public class DisplayMessage {
 	/**
-	 * Creates a new DisplayMessage instance.
-	 */
-	public DisplayMessage() {}
-
-	/**
 	 * Shows a message dialog on the given frame.
 	 *
 	 * @param mainFrame the parent frame

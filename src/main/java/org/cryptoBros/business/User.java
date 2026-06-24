@@ -88,12 +88,4 @@ public class User {
     public double getBalance() {
         return balance;
     }
-
-    /**
-     * Sets the account balance.
-     * @param balance the new balance
-     */
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
 }

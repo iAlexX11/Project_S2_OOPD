@@ -3,7 +3,6 @@ package org.cryptoBros.presentation.Controllers;
 import com.google.gson.*;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.CryptoManager;
-import org.cryptoBros.business.Liseners.CryptoListener;
 import org.cryptoBros.persistence.Exceptions.*;
 import org.cryptoBros.presentation.Views.DisplayMessage;
 
@@ -36,15 +35,6 @@ public class AdminController {
 	/** Logs out the admin and returns to the initial screen. */
 	public void adminLogout() {
 		initialController.startProgram();
-	}
-
-	/**
-	 * Registers a listener for cryptocurrency updates.
-	 *
-	 * @param listener the listener to register
-	 */
-	public void registerCryptoListener(CryptoListener listener) {
-		cryptoManager.addCryptoListener(listener);
 	}
 
 	/**

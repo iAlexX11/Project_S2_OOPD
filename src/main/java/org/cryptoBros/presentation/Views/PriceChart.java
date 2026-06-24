@@ -3,7 +3,6 @@ package org.cryptoBros.presentation.Views;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +11,6 @@ import java.util.List;
  */
 public class PriceChart extends JPanel {
 
-
-    private static final int MAX_POINTS = 120;
     private static final double Y_MARGIN = 0.05;
     private static final int PAD_LEFT = 70;
     private static final int PAD_RIGHT = 20;
@@ -48,13 +45,6 @@ public class PriceChart extends JPanel {
         this.times.addAll(times);
         repaint();
 
-    }
-
-    /** Removes all data points from the chart. */
-    public void clear () {
-        prices.clear();
-        times.clear();
-        repaint();
     }
 
     /**

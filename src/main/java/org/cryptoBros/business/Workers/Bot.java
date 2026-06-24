@@ -3,14 +3,10 @@ package org.cryptoBros.business.Workers;
 import org.cryptoBros.business.Crypto;
 import org.cryptoBros.business.Liseners.BotListener;
 import org.cryptoBros.business.User;
-import org.cryptoBros.persistence.CryptoPersistence;
 import org.cryptoBros.persistence.Exceptions.CryptoNotFoundException;
 import org.cryptoBros.persistence.Exceptions.DbConnectionException;
 import org.cryptoBros.persistence.Exceptions.PurchaseNotAddedException;
 import org.cryptoBros.persistence.Exceptions.SaleNotAddedException;
-import org.cryptoBros.persistence.SQL.CryptoSQL;
-import org.cryptoBros.persistence.SQL.UserPortfolioSQL;
-import org.cryptoBros.persistence.UserPortfolioPersistence;
 import org.cryptoBros.presentation.BotLogFormatter;
 
 import java.util.Random;
@@ -24,7 +20,6 @@ import java.util.logging.Logger;
 
 /**
  * Simulates market activity for a single cryptocurrency.
- *
  * Each tick (every 5/volatility seconds) the bot randomly buys or sells
  * 1 unit of its assigned crypto, using the same persistence layer as a
  * human user — so all DB triggers fire identically.
@@ -37,8 +32,6 @@ public class Bot implements Runnable {
     private final long                      botUserId;
     private final String                    cryptoSymbol;
     private final double                    volatility;
-    private final UserPortfolioPersistence  portfolio;
-    private final CryptoPersistence         cryptoPersistence; // Can be change
     private final Random                    rng;
     private final BotListener               botListener;
 
@@ -57,9 +50,7 @@ public class Bot implements Runnable {
         this.botUserId          = botUserId;
         this.cryptoSymbol       = cryptoSymbol;
         this.volatility         = volatility;
-        this.portfolio          = new UserPortfolioSQL();
         this.rng                = new Random();
-        this.cryptoPersistence  = new CryptoSQL();
         this.botListener      = botListener;
         this.LOG = Logger.getLogger(this.getClass().getName() + "-" + botUserId);
         this.LOG.setUseParentHandlers(false);

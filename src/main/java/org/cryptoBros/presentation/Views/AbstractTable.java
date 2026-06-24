@@ -9,7 +9,6 @@ import java.awt.*;
 
 /**
  * Reusable Swing table panel with configurable columns, button columns, and row operations.
- *
  * Subclasses define which columns are editable and how they are rendered
  * by implementing {@link #isColumnEditable(int)} and {@link #configureColumns()}.
  */
@@ -111,7 +110,6 @@ public abstract class AbstractTable extends JPanel {
 
     /**
      * Turns a column into a clickable button column.
-     *
      * Each cell in the column renders a styled button. When the user clicks
      * it, the provided callback receives the row index of the click.
      *
@@ -143,6 +141,15 @@ public abstract class AbstractTable extends JPanel {
         });
     }
 
+    /**
+     * @param row cell value that we want to see
+     * @param colum collum value that we want to see
+     * @return the object stored in that position
+     */
+    public Object getValueAt(int row, int colum) {
+        return model.getValueAt(row, colum);
+    }
+
     /** Callback notified when a button inside a table row is clicked. */
     @FunctionalInterface
     public interface ButtonRowCallback {
@@ -163,12 +170,61 @@ public abstract class AbstractTable extends JPanel {
     /** Removes all rows from the table. */
     public void clearRows()            { model.setRowCount(0); }
 
-    /**
-     * Updates a single cell value in the table model.
-     *
-     * @param value new value to set
-     * @param row   zero-based row index
-     * @param col   zero-based column index
-     */
-    public void setValueAt(Object value, int row, int col) { model.setValueAt(value, row, col); }
+	/**
+	 * Returns the foreground color for a cell. Override to customize per column.
+	 *
+	 * @param col   column index
+	 * @param value string representation of the cell value
+	 * @return the foreground color
+	 */
+	protected Color getCellForeground(int col, String value) {
+		return Color.BLACK;
+	}
+
+	/**
+	 * Returns the font for a cell. Override to customize per column.
+	 *
+	 * @param col column index
+	 * @return the cell font
+	 */
+	protected Font getCellFont(int col) {
+		return new Font("SansSerif", Font.PLAIN, 14);
+	}
+
+	/**
+	 * Returns the horizontal alignment for a cell. Override to customize per column.
+	 *
+	 * @param col column index
+	 * @return a {la bSwingConstants} alignment constant
+	 */
+	protected int getCellAlignment(int col) {
+		return SwingConstants.LEFT;
+	}
+
+	/**
+	 * Builds a base renderer with alternating row backgrounds and the bottom border,
+	 * delegating color, font, and alignment to the hook methods.
+	 *
+	 * @return a configured {DefaultTableCellRenderer}
+	 */
+	protected DefaultTableCellRenderer buildBaseRenderer() {
+		return new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(
+					JTable t, Object val, boolean sel, boolean foc, int row, int col) {
+				super.getTableCellRendererComponent(t, val, sel, foc, row, col);
+				setOpaque(true);
+				setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
+
+				if (!sel)
+					setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+
+				String s = val == null ? "" : val.toString();
+				setForeground(getCellForeground(col, s));
+				setFont(getCellFont(col));
+				setHorizontalAlignment(getCellAlignment(col));
+				return this;
+			}
+		};
+	}
 }

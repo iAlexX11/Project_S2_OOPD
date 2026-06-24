@@ -2,9 +2,7 @@ package org.cryptoBros.business;
 
 import org.cryptoBros.persistence.ConfigJson;
 import org.cryptoBros.persistence.ConfigPersistence;
-import org.cryptoBros.persistence.Exceptions.ConfigFileCorruptedException;
 import org.cryptoBros.persistence.Exceptions.ConfigFileNotFoundException;
-import org.cryptoBros.persistence.SQL.DbConnectionSingleton;
 import org.mindrot.jbcrypt.BCrypt;
 import org.passay.*;
 
@@ -13,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.passay.EnglishCharacterData.*;
-import static org.passay.EnglishCharacterData.Special;
 
 /**
  * Manages credential validation, password hashing, and configuration loading.
@@ -26,16 +23,6 @@ public class CredentialManager {
      */
     public CredentialManager() {
         configPersistence = new ConfigJson();
-    }
-
-    /**
-     * Loads the database configuration from the config file.
-     *
-     * @throws ConfigFileNotFoundException  if the config file is not found
-     * @throws ConfigFileCorruptedException if the config file is corrupted
-     */
-    public void loadConfigFile() throws ConfigFileNotFoundException, ConfigFileCorruptedException {
-        DbConnectionSingleton.getInstance().loadConfig();
     }
 
     /**
@@ -101,9 +88,8 @@ public class CredentialManager {
 
 		PasswordData data = new PasswordData(new String(password));
 		RuleResult result = validator.validate(data);
-		data = null;
 
-		if (result.isValid()) {
+        if (result.isValid()) {
 			return "ok";
 		}
 

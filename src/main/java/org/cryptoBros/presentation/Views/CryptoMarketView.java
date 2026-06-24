@@ -11,10 +11,6 @@ import java.awt.event.ActionListener;
  */
 public class CryptoMarketView extends Pages {
 
-	/** Whether the current user is an admin. */
-	private boolean isAdmin;
-	/** The current action listener. */
-	private ActionListener currentListener;
 	/** The cryptocurrency data table. */
 	DynamicTable cryptoTable;
 
@@ -41,11 +37,6 @@ public class CryptoMarketView extends Pages {
 		getContent().revalidate();
 	}
 
-	private void applyActions() {
-		if (currentListener == null) return;
-		addHeaderActions(currentListener);
-	}
-
     /**
      * Registers a listener for row click events.
      * @param listener the listener for row click events
@@ -65,6 +56,12 @@ public class CryptoMarketView extends Pages {
 		return core;
 	}
 
+	/**
+	 * Builds the panel that displays the current cryptocurrency market.
+	 * It includes a title and a dynamic table showing market data.
+	 *
+	 * @return a configured JPanel containing the market overview UI
+	 */
 	private JPanel dataPanel() {
 		JPanel panel = new JPanel(new BorderLayout(0, 10));
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 50, 24, 28));

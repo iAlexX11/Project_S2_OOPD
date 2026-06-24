@@ -171,4 +171,27 @@ public class CryptoSQL implements CryptoPersistence {
 		}
 	}
 
+
+    @Override
+    public double getCurrentPrice(String symbol) throws CryptoNotFoundException, DbConnectionException{
+        String query = "SELECT current_price FROM cryptocurrency WHERE symbol = ?";
+
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, symbol);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return  rs.getDouble("current_price");
+            }
+            else {
+                throw new CryptoNotFoundException("Crypto with symbol " + symbol + " not found.");
+            }
+
+        } catch (SQLException e) {
+            throw new DbConnectionException("Error connecting to the database: " + e.getMessage());
+        }
+    }
+
 }

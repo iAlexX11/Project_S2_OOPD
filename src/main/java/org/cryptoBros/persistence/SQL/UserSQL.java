@@ -35,9 +35,9 @@ public class UserSQL implements UserPersistence {
     public User addUser(User user) throws UserNotAddException, DbConnectionException {
         String query = "INSERT INTO users (username, email, password, balance) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = db.connect().prepareStatement(
-                query,
-                PreparedStatement.RETURN_GENERATED_KEYS))
+        try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(
+                     query, PreparedStatement.RETURN_GENERATED_KEYS))
         {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
@@ -158,33 +158,6 @@ public class UserSQL implements UserPersistence {
 	}
 
 	/**
-	 * Overwrites the balance for a user with the specified new value.
-	 *
-	 * @param userId     the ID of the user whose balance to update
-	 * @param newBalance the new balance to set
-	 * @throws UserNotFoundException if no user exists with the given ID
-	 * @throws DbConnectionException if the database connection fails
-	 */
-	@Override
-	public void updateUserBalance(long userId, double newBalance) throws UserNotFoundException, DbConnectionException {
-		String query = "UPDATE users SET balance = ? WHERE user_id = ?";
-
-        try (Connection conn = db.connect();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-			ps.setDouble(1, newBalance);
-			ps.setLong(2, userId);
-
-			int affectedRows = ps.executeUpdate();
-
-			if (affectedRows == 0) {
-				throw new UserNotFoundException("User with user_id " + userId + " not found");
-			}
-		} catch (SQLException e) {
-			throw new DbConnectionException("Error updating balance: " + e.getMessage());
-		}
-	}
-
-	/**
 	 * Adjusts a user's balance by adding the given amount and returns the resulting balance.
 	 * Uses UPDATE ... RETURNING to atomically apply the delta and read the new value.
 	 *
@@ -198,7 +171,8 @@ public class UserSQL implements UserPersistence {
 	public double adjustUserBalance(long userId, double amount) throws UserNotFoundException, DbConnectionException {
 		String query = "UPDATE users SET balance = balance + ? WHERE user_id = ? RETURNING balance";
 
-		try (PreparedStatement ps = db.connect().prepareStatement(query)) {
+		try (Connection conn = db.connect();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setDouble(1, amount);
 			ps.setLong(2, userId);
 
